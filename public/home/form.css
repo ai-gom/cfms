@@ -1,0 +1,121 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+form {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    margin: 40px auto;
+}
+
+h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+h3 {
+    font-size: 20px;
+    color: #555;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.inline-inputs {
+    display: flex;
+    gap: 20px;
+}
+
+.inline-inputs > div {
+    flex: 1;
+}
+
+.radio-group,
+.rating-group {
+    margin-bottom: 20px;
+}
+
+.radio-group label,
+.rating-group label {
+    display: inline-block;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.radio-group input[type="radio"],
+.rating-group input[type="radio"] {
+    margin-right: 6px;
+}
+
+button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 4px;
+    width: 100%;
+    margin-top: 30px;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.rating-group input[type="radio"] {
+    display: none;
+}
+
+.rating-group label {
+    font-size: 24px;
+    cursor: pointer;
+    color: #ccc;
+}
+
+.rating-group input[type="radio"]:checked ~ label,
+.rating-group label:hover,
+.rating-group label:hover ~ label {
+    color: #ffc107;
+}
+
+@media (max-width: 768px) {
+    .inline-inputs {
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dashboard</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+        <!-- Sidebar Start -->
+        <div class="sidebar pe-4 pb-3">
+            <nav class="navbar bg-light navbar-light">
+                <a href="index.html" class="navbar-brand mx-4 mb-3 d-flex align-items-center">
+                    <img src="Urkl.png" alt="Logo" style="height: 40px; margin-right: 10px;">
+                    <h3 class="text-primary mb-0">PSU <span class="text-gold">ACC</span></h3>
+                </a>
+                
+                
+                
+                <div class="navbar-nav w-100">
+                    <a href="index.html" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-laptop me-2"></i>External Forms </a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                            <a href="form.html" class="dropdown-item">Admission, Guidance and Testing</a>
+                            <a href="typography.html" class="dropdown-item">Cashier</a>
+                            <a href="element.html" class="dropdown-item">College/Department</a>
+                            <a href="element.html" class="dropdown-item">Library and Audio Visuals</a>
+                            <a href="element.html" class="dropdown-item">NSTP</a>
+                            <a href="element.html" class="dropdown-item">Registrar</a>
+                            <a href="element.html" class="dropdown-item">Student Services and Alumni affairs</a>
+                        </div>
+                    </div>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-laptop me-2"></i>Internal Forms</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                            <a href="button.html" class="dropdown-item">Admission, Guidance and Testing</a>
+                            <a href="typography.html" class="dropdown-item">Cashier</a>
+                            <a href="element.html" class="dropdown-item">College/Department</a>
+                            <a href="element.html" class="dropdown-item">Library and Audio Visuals</a>
+                            <a href="element.html" class="dropdown-item">NSTP</a>
+                            <a href="element.html" class="dropdown-item">Registrar</a>
+                            <a href="element.html" class="dropdown-item">Student Services and Alumni affairs</a>
+                        </div>
+                    <a href="#" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Reports</a>
+                    <a href="Rankings.html" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Rankings</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <!-- Sidebar End -->
+
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+<nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
+    <!-- <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+        <h2 class="text-primary mb-0"><i class="fa fa-bars"></i></h2>
+    </a> -->
+    <a href="#" class="sidebar-toggler flex-shrink-0">
+        <i class="fa fa-bars"></i>
+    </a>
+
+    <!-- Navbar Collapse -->
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto align-items-center">
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <img class="rounded-circle me-lg-2" src="images.jpg" alt="Profile Picture" style="width: 40px; height: 40px;">
+                    <span class="d-none d-lg-inline-flex">Aryel Endaya</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                    <a href="#" class="dropdown-item">My Profile</a>
+                    <a href="#" class="dropdown-item">Settings</a>
+                    <a href="#" class="dropdown-item">Log Out</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+<!-- Navbar End -->
+
+<!-- Cards Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+
+        <!-- New card on top of the existing three -->
+        <div class="col-sm-12">
+            <div class="card border-0 rounded-3 shadow-lg mb-4">
+                <div class="card-body text-center" style="background-color: #f8f9fa;">
+                    <h5 class="card-title" style="color: #343a40;">Office Satisfaction</h5>
+
+                    <!-- Custom Legend Start -->
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="d-flex align-items-center me-3">
+                            <span style="display:inline-block; width: 20px; height: 20px; background-color: green; margin-right: 5px;"></span>
+                            <span>High Satisfaction (≥ 75)</span>
+                        </div>
+                        <div class="d-flex align-items-center me-3">
+                            <span style="display:inline-block; width: 20px; height: 20px; background-color: orange; margin-right: 5px;"></span>
+                            <span>Medium Satisfaction (50-74)</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span style="display:inline-block; width: 20px; height: 20px; background-color: red; margin-right: 5px;"></span>
+                            <span>Low Satisfaction (< 50)</span>
+                        </div>
+                    </div>
+                    <!-- Custom Legend End -->
+
+                    <canvas id="satisfactionBarChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-4">
+            <div class="card border-0 rounded-3 shadow-lg">
+                <div class="card-body text-center" style="background-color: #f8f9fa;">
+                    <h5 class="card-title" style="color: #343a40;">All Services</h5>
+                    <p class="card-text" style="color: #6c757d;">19</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <div class="card border-0 rounded-3 shadow-lg">
+                <div class="card-body text-center" style="background-color: #f8f9fa;">
+                    <h5 class="card-title" style="color: #343a40;">External Services</h5>
+                    <p class="card-text" style="color: #6c757d;">.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <div class="card border-0 rounded-3 shadow-lg">
+                <div class="card-body text-center" style="background-color: #f8f9fa;">
+                    <h5 class="card-title" style="color: #343a40;">Internal Services</h5>
+                    <p class="card-text" style="color: #6c757d;">.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- New card below the existing three -->
+        <div class="col-sm-20 col-md-12">
+            <div class="card border-0 rounded-3 shadow-lg" style="height: 400px;"> <!-- Custom height added here -->
+                <div class="card-body text-center" style="background-color: #f8f9fa;">
+                    <canvas id="myLineChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Cards End -->
+
+
+
+
+
+
+
+
+
+
+
+        
+            <!-- Footer Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="bg-light rounded-top p-4">
+                    <div class="row">
+                        <div class="col-12 col-sm-6 text-center text-sm-start">
+                            &copy; <a href="#">Your Site Name</a>, All Right Reserved. 
+                        </div>
+                        <div class="col-12 col-sm-6 text-center text-sm-end">
+                            <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
+                            Designed By <a href="https://htmlcodex.com">HTML Codex</a>
+                        </br>
+                        Distributed By <a class="border-bottom" href="https://themewagon.com" target="_blank">ThemeWagon</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer End -->
+        </div>
+        <!-- Content End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/chart/chart.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.js" integrity="sha512-7DgGWBKHddtgZ9Cgu8aGfJXvgcVv4SWSESomRtghob4k4orCBUTSRQ4s5SaC2Rz+OptMqNk0aHHsaUBk6fzIXw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>">
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+
+    <script>
+        // Initialize Chart.js
+        const ctx = document.getElementById('myLineChart').getContext('2d');
+        
+        const myLineChart = new Chart(ctx, {
+            type: 'line', // Specify chart type
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July','August','September','October','November','December'], // X-axis labels
+                datasets: [{
+                    label: 'Form Submitted', // Label for the dataset
+                    data: [65, 59, 80, 81, 56, 55, 40,34,34,56,33,33], // Y-axis data points
+                    backgroundColor: 'rgba(0, 123, 255, 0.2)', // Background color of the line fill
+                    borderColor: 'rgba(0, 123, 255, 1)', // Border color of the line
+                    borderWidth: 2, // Width of the line
+                    fill: true, // Fill the area under the line
+                    tension: 0.4, // Smoothness of the line curve
+                }]
+            },
+            options: {
+                responsive: true, // Make chart responsive
+                scales: {
+                    y: {
+                        beginAtZero: true // Start Y-axis at zero
+                    }
+                }
+            }
+        });
+    </script>
+    
+
+    <!-- JavaScript to render the Bar Chart -->
+<script>
+    const satisfactionCtx = document.getElementById('satisfactionBarChart').getContext('2d');
+
+    // Sample satisfaction scores for 33 offices
+    const satisfactionScores = [85, 70, 60, 90, 40, 55, 65, 75, 95, 30, 50, 80, 45, 68, 72, 85, 88, 53, 47, 100, 60, 78, 82, 67, 40, 55, 73, 60, 85, 92, 33, 57, 81];
+
+    const officeLabels = Array.from({ length: 33 }, (_, i) => `Office ${i + 1}`);
+
+    // Function to set bar colors based on score
+    const getColor = (score) => {
+        return score >= 75 ? 'green' : score >= 50 ? 'orange' : 'red'; // Green for high, orange for mid, red for low
+    };
+
+    // Colors for each bar
+    const barColors = satisfactionScores.map(score => getColor(score));
+
+    const satisfactionBarChart = new Chart(satisfactionCtx, {
+        type: 'bar',
+        data: {
+            labels: officeLabels, // X-axis labels (offices)
+            datasets: [{
+                label: 'Satisfaction Score',
+                data: satisfactionScores, // Y-axis data (scores)
+                backgroundColor: barColors, // Dynamic color based on score
+                borderColor: 'rgba(0, 0, 0, 0.1)', // Bar border color
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true, // Y-axis starts at zero
+                    max: 100 // Maximum value on Y-axis
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false // Hide legend
+                }
+            }
+        }
+    });
+</script>
+    
+
+</body>
+
+</html>
