@@ -1,27 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    @include('admin.css')
-</head>
-
-<body>
-    <div class="container-xxl position-relative bg-white d-flex p-0">
-        <!-- Spinner Start -->
-        @include('admin.spinner')
-        <!-- Spinner End -->
-
-        <!-- Sidebar Start -->
-        @include('admin.sidebar')
-        <!-- Sidebar End -->
-
-        <div class="content">
-            <!-- Navbar Start -->
-            @include('admin.navbar')
-            <!-- Navbar End -->
-
-          <!-- Card Start for Age Table -->
-<div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
+  <!-- Card Start for Age Table -->
+  <div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
     <div class="card-header">
         <h4>Table 1: Age</h4>
     </div>
@@ -42,7 +20,7 @@
                     $totalOverallCount = 0;
                 @endphp
 
-                @foreach ($annualData['ageRanges'] as $range => $data)
+                @foreach ($aprilToJuneData['ageRanges'] as $range => $data)
                     <tr>
                         <td>{{ $range }}</td>
                         <td>{{ $data['external']['count'] }} ({{ number_format($data['external']['percentage'], 2) }}%)</td>
@@ -74,9 +52,9 @@
     </div>
 </div>
 
- 
-    <!-- Card Start for Gender Percentages -->
-    <div class="card" style="margin-top: 20px; margin-left: 20px;">
+    
+     <!-- Card Start for Gender Percentages -->
+<div class="card" style="margin-top: 20px; margin-left: 20px;">
     <div class="card-header">
         <h4>Table 2. Sex</h4>
     </div>
@@ -101,40 +79,40 @@
                 <!-- Male Row -->
                 <tr>
                     <td>Male</td>
-                    <td>{{ number_format($annualData['maleExternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($annualData['maleInternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($annualData['maleOverallPercentage'], 2) }}%</td>
+                    <td>{{ number_format($aprilToJuneData['maleExternalPercentage'], 2) }}%</td>
+                    <td>{{ number_format($aprilToJuneData['maleInternalPercentage'], 2) }}%</td>
+                    <td>{{ number_format($aprilToJuneData['maleOverallPercentage'], 2) }}%</td>
                 </tr>
                 @php
-                    $totalExternalPercentage += $annualData['maleExternalPercentage'];
-                    $totalInternalPercentage += $annualData['maleInternalPercentage'];
-                    $totalOverallPercentage +=  $annualData ['maleOverallPercentage'];
+                    $totalExternalPercentage += $aprilToJuneData['maleExternalPercentage'];
+                    $totalInternalPercentage += $aprilToJuneData['maleInternalPercentage'];
+                    $totalOverallPercentage += $aprilToJuneData ['maleOverallPercentage'];
                 @endphp
 
                 <!-- Female Row -->
                 <tr>
                     <td>Female</td>
-                    <td>{{ number_format($annualData['femaleExternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($annualData['femaleInternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($annualData['femaleOverallPercentage'], 2) }}%</td>
+                    <td>{{ number_format($aprilToJuneData['femaleExternalPercentage'], 2) }}%</td>
+                    <td>{{ number_format($aprilToJuneData['femaleInternalPercentage'], 2) }}%</td>
+                    <td>{{ number_format($aprilToJuneData['femaleOverallPercentage'], 2) }}%</td>
                 </tr>
                 @php
-                    $totalExternalPercentage += $annualData['femaleExternalPercentage'];
-                    $totalInternalPercentage += $annualData['femaleInternalPercentage'];
-                    $totalOverallPercentage  += $annualData['femaleOverallPercentage'];
+                    $totalExternalPercentage += $aprilToJuneData['femaleExternalPercentage'];
+                    $totalInternalPercentage += $aprilToJuneData['femaleInternalPercentage'];
+                    $totalOverallPercentage  += $aprilToJuneData['femaleOverallPercentage'];
                 @endphp
 
                 <!-- Prefer Not to Say Row -->
                 <tr>
                     <td>Prefer Not to Say</td>
-                    <td>{{ number_format($annualData['preferNotToSayExternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($annualData['preferNotToSayInternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($annualData['preferNotToSayOverallPercentage'], 2) }}%</td>
+                    <td>{{ number_format($aprilToJuneData['preferNotToSayExternalPercentage'], 2) }}%</td>
+                    <td>{{ number_format($aprilToJuneData['preferNotToSayInternalPercentage'], 2) }}%</td>
+                    <td>{{ number_format($aprilToJuneData['preferNotToSayOverallPercentage'], 2) }}%</td>
                 </tr>
                 @php
-                    $totalExternalPercentage += $annualData['preferNotToSayExternalPercentage'];
-                    $totalInternalPercentage += $annualData['preferNotToSayInternalPercentage'];
-                    $totalOverallPercentage +=  $annualData['preferNotToSayOverallPercentage'];
+                    $totalExternalPercentage += $aprilToJuneData['preferNotToSayExternalPercentage'];
+                    $totalInternalPercentage += $aprilToJuneData['preferNotToSayInternalPercentage'];
+                    $totalOverallPercentage +=  $aprilToJuneData['preferNotToSayOverallPercentage'];
                 @endphp
 
                 <!-- Totals Row -->
@@ -149,8 +127,8 @@
     </div>
 </div>
 
- <!-- Card Start for Municipality -->
- <div class="card" style="margin-top: 20px; margin-left: 20px;">
+    <!-- Card Start for Municipality -->
+<div class="card" style="margin-top: 20px; margin-left: 20px;">
     <div class="card-header">
         <h4>Table 3. Municipality of Residence</h4>
     </div>
@@ -172,7 +150,7 @@
                     $totalOverallCount = 0;
                 @endphp
 
-                @foreach ($annualData['municipalityData'] as $municipality => $data)
+                @foreach ($aprilToJuneData['municipalityData'] as $municipality => $data)
                     <tr>
                         <td>{{ $municipality }}</td>
                         <td>{{ $data['external']['count'] }} ({{ number_format($data['external']['percentage'], 2) }}%)</td>
@@ -190,7 +168,7 @@
 
                 @php
                     // Calculate total percentages based on total forms
-                    $totalForms = $annualData['totalForms'];
+                    $totalForms = $aprilToJuneData['totalForms'];
                     $totalExternalPercentage = ($totalForms > 0) ? ($totalExternalCount / $totalForms) * 100 : 0;
                     $totalInternalPercentage = ($totalForms > 0) ? ($totalInternalCount / $totalForms) * 100 : 0;
                     $totalOverallPercentage = ($totalForms > 0) ? ($totalOverallCount / $totalForms) * 100 : 0;
@@ -209,7 +187,7 @@
 </div>
 
 
-<!-- Card Start for Client Category -->
+    <!-- Card Start for Client Category -->
 <div class="card" style="margin-top: 20px; margin-left: 20px;">
     <div class="card-header">
         <h4>Table 4. Client Category</h4>
@@ -232,7 +210,7 @@
                     $grandTotalCount = 0;
                 @endphp
 
-                @foreach ($annualData['clientCategories'] as $category => $data)
+                @foreach ($aprilToJuneData['clientCategories'] as $category => $data)
                     <tr>
                         <td>{{ $category }}</td>
                         <td>{{ $data['external']['count'] }} ({{ number_format($data['external']['percentage'], 2) }}%)</td>
@@ -268,8 +246,9 @@
     </div>
 </div>
 
-<!-- Card for Citizen's Charter Awareness  -->
-<div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
+
+   <!-- Card for Citizen's Charter Awareness - April to June -->
+ <div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
                     <div class="card-header">
                         <h4>Table 5: Citizen's Charter Awareness</h4>
                     </div>
@@ -287,7 +266,7 @@
                                     <tr>
                                         <td colspan="3">{{ ucfirst($ccKey) }} - Response Breakdown</td>
                                     </tr>
-                                    @foreach($annualResponses[$ccKey] as $option => $data)
+                                    @foreach($aprilToJuneResponses[$ccKey] as $option => $data)
                                         <tr>
                                             <td>{{ $option }}. {{ $yourOptions[$ccKey][$option] ?? 'Description not found' }}</td>
                                             <td>{{ $data['count'] }}</td>
@@ -299,20 +278,3 @@
                         </table>
                     </div>
                 </div>
-
-
-
-        </div>
-        <!-- Content End -->
-
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top" style="position: fixed; bottom: 20px; right: 20px; background-color: #007bff; color: #fff; border-radius: 50%; border: none; padding: 10px; font-size: 1.5rem; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-            <i class="bi bi-arrow-up"></i>
-        </a>
-    </div>
-
-    <!-- JavaScript Libraries -->
-    @include('admin.js')
-</body>
-
-</html>

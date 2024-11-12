@@ -42,3 +42,5 @@ route::get('delete_services/{id}',[AdminController::class,'delete_services'])->m
 Route::post('submit_form', [HomeController::class, 'submit_form']);
 
 route::get('reports_bi_quarterly',[AdminController::class,'reports_bi_quarterly'])->middleware(['auth','admin']);
+
+route::get('reports_quarterly',[AdminController::class,'reports_quarterly'])->middleware(['auth','admin']);

@@ -12,7 +12,7 @@
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                     <img class="rounded-circle me-lg-2" src="{{asset('image/images.jpg')}}" alt="Profile Picture" style="width: 40px; height: 40px;">
-                    <span class="d-none d-lg-inline-flex">Aryel Endaya</span>
+                    <span class="d-none d-lg-inline-flex">Admin admin</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
                     <a href="#" class="dropdown-item">My Profile</a>

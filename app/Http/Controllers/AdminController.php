@@ -16,172 +16,37 @@ class AdminController extends Controller
 {
     public function reports()
     {
-     // Get the current year
-    $currentYear = Carbon::now()->year;
+        $currentYear = Carbon::now()->year;
 
-    // Get the total number of form submissions for the current year
-    $totalSubmissions = Form::whereYear('date', $currentYear)->count();
-
-    // Get services data
-    $data = Services::all();  // Fetch all services
-
-    // Counts based on sex and service type (external)
-    $maleExternalCount = Form::where('sex', 'male')
-        ->whereHas('service', function ($query) {
-            $query->where('service_type', 'external');
-        })
-        ->count();
-
-    $femaleExternalCount = Form::where('sex', 'female')
-        ->whereHas('service', function ($query) {
-            $query->where('service_type', 'external');
-        })
-        ->count();
-
-    $preferNotToSayExternalCount = Form::where('sex', 'prefer-not-to-say')
-        ->whereHas('service', function ($query) {
-            $query->where('service_type', 'external');
-        })
-        ->count();
-
-    // Counts for internal service type
-    $maleInternalCount = Form::where('sex', 'male')
-        ->whereHas('service', function ($query) {
-            $query->where('service_type', 'internal');
-        })
-        ->count();
-
-    $femaleInternalCount = Form::where('sex', 'female')
-        ->whereHas('service', function ($query) {
-            $query->where('service_type', 'internal');
-        })
-        ->count();
-
-    $preferNotToSayInternalCount = Form::where('sex', 'prefer-not-to-say')
-        ->whereHas('service', function ($query) {
-            $query->where('service_type', 'internal');
-        })
-        ->count();
-
-    // Total counts for each sex
-    $totalMale = $maleExternalCount + $maleInternalCount;
-    $totalFemale = $femaleExternalCount + $femaleInternalCount;
-    $totalPreferNotToSay = $preferNotToSayExternalCount + $preferNotToSayInternalCount;
-
-    $totalForms = $totalMale + $totalFemale + $totalPreferNotToSay;
-
-    // Calculate percentages for external service type
-    $maleExternalPercentage = ($totalForms > 0) ? ($maleExternalCount / $totalForms) * 100 : 0;
-    $femaleExternalPercentage = ($totalForms > 0) ? ($femaleExternalCount / $totalForms) * 100 : 0;
-    $preferNotToSayExternalPercentage = ($totalForms > 0) ? ($preferNotToSayExternalCount / $totalForms) * 100 : 0;
-
-    // Calculate percentages for internal service type
-    $maleInternalPercentage = ($totalForms > 0) ? ($maleInternalCount / $totalForms) * 100 : 0;
-    $femaleInternalPercentage = ($totalForms > 0) ? ($femaleInternalCount / $totalForms) * 100 : 0;
-    $preferNotToSayInternalPercentage = ($totalForms > 0) ? ($preferNotToSayInternalCount / $totalForms) * 100 : 0;
-
-    // Calculate overall percentages (sum of both external and internal)
-    $maleOverallPercentage = ($totalForms > 0) ? ($totalMale / $totalForms) * 100 : 0;
-    $femaleOverallPercentage = ($totalForms > 0) ? ($totalFemale / $totalForms) * 100 : 0;
-    $preferNotToSayOverallPercentage = ($totalForms > 0) ? ($totalPreferNotToSay / $totalForms) * 100 : 0;
-
-    // Age ranges counts and percentages
-    $ageRanges = [
-        '19 or lower' => [0, 0], 
-        '20-34' => [0, 0], 
-        '35-49' => [0, 0], 
-        '50-64' => [0, 0], 
-        '65 or higher' => [0, 0], 
-        'Did not specify' => [0, 0]
-    ];
-
-    foreach ($ageRanges as $ageRange => $counts) {
-        $externalCount = Form::whereBetween('age', $this->getAgeRange($ageRange))
-            ->whereHas('service', function ($query) {
-                $query->where('service_type', 'external');
-            })
-            ->count();
-
-        $internalCount = Form::whereBetween('age', $this->getAgeRange($ageRange))
-            ->whereHas('service', function ($query) {
-                $query->where('service_type', 'internal');
-            })
-            ->count();
-
-        $totalAgeRangeCount = $externalCount + $internalCount;
-        $ageRanges[$ageRange] = [
-            'external' => ['count' => $externalCount, 'percentage' => ($totalForms > 0) ? ($externalCount / $totalForms) * 100 : 0],
-            'internal' => ['count' => $internalCount, 'percentage' => ($totalForms > 0) ? ($internalCount / $totalForms) * 100 : 0],
-            'total' => ['count' => $totalAgeRangeCount, 'percentage' => ($totalForms > 0) ? ($totalAgeRangeCount / $totalForms) * 100 : 0],
+        // Fetch data for the entire year (January to December)
+        $annualData = $this->fetchDataByPeriod(1, 12, $currentYear);
+        $annualResponses = $this->computeCcResponses(1, 12, $currentYear, $annualData['totalForms']);
+    
+        // Option descriptions for Citizen's Charter responses
+        $yourOptions = [
+            'cc1' => [
+                '1' => 'I know what a CC is and I saw this Office\'s CC.',
+                '2' => 'I know what a CC is but I did not see this office\'s CC.',
+                '3' => 'I learned of the CC only when I saw the office\'s CC.',
+                '4' => 'I did not know what a CC is and I did not see this office\'s CC.'
+            ],
+            'cc2' => [
+                '1' => 'Easy to see',
+                '2' => 'Somewhat easy to see',
+                '3' => 'Difficult to see',
+                '4' => 'Not Visible at all',
+                '5' => 'N/A'
+            ],
+            'cc3' => [
+                '1' => 'Helped very much',
+                '2' => 'Somewhat helped',
+                '3' => 'Did not help',
+                '4' => 'N/A'
+            ]
         ];
-    }
-
-    // Municipality counts and percentages by service type
-    $municipalities = [
-        'Agno', 'Aguilar', 'Alaminos', 'Alcala', 'Anda', 'Bani', 'Binmaley', 'Bolinao', 'Burgos',
-        'Dagupan', 'Dasol', 'Infanta', 'Lingayen', 'Mabini', 'Mangaldan', 'Mangatarem', 'Rosales',
-        'Sta. Barbara', 'Sta. Maria', 'Sual'
-    ];
-
-    $municipalityData = [];
-    foreach ($municipalities as $municipality) {
-        // Get external count for the municipality
-        $externalCount = Form::where('municipality', $municipality)
-            ->whereHas('service', function ($query) {
-                $query->where('service_type', 'external');
-            })
-            ->count();
-
-        // Get internal count for the municipality
-        $internalCount = Form::where('municipality', $municipality)
-            ->whereHas('service', function ($query) {
-                $query->where('service_type', 'internal');
-            })
-            ->count();
-
-        // Total count for the municipality (external + internal)
-        $totalMunicipalityCount = $externalCount + $internalCount;
-
-        // Calculate percentages
-        $municipalityData[$municipality] = [
-            'external' => ['count' => $externalCount, 'percentage' => ($totalForms > 0) ? ($externalCount / $totalForms) * 100 : 0],
-            'internal' => ['count' => $internalCount, 'percentage' => ($totalForms > 0) ? ($internalCount / $totalForms) * 100 : 0],
-            'total' => ['count' => $totalMunicipalityCount, 'percentage' => ($totalForms > 0) ? ($totalMunicipalityCount / $totalForms) * 100 : 0],
-        ];
-    }
-
-    // Fetch client categories data
-    $clientCategories = [];
-    foreach (['Student', 'faculty', 'Non-teaching staff', 'Alumni', 'parents', 'supplier', 'Community_member', 'industry_partner', 'Regulatory', 'Others'] as $category) {
-        $externalCount = Form::where('client_category', $category)
-            ->whereHas('service', function ($query) {
-                $query->where('service_type', 'external');
-            })
-            ->count();
-
-        $internalCount = Form::where('client_category', $category)
-            ->whereHas('service', function ($query) {
-                $query->where('service_type', 'internal');
-            })
-            ->count();
-
-        $totalCategoryCount = $externalCount + $internalCount;
-
-        $clientCategories[$category] = [
-            'external' => ['count' => $externalCount, 'percentage' => ($totalForms > 0) ? ($externalCount / $totalForms) * 100 : 0],
-            'internal' => ['count' => $internalCount, 'percentage' => ($totalForms > 0) ? ($internalCount / $totalForms) * 100 : 0],
-            'total' => ['count' => $totalCategoryCount, 'percentage' => ($totalForms > 0) ? ($totalCategoryCount / $totalForms) * 100 : 0],
-        ];
-    }
-
-    return view('admin.reports', compact(
-        'totalSubmissions', 
-        'data',  
-        'maleExternalPercentage', 'femaleExternalPercentage', 'preferNotToSayExternalPercentage',
-        'maleInternalPercentage', 'femaleInternalPercentage', 'preferNotToSayInternalPercentage',
-        'maleOverallPercentage', 'femaleOverallPercentage', 'preferNotToSayOverallPercentage',
-        'ageRanges', 'municipalityData', 'clientCategories' // Add clientCategories here
-    ));
+    
+        // Return the view with annual data
+        return view('admin.reports', compact('annualData', 'annualResponses', 'yourOptions'));
 }
 
 private function getAgeRange($range)
@@ -284,8 +149,277 @@ private function getAgeRange($range)
 
     public function reports_bi_quarterly()
     {
-        return view('admin.reports_bi_quarterly');
-    }
+        $currentYear = Carbon::now()->year;
+        $januaryToJuneData = $this->fetchDataByPeriod(1, 6, $currentYear);
+        $julyToDecemberData = $this->fetchDataByPeriod(7, 12, $currentYear);
+
+        $januaryToJuneResponses = $this->computeCcResponses(1, 6, $currentYear, $januaryToJuneData['totalForms']);
+        $julyToDecemberResponses = $this->computeCcResponses(7, 12, $currentYear, $julyToDecemberData['totalForms']);
+
+        // Option descriptions
+    $yourOptions = [
+        'cc1' => [
+            '1' => 'I know what a CC is and I saw this Office\'s CC.',
+            '2' => 'I know what a CC is but I did not see this office\'s CC.',
+            '3' => 'I learned of the CC only when I saw the office\'s CC.',
+            '4' => 'I did not know what a CC is and I did not see this office\'s CC.'
+        ],
+        'cc2' => [
+            '1' => 'Easy to see',
+            '2' => 'Somewhat easy to see',
+            '3' => 'Difficult to see',
+            '4' => 'Not Visible at all',
+            '5' => 'N/A'
+        ],
+        'cc3' => [
+            '1' => 'Helped very much',
+            '2' => 'Somewhat helped',
+            '3' => 'Did not help',
+            '4' => 'N/A'
+        ]
+    ];
+
     
+        return view('admin.reports_bi_quarterly', compact(
+            'januaryToJuneData',
+            'julyToDecemberData',
+            'januaryToJuneResponses',
+            'julyToDecemberResponses',
+            'yourOptions'
+        ));
+
+        
+    }
+
+    private function fetchDataByPeriod($startMonth, $endMonth, $year)
+    {
+        $totalForms = Form::whereYear('date', $year)
+                          ->whereMonth('date', '>=', $startMonth)
+                          ->whereMonth('date', '<=', $endMonth)
+                          ->count();
+
+        return [
+            'totalForms' => $totalForms,
+            'maleExternalPercentage' => $this->calculatePercentage($startMonth, $endMonth, $year, 'male', 'external', $totalForms),
+            'femaleExternalPercentage' => $this->calculatePercentage($startMonth, $endMonth, $year, 'female', 'external', $totalForms),
+            'preferNotToSayExternalPercentage' => $this->calculatePercentage($startMonth, $endMonth, $year, 'prefer-not-to-say', 'external', $totalForms),
+            'maleInternalPercentage' => $this->calculatePercentage($startMonth, $endMonth, $year, 'male', 'internal', $totalForms),
+            'femaleInternalPercentage' => $this->calculatePercentage($startMonth, $endMonth, $year, 'female', 'internal', $totalForms),
+            'preferNotToSayInternalPercentage' => $this->calculatePercentage($startMonth, $endMonth, $year, 'prefer-not-to-say', 'internal', $totalForms),
+            'maleOverallPercentage' => $this->calculateOverallPercentage($startMonth, $endMonth, $year, 'male', $totalForms),
+            'femaleOverallPercentage' => $this->calculateOverallPercentage($startMonth, $endMonth, $year, 'female', $totalForms),
+            'preferNotToSayOverallPercentage' => $this->calculateOverallPercentage($startMonth, $endMonth, $year, 'prefer-not-to-say', $totalForms),
+            'ageRanges' => $this->computeAgeRanges($startMonth, $endMonth, $year, $totalForms),
+            'municipalityData' => $this->computeMunicipalityData($startMonth, $endMonth, $year, $totalForms),
+            'clientCategories' => $this->computeClientCategories($startMonth, $endMonth, $year, $totalForms)
+        ];
+    }
+
+    private function calculatePercentage($startMonth, $endMonth, $year, $sex, $serviceType, $totalForms)
+    {
+        $count = Form::where('sex', $sex)
+            ->whereYear('date', $year)
+            ->whereMonth('date', '>=', $startMonth)
+            ->whereMonth('date', '<=', $endMonth)
+            ->whereHas('service', function ($query) use ($serviceType) {
+                $query->where('service_type', $serviceType);
+            })
+            ->count();
+
+        return ($totalForms > 0) ? ($count / $totalForms) * 100 : 0;
+    }
+
+    private function calculateOverallPercentage($startMonth, $endMonth, $year, $sex, $totalForms)
+    {
+        $externalCount = $this->calculatePercentage($startMonth, $endMonth, $year, $sex, 'external', $totalForms);
+        $internalCount = $this->calculatePercentage($startMonth, $endMonth, $year, $sex, 'internal', $totalForms);
+
+        return $externalCount + $internalCount;
+    }
+
+    private function computeAgeRanges($startMonth, $endMonth, $year, $totalForms)
+    {
+        $ageRanges = [
+            '19 or lower' => [0, 19], 
+            '20-34' => [20, 34], 
+            '35-49' => [35, 49], 
+            '50-64' => [50, 64], 
+            '65 or higher' => [65, 150]
+        ];
+        $ageData = [];
+
+        foreach ($ageRanges as $range => [$min, $max]) {
+            $externalCount = Form::whereBetween('age', [$min, $max])
+                ->whereYear('date', $year)
+                ->whereMonth('date', '>=', $startMonth)
+                ->whereMonth('date', '<=', $endMonth)
+                ->whereHas('service', function ($query) {
+                    $query->where('service_type', 'external');
+                })
+                ->count();
+
+            $internalCount = Form::whereBetween('age', [$min, $max])
+                ->whereYear('date', $year)
+                ->whereMonth('date', '>=', $startMonth)
+                ->whereMonth('date', '<=', $endMonth)
+                ->whereHas('service', function ($query) {
+                    $query->where('service_type', 'internal');
+                })
+                ->count();
+
+            $total = $externalCount + $internalCount;
+
+            $ageData[$range] = [
+                'external' => ['count' => $externalCount, 'percentage' => ($totalForms > 0) ? ($externalCount / $totalForms) * 100 : 0],
+                'internal' => ['count' => $internalCount, 'percentage' => ($totalForms > 0) ? ($internalCount / $totalForms) * 100 : 0],
+                'total' => ['count' => $total, 'percentage' => ($totalForms > 0) ? ($total / $totalForms) * 100 : 0]
+            ];
+        }
+
+        return $ageData;
+    }
+
+    private function computeMunicipalityData($startMonth, $endMonth, $year, $totalForms)
+    {
+        $municipalities = ['Agno', 'Aguilar', 'Alaminos', 'Alcala', 'Anda', 'Bani', 'Binmaley', 'Bolinao', 'Burgos', 'Dagupan', 'Dasol', 'Infanta', 'Lingayen', 'Mabini', 'Mangaldan', 'Mangatarem', 'Rosales', 'Sta. Barbara', 'Sta. Maria', 'Sual', 'Others'];
+        $municipalityData = [];
+
+        foreach ($municipalities as $municipality) {
+            $externalCount = Form::where('municipality', $municipality)
+                ->whereYear('date', $year)
+                ->whereMonth('date', '>=', $startMonth)
+                ->whereMonth('date', '<=', $endMonth)
+                ->whereHas('service', function ($query) {
+                    $query->where('service_type', 'external');
+                })
+                ->count();
+
+            $internalCount = Form::where('municipality', $municipality)
+                ->whereYear('date', $year)
+                ->whereMonth('date', '>=', $startMonth)
+                ->whereMonth('date', '<=', $endMonth)
+                ->whereHas('service', function ($query) {
+                    $query->where('service_type', 'internal');
+                })
+                ->count();
+
+            $total = $externalCount + $internalCount;
+
+            $municipalityData[$municipality] = [
+                'external' => ['count' => $externalCount, 'percentage' => ($totalForms > 0) ? ($externalCount / $totalForms) * 100 : 0],
+                'internal' => ['count' => $internalCount, 'percentage' => ($totalForms > 0) ? ($internalCount / $totalForms) * 100 : 0],
+                'total' => ['count' => $total, 'percentage' => ($totalForms > 0) ? ($total / $totalForms) * 100 : 0]
+            ];
+        }
+
+        return $municipalityData;
+    }
+
+    private function computeClientCategories($startMonth, $endMonth, $year, $totalForms)
+    {
+        $clientCategories = ['Student', 'Faculty', 'Non-teaching staff', 'Alumni', 'Parents', 'Supplier', 'Community_member', 'Industry_partner', 'Regulatory', 'Others'];
+        $categoryData = [];
+
+        foreach ($clientCategories as $category) {
+            $externalCount = Form::where('client_category', $category)
+                ->whereYear('date', $year)
+                ->whereMonth('date', '>=', $startMonth)
+                ->whereMonth('date', '<=', $endMonth)
+                ->whereHas('service', function ($query) {
+                    $query->where('service_type', 'external');
+                })
+                ->count();
+
+            $internalCount = Form::where('client_category', $category)
+                ->whereYear('date', $year)
+                ->whereMonth('date', '>=', $startMonth)
+                ->whereMonth('date', '<=', $endMonth)
+                ->whereHas('service', function ($query) {
+                    $query->where('service_type', 'internal');
+                })
+                ->count();
+
+            $total = $externalCount + $internalCount;
+
+            $categoryData[$category] = [
+                'external' => ['count' => $externalCount, 'percentage' => ($totalForms > 0) ? ($externalCount / $totalForms) * 100 : 0],
+                'internal' => ['count' => $internalCount, 'percentage' => ($totalForms > 0) ? ($internalCount / $totalForms) * 100 : 0],
+                'total' => ['count' => $total, 'percentage' => ($totalForms > 0) ? ($total / $totalForms) * 100 : 0]
+            ];
+        }
+
+        return $categoryData;
+    }
+
+    // Helper function for calculating responses and percentages
+private function computeCcResponses($startMonth, $endMonth, $year, $totalForms)
+{
+    $ccResponses = [
+        'cc1' => ['1' => 0, '2' => 0, '3' => 0, '4' => 0],
+        'cc2' => ['1' => 0, '2' => 0, '3' => 0, '4' => 0, '5' => 0],
+        'cc3' => ['1' => 0, '2' => 0, '3' => 0, '4' => 0]
+    ];
+
+    foreach (['cc1', 'cc2', 'cc3'] as $ccField) {
+        foreach ($ccResponses[$ccField] as $option => &$count) {
+            $count = Form::where($ccField, $option)
+                ->whereYear('date', $year)
+                ->whereMonth('date', '>=', $startMonth)
+                ->whereMonth('date', '<=', $endMonth)
+                ->count();
+
+            // Calculate percentage
+            $ccResponses[$ccField][$option] = [
+                'count' => $count,
+                'percentage' => ($totalForms > 0) ? ($count / $totalForms) * 100 : 0
+            ];
+        }
+    }
+
+    return $ccResponses;
+}
+
+    public function reports_quarterly()
+    {
+        $currentYear = Carbon::now()->year;
+
+        $januaryToMarchData = $this->fetchDataByPeriod(1, 3, $currentYear);
+        $aprilToJuneData = $this->fetchDataByPeriod(4, 6, $currentYear);
+        $julyToSeptemberData = $this->fetchDataByPeriod(7, 9, $currentYear);
+        $octoberToDecemberData = $this->fetchDataByPeriod(10, 12, $currentYear);
+
+        $januaryToMarchResponses = $this->computeCcResponses(1, 3, $currentYear, $januaryToMarchData['totalForms']);
+        $aprilToJuneResponses = $this->computeCcResponses(4, 6, $currentYear, $aprilToJuneData['totalForms']);
+        $julyToSeptemberResponses = $this->computeCcResponses(7, 9, $currentYear, $julyToSeptemberData['totalForms']);
+        $octoberToDecemberResponses = $this->computeCcResponses(10, 12, $currentYear, $octoberToDecemberData['totalForms']);
+        // Option descriptions
+    $yourOptions = [
+        'cc1' => [
+            '1' => 'I know what a CC is and I saw this Office\'s CC.',
+            '2' => 'I know what a CC is but I did not see this office\'s CC.',
+            '3' => 'I learned of the CC only when I saw the office\'s CC.',
+            '4' => 'I did not know what a CC is and I did not see this office\'s CC.'
+        ],
+        'cc2' => [
+            '1' => 'Easy to see',
+            '2' => 'Somewhat easy to see',
+            '3' => 'Difficult to see',
+            '4' => 'Not Visible at all',
+            '5' => 'N/A'
+        ],
+        'cc3' => [
+            '1' => 'Helped very much',
+            '2' => 'Somewhat helped',
+            '3' => 'Did not help',
+            '4' => 'N/A'
+        ]
+    ];
+
+        return view('admin.reports_quarterly', compact('januaryToMarchData', 'aprilToJuneData', 'julyToSeptemberData', 'octoberToDecemberData','januaryToMarchResponses','aprilToJuneResponses','julyToSeptemberResponses','octoberToDecemberResponses','yourOptions'));
+    }
+
 
 }
+
+
+
