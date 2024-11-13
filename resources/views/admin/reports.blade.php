@@ -21,6 +21,12 @@
             <!-- Navbar End -->
 
           <!-- Card Start for Age Table -->
+
+          <div style="text-align: right; margin: 20px;">
+    <a href="{{ route('print.report', ['quarter' => 'Q8']) }}" target="_blank" class="btn btn-primary">
+        <i class="bi bi-printer"></i> Print Q8 Report
+    </a>
+</div>
 <div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
     <div class="card-header">
         <h4>Table 1: Age</h4>
@@ -452,6 +458,7 @@
         </table>
     </div>
 </div>
+
 
 <!--table 9-Average score per office/unit/department -->
 <div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">

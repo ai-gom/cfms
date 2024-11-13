@@ -30,18 +30,38 @@
             <!-- January - April Data -->
             <div id="januaryToApril" style="display: block;">
                 <h2 style="margin-left: 20px;">January - April Data</h2>
+
+                <div style="text-align: right; margin: 20px;">
+    <a href="{{ route('print.report', ['quarter' => 'Q5']) }}" target="_blank" class="btn btn-primary">
+        <i class="bi bi-printer"></i> Print Q5 Report
+    </a>
+</div>
                 @include('admin.H1january_aprilData')
             </div>
 
             <!-- May - August Data -->
             <div id="mayToAugust" style="display: none;">
                 <h2 style="margin-left: 20px;">May - August Data</h2>
+
+                <div style="text-align: right; margin: 20px;">
+    <a href="{{ route('print.report', ['quarter' => 'Q6']) }}" target="_blank" class="btn btn-primary">
+        <i class="bi bi-printer"></i> Print Q6 Report
+    </a>
+</div>
+
                 @include('admin.H2may_augustData')
             </div>
 
             <!-- September - December Data -->
             <div id="septemberToDecember" style="display: none;">
                 <h2 style="margin-left: 20px;">September - December Data</h2>
+
+                <div style="text-align: right; margin: 20px;">
+    <a href="{{ route('print.report', ['quarter' => 'Q7']) }}" target="_blank" class="btn btn-primary">
+        <i class="bi bi-printer"></i> Print Q7 Report
+    </a>
+</div>
+
                 @include('admin.H3september_decemberData')
             </div>
 

@@ -44,3 +44,6 @@ Route::post('submit_form', [HomeController::class, 'submit_form']);
 route::get('reports_bi_quarterly',[AdminController::class,'reports_bi_quarterly'])->middleware(['auth','admin']);
 
 route::get('reports_quarterly',[AdminController::class,'reports_quarterly'])->middleware(['auth','admin']);
+
+Route::get('/print-report/{quarter}', [AdminController::class, 'printQuarterReport'])->name('print.report');
+
