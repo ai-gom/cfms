@@ -23,3 +23,4 @@
 
     <!-- Template Stylesheet -->
     <link href="{{asset('css/index.css')}}" rel="stylesheet">
+    

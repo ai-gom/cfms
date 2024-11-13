@@ -11,69 +11,57 @@
         @include('admin.spinner')
         <!-- Spinner End -->
 
-
         <!-- Sidebar Start -->
         @include('admin.sidebar')
         <!-- Sidebar End -->
 
         <div class="content">
             <!-- Navbar Start -->
-        @include('admin.navbar')
-<!-- Navbar End -->
- 
-  <!-- Toggle Button for Sorting -->
-  <!-- <div style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
-    <button onclick="showData('januaryToJune')" class="btn btn-primary">January - June</button>
-    <button onclick="showData('julyToDecember')" class="btn btn-secondary">July - December</button>
-</div> -->
+            @include('admin.navbar')
+            <!-- Navbar End -->
 
+            <!-- Toggle Button for Sorting -->
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
+                <div onclick="showData('januaryToApril')" style="color: #343a40; text-decoration: none; cursor: pointer; font-weight: bold;">January - April</div>
+                <div onclick="showData('mayToAugust')" style="color: #343a40; text-decoration: none; cursor: pointer; font-weight: bold;">May - August</div>
+                <div onclick="showData('septemberToDecember')" style="color: #343a40; text-decoration: none; cursor: pointer; font-weight: bold;">September - December</div>
+            </div>
 
-<div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
-    <div onclick="showData('januaryToJune')" style="color: #343a40; text-decoration: none; cursor: pointer; font-weight: bold;">January - June</div>
-    <div onclick="showData('julyToDecember')" style="color: #343a40; text-decoration: none; cursor: pointer; font-weight: bold;">July - December</div>
-</div>
+            <!-- January - April Data -->
+            <div id="januaryToApril" style="display: block;">
+                <h2 style="margin-left: 20px;">January - April Data</h2>
+                @include('admin.H1january_aprilData')
+            </div>
 
-<!-- January - June Data -->
-<div id="januaryToJune" style="display: block;">
-    <h2 style="margin-left: 20px;">January - June Data</h2>
+            <!-- May - August Data -->
+            <div id="mayToAugust" style="display: none;">
+                <h2 style="margin-left: 20px;">May - August Data</h2>
+                @include('admin.H2may_augustData')
+            </div>
 
-        @include('admin.H1january_juneData')
+            <!-- September - December Data -->
+            <div id="septemberToDecember" style="display: none;">
+                <h2 style="margin-left: 20px;">September - December Data</h2>
+                @include('admin.H3september_decemberData')
+            </div>
 
-<!--end of container  -->
-</div>
+            <!-- Content End -->
 
+            <!-- Back to Top -->
+            <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+        </div>
 
+        <!-- JavaScript Libraries -->
+        @include('admin.js')
 
-
-<!-- July - December Data -->
-<div id="julyToDecember" style="display: none;">
-    <h2 style="margin-left: 20px;">July - December Data</h2>
-    
-    @include('admin.H2july_decemberData')
-
- <!--end of container  -->
-</div>
-
-
-        <!-- Content End -->
-
-
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+        <script>
+            function showData(period) {
+                document.getElementById('januaryToApril').style.display = (period === 'januaryToApril') ? 'block' : 'none';
+                document.getElementById('mayToAugust').style.display = (period === 'mayToAugust') ? 'block' : 'none';
+                document.getElementById('septemberToDecember').style.display = (period === 'septemberToDecember') ? 'block' : 'none';
+            }
+        </script>
     </div>
-
-    <!-- JavaScript Libraries -->
-
-    @include('admin.js')
-
-    <script>
-    function showData(period) {
-        document.getElementById('januaryToJune').style.display = (period === 'januaryToJune') ? 'block' : 'none';
-        document.getElementById('julyToDecember').style.display = (period === 'julyToDecember') ? 'block' : 'none';
-    }
-</script>
-
-
 </body>
 
 </html>

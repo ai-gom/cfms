@@ -278,3 +278,204 @@
                         </table>
                     </div>
                 </div>
+
+
+                
+                   <!-- Total Expectations Summary Table -->
+<div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
+    <div class="card-header">
+        <h4>Table 6. Client Overall satisfaction with the service Availed</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Total Strongly Agree</th>
+                    <th>Total Agree</th>
+                    <th>Total Neither</th>
+                    <th>Total Disagree</th>
+                    <th>Total Strongly Disagree</th>
+                    <th>Total N/A</th>
+                    <th>Total Responses</th>
+                    <th>Average Overall Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Service Satisfaction</td>
+                    <td>{{ $aprilToJuneTotals['strongly_agree'] }}</td>
+                    <td>{{ $aprilToJuneTotals['agree'] }}</td>
+                    <td>{{ $aprilToJuneTotals['neither'] }}</td>
+                    <td>{{ $aprilToJuneTotals['disagree'] }}</td>
+                    <td>{{ $aprilToJuneTotals['strongly_disagree'] }}</td>
+                    <td>{{ $aprilToJuneTotals['na'] }}</td>
+                    <td>{{ $aprilToJuneTotals['total_responses'] }}</td>
+                    <td>{{ number_format($aprilToJuneTotals['average_overall_score'], 2) }}%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+                <!-- Expectations Breakdown Table -->
+<div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
+    <div class="card-header">
+        <h4>Table 7. Client Overall Satisfaction</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Response</th>
+                    <th>Strongly Agree</th>
+                    <th>Agree</th>
+                    <th>Neither</th>
+                    <th>Disagree</th>
+                    <th>Strongly Disagree</th>
+                    <th>N/A</th>
+                    <th>Total Responses</th>
+                    <th>Overall Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                    $sumOverallScores = 0;
+                    $countOverallScores = 0;
+                @endphp
+                @foreach($aprilToJuneExpectationsBreakdown as $field => $breakdown)
+                    @php
+                        // Calculate individual overall score
+                        $totalRelevantResponses = $breakdown['total_responses'] - $breakdown['na']['count'];
+                        $agreeResponses = $breakdown['strongly-agree']['count'] + $breakdown['agree']['count'];
+                        $overallScore = $totalRelevantResponses > 0 ? ($agreeResponses / $totalRelevantResponses) * 100 : 0;
+                        $sumOverallScores += $overallScore;
+                        $countOverallScores++;
+                    @endphp
+                    <tr>
+                        <td>{{ $fieldLabels[$field] ?? ucfirst(str_replace('_', ' ', $field)) }}</td>
+                        <td>{{ $breakdown['strongly-agree']['count'] }} ({{ number_format($breakdown['strongly-agree']['percentage'], 2) }}%)</td>
+                        <td>{{ $breakdown['agree']['count'] }} ({{ number_format($breakdown['agree']['percentage'], 2) }}%)</td>
+                        <td>{{ $breakdown['neither']['count'] }} ({{ number_format($breakdown['neither']['percentage'], 2) }}%)</td>
+                        <td>{{ $breakdown['disagree']['count'] }} ({{ number_format($breakdown['disagree']['percentage'], 2) }}%)</td>
+                        <td>{{ $breakdown['strongly-disagree']['count'] }} ({{ number_format($breakdown['strongly-disagree']['percentage'], 2) }}%)</td>
+                        <td>{{ $breakdown['na']['count'] }} ({{ number_format($breakdown['na']['percentage'], 2) }}%)</td>
+                        <td>{{ $breakdown['total_responses'] }}</td>
+                        <td>{{ number_format($overallScore, 2) }}%</td>
+                    </tr>
+                @endforeach
+
+                <!-- Totals Row -->
+                <tr style="font-weight: bold;">
+                    <td>Total</td>
+                    <td>{{ $aprilToJuneTotals['strongly_agree'] }}</td>
+                    <td>{{ $aprilToJuneTotals['agree'] }}</td>
+                    <td>{{ $aprilToJuneTotals['neither'] }}</td>
+                    <td>{{ $aprilToJuneTotals['disagree'] }}</td>
+                    <td>{{ $aprilToJuneTotals['strongly_disagree'] }}</td>
+                    <td>{{ $aprilToJuneTotals['na'] }}</td>
+                    <td>{{ $aprilToJuneTotals['total_responses'] }}</td>
+                    <td>{{ number_format($aprilToJuneTotals['average_overall_score'], 2) }}%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- Table 8: Overall score per service -->
+<div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
+    <div class="card-header">
+        <h4>Table 8: Overall score per service</h4>
+    </div>
+    <div class="card-body" style="overflow-x: auto;">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Overall Rating</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- External Services -->
+                <tr>
+                    <td colspan="2" style="font-weight: bold; text-align: center;">External Services</td>
+                </tr>
+                @foreach( $serviceAveragesQ2 as $service)
+                    @if($service['service_type'] == 'external') <!-- Assuming service_type is available -->
+                    <tr>
+                        <td>{{ $service['service_name'] }}</td>
+                        <td>{{ number_format($service['overall_awm'], 2) }}%</td>
+                    </tr>
+                    @endif
+                @endforeach
+
+                <!-- Break -->
+                <tr>
+                    <td colspan="2" style="background-color: #f8f9fa; height: 10px;"></td>
+                </tr>
+
+                <!-- Internal Services -->
+                <tr>
+                    <td colspan="2" style="font-weight: bold; text-align: center;">Internal Services</td>
+                </tr>
+                @foreach( $serviceAveragesQ2 as $service)
+                    @if($service['service_type'] == 'internal') <!-- Assuming service_type is available -->
+                    <tr>
+                        <td>{{ $service['service_name'] }}</td>
+                        <td>{{ number_format($service['overall_awm'], 2) }}%</td>
+                    </tr>
+                    @endif
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!--table 9-Average score per office/unit/department -->
+<div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
+    <div class="card-header">
+        <h4>Table 9: Average Score per Office/Unit/Department</h4>
+    </div>
+    <div class="card-body" style="overflow-x: auto;">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Ave of SQD0</th>
+                    <th>Ave of SQD1</th>
+                    <th>Ave of SQD2</th>
+                    <th>Ave of SQD3</th>
+                    <th>Ave of SQD4</th>
+                    <th>Ave of SQD5</th>
+                    <th>Ave of SQD6</th>
+                    <th>Ave of SQD7</th>
+                    <th>Ave of SQD8</th>
+                    <th>Ave of SQD'S</th> <!-- New column -->
+                    <th>Overall AWM</th>
+                    <th>Descriptive Rating</th>
+                    <th>Total Respondent</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach( $serviceAveragesQ2 as $service)
+                <tr>
+                    <td>{{ $service['service_name'] }}</td>
+                    @php
+                        $averageOfAllExpectations = array_sum($service['averages']) / count($service['averages']);
+                    @endphp
+                    @foreach($service['averages'] as $average)
+                        <td>{{ number_format($average, 2) }}</td>
+                    @endforeach
+                    <td>{{ number_format($averageOfAllExpectations, 2) }}</td> <!-- New column value -->
+                    <td>{{ number_format($service['overall_awm'], 2) }}%</td>
+                    <td>{{ $service['descriptive_rating'] }}</td>
+                    <td>{{ $service['total_respondents'] }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>                   

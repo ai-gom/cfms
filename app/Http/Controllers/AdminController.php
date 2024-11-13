@@ -17,10 +17,68 @@ class AdminController extends Controller
     public function reports()
     {
         $currentYear = Carbon::now()->year;
-
+    
         // Fetch data for the entire year (January to December)
         $annualData = $this->fetchDataByPeriod(1, 12, $currentYear);
         $annualResponses = $this->computeCcResponses(1, 12, $currentYear, $annualData['totalForms']);
+    
+        $expectationsFields = [
+            'expectations_0', 'expectations_1', 'expectations_2',
+            'expectations_3', 'expectations_4', 'expectations_5',
+            'expectations_6', 'expectations_7', 'expectations_8'
+        ];
+    
+        $expectationsBreakdown = $this->aggregateExpectations($expectationsFields, $currentYear, 1, 12);
+    
+        // Totals Calculation
+        $totals = [
+            'strongly_agree' => 0,
+            'agree' => 0,
+            'neither' => 0,
+            'disagree' => 0,
+            'strongly_disagree' => 0,
+            'na' => 0,
+            'total_responses' => 0,
+            'average_overall_score' => 0,
+        ];
+    
+        $sumOverallScores = 0;
+        $countOverallScores = 0;
+    
+        foreach ($expectationsBreakdown as $breakdown) {
+            $totals['strongly_agree'] += $breakdown['strongly-agree']['count'];
+            $totals['agree'] += $breakdown['agree']['count'];
+            $totals['neither'] += $breakdown['neither']['count'];
+            $totals['disagree'] += $breakdown['disagree']['count'];
+            $totals['strongly_disagree'] += $breakdown['strongly-disagree']['count'];
+            $totals['na'] += $breakdown['na']['count'];
+            $totals['total_responses'] += $breakdown['total_responses'];
+    
+            $totalRelevantResponses = $breakdown['total_responses'] - $breakdown['na']['count'];
+            $agreeResponses = $breakdown['strongly-agree']['count'] + $breakdown['agree']['count'];
+            $overallScore = $totalRelevantResponses > 0 ? ($agreeResponses / $totalRelevantResponses) * 100 : 0;
+    
+            $sumOverallScores += $overallScore;
+            $countOverallScores++;
+        }
+    
+        $totals['average_overall_score'] = $countOverallScores > 0 ? $sumOverallScores / $countOverallScores : 0;
+    
+        // Compute annual averages per service
+        $serviceAveragesAnnual = $this->computeServiceAverages(1, 12, $currentYear);
+    
+        // Custom field labels
+        $fieldLabels = [
+            'expectations_0' => 'Responsiveness',
+            'expectations_1' => 'Reliability',
+            'expectations_2' => 'Access and Facilities',
+            'expectations_3' => 'Communication',
+            'expectations_4' => 'Costs',
+            'expectations_5' => 'Integrity',
+            'expectations_6' => 'Assurance',
+            'expectations_7' => 'Outcome',
+            'expectations_8' => 'Overall'
+        ];
     
         // Option descriptions for Citizen's Charter responses
         $yourOptions = [
@@ -46,9 +104,16 @@ class AdminController extends Controller
         ];
     
         // Return the view with annual data
-        return view('admin.reports', compact('annualData', 'annualResponses', 'yourOptions'));
-}
-
+        return view('admin.reports', compact(
+            'annualData',
+            'annualResponses',
+            'yourOptions',
+            'expectationsBreakdown',
+            'fieldLabels',
+            'totals',
+            'serviceAveragesAnnual' // Include annual averages in the view
+        ));
+    }
 private function getAgeRange($range)
 {
     switch ($range) {
@@ -150,11 +215,98 @@ private function getAgeRange($range)
     public function reports_bi_quarterly()
     {
         $currentYear = Carbon::now()->year;
-        $januaryToJuneData = $this->fetchDataByPeriod(1, 6, $currentYear);
-        $julyToDecemberData = $this->fetchDataByPeriod(7, 12, $currentYear);
+        $januaryToAprilData = $this->fetchDataByPeriod(1, 4, $currentYear);
+        $mayToAugustData = $this->fetchDataByPeriod(5, 8, $currentYear);
+        $septemberToDecember = $this->fetchDataByPeriod(9, 12, $currentYear);
 
-        $januaryToJuneResponses = $this->computeCcResponses(1, 6, $currentYear, $januaryToJuneData['totalForms']);
-        $julyToDecemberResponses = $this->computeCcResponses(7, 12, $currentYear, $julyToDecemberData['totalForms']);
+        $januaryToAprilResponses = $this->computeCcResponses(1, 4, $currentYear, $januaryToAprilData['totalForms']);
+        $mayToAugustResponses = $this->computeCcResponses(5, 8, $currentYear, $mayToAugustData['totalForms']);
+        $septemberToDecemberResponses = $this->computeCcResponses(9, 12, $currentYear, $septemberToDecember['totalForms']);
+
+        // Compute averages per service for January to April
+            $serviceAveragesJanToApr = $this->computeServiceAverages(1, 4, $currentYear);
+
+// Compute averages per service for May to August
+        $serviceAveragesMayToAug = $this->computeServiceAverages(5, 8, $currentYear);
+
+// Compute averages per service for September to December
+        $serviceAveragesSepToDec = $this->computeServiceAverages(9, 12, $currentYear); ////remove it if the table is wrong
+
+        // Compute expectations breakdown for each bi-quarter
+    $januaryToAprilExpectationsBreakdown = $this->aggregateExpectations(
+        ['expectations_0', 'expectations_1', 'expectations_2', 'expectations_3', 'expectations_4', 'expectations_5', 'expectations_6', 'expectations_7', 'expectations_8'],
+        $currentYear,
+        1,
+        4
+    );
+    $mayToAugustExpectationsBreakdown = $this->aggregateExpectations(
+        ['expectations_0', 'expectations_1', 'expectations_2', 'expectations_3', 'expectations_4', 'expectations_5', 'expectations_6', 'expectations_7', 'expectations_8'],
+        $currentYear,
+        5,
+        8
+    );
+    $septemberToDecemberExpectationsBreakdown = $this->aggregateExpectations(
+        ['expectations_0', 'expectations_1', 'expectations_2', 'expectations_3', 'expectations_4', 'expectations_5', 'expectations_6', 'expectations_7', 'expectations_8'],
+        $currentYear,
+        9,
+        12
+    );
+
+    // Function to calculate totals for a breakdown
+    $calculateTotals = function ($breakdown) {
+        $totals = [
+            'strongly_agree' => 0,
+            'agree' => 0,
+            'neither' => 0,
+            'disagree' => 0,
+            'strongly_disagree' => 0,
+            'na' => 0,
+            'total_responses' => 0,
+            'average_overall_score' => 0,
+        ];
+
+        $sumOverallScores = 0;
+        $countOverallScores = 0;
+
+        foreach ($breakdown as $fieldBreakdown) {
+            $totals['strongly_agree'] += $fieldBreakdown['strongly-agree']['count'];
+            $totals['agree'] += $fieldBreakdown['agree']['count'];
+            $totals['neither'] += $fieldBreakdown['neither']['count'];
+            $totals['disagree'] += $fieldBreakdown['disagree']['count'];
+            $totals['strongly_disagree'] += $fieldBreakdown['strongly-disagree']['count'];
+            $totals['na'] += $fieldBreakdown['na']['count'];
+            $totals['total_responses'] += $fieldBreakdown['total_responses'];
+
+            $totalRelevantResponses = $fieldBreakdown['total_responses'] - $fieldBreakdown['na']['count'];
+            $agreeResponses = $fieldBreakdown['strongly-agree']['count'] + $fieldBreakdown['agree']['count'];
+            $overallScore = $totalRelevantResponses > 0 ? ($agreeResponses / $totalRelevantResponses) * 100 : 0;
+
+            $sumOverallScores += $overallScore;
+            $countOverallScores++;
+        }
+
+        $totals['average_overall_score'] = $countOverallScores > 0 ? $sumOverallScores / $countOverallScores : 0;
+
+        return $totals;
+    };
+
+    // Calculate totals for each quarter
+    $januaryToAprilTotals = $calculateTotals($januaryToAprilExpectationsBreakdown);
+    $mayToAugustTotals = $calculateTotals($mayToAugustExpectationsBreakdown);
+    $septemberToDecemberTotals = $calculateTotals($septemberToDecemberExpectationsBreakdown);
+
+    // Custom field labels
+    $fieldLabels = [
+        'expectations_0' => 'Responsiveness',
+        'expectations_1' => 'Reliability',
+        'expectations_2' => 'Access and Facilities',
+        'expectations_3' => 'Communication',
+        'expectations_4' => 'Costs',
+        'expectations_5' => 'Integrity',
+        'expectations_6' => 'Assurance',
+        'expectations_7' => 'Outcome',
+        'expectations_8' => 'Overall'
+    ];
 
         // Option descriptions
     $yourOptions = [
@@ -181,10 +333,22 @@ private function getAgeRange($range)
 
     
         return view('admin.reports_bi_quarterly', compact(
-            'januaryToJuneData',
-            'julyToDecemberData',
-            'januaryToJuneResponses',
-            'julyToDecemberResponses',
+            'januaryToAprilData',
+            'mayToAugustData',
+            'septemberToDecember',
+            'januaryToAprilResponses',
+            'mayToAugustResponses',
+            'septemberToDecemberResponses',
+            'januaryToAprilExpectationsBreakdown',
+            'mayToAugustExpectationsBreakdown',
+            'septemberToDecemberExpectationsBreakdown',
+            'januaryToAprilTotals',
+            'mayToAugustTotals',
+            'septemberToDecemberTotals',
+            'fieldLabels',
+            'serviceAveragesJanToApr',
+            'serviceAveragesMayToAug',
+            'serviceAveragesSepToDec',  
             'yourOptions'
         ));
 
@@ -379,20 +543,112 @@ private function computeCcResponses($startMonth, $endMonth, $year, $totalForms)
     return $ccResponses;
 }
 
-    public function reports_quarterly()
-    {
-        $currentYear = Carbon::now()->year;
+public function reports_quarterly()
+{
+    $currentYear = Carbon::now()->year;
 
-        $januaryToMarchData = $this->fetchDataByPeriod(1, 3, $currentYear);
-        $aprilToJuneData = $this->fetchDataByPeriod(4, 6, $currentYear);
-        $julyToSeptemberData = $this->fetchDataByPeriod(7, 9, $currentYear);
-        $octoberToDecemberData = $this->fetchDataByPeriod(10, 12, $currentYear);
+    // Fetch data for each quarter
+    $januaryToMarchData = $this->fetchDataByPeriod(1, 3, $currentYear);
+    $aprilToJuneData = $this->fetchDataByPeriod(4, 6, $currentYear);
+    $julyToSeptemberData = $this->fetchDataByPeriod(7, 9, $currentYear);
+    $octoberToDecemberData = $this->fetchDataByPeriod(10, 12, $currentYear);
 
-        $januaryToMarchResponses = $this->computeCcResponses(1, 3, $currentYear, $januaryToMarchData['totalForms']);
-        $aprilToJuneResponses = $this->computeCcResponses(4, 6, $currentYear, $aprilToJuneData['totalForms']);
-        $julyToSeptemberResponses = $this->computeCcResponses(7, 9, $currentYear, $julyToSeptemberData['totalForms']);
-        $octoberToDecemberResponses = $this->computeCcResponses(10, 12, $currentYear, $octoberToDecemberData['totalForms']);
-        // Option descriptions
+    // Compute responses for each quarter
+    $januaryToMarchResponses = $this->computeCcResponses(1, 3, $currentYear, $januaryToMarchData['totalForms']);
+    $aprilToJuneResponses = $this->computeCcResponses(4, 6, $currentYear, $aprilToJuneData['totalForms']);
+    $julyToSeptemberResponses = $this->computeCcResponses(7, 9, $currentYear, $julyToSeptemberData['totalForms']);
+    $octoberToDecemberResponses = $this->computeCcResponses(10, 12, $currentYear, $octoberToDecemberData['totalForms']);
+
+    // Compute averages per quarter
+    $serviceAveragesQ1 = $this->computeServiceAverages(1, 3, $currentYear); // Q1: Jan to Mar
+    $serviceAveragesQ2 = $this->computeServiceAverages(4, 6, $currentYear); // Q2: Apr to Jun
+    $serviceAveragesQ3 = $this->computeServiceAverages(7, 9, $currentYear); // Q3: Jul to Sep
+    $serviceAveragesQ4 = $this->computeServiceAverages(10, 12, $currentYear); // Q4: Oct to Dec
+
+
+    // Compute expectations breakdown for each quarter
+    $januaryToMarchExpectationsBreakdown = $this->aggregateExpectations(
+        ['expectations_0', 'expectations_1', 'expectations_2', 'expectations_3', 'expectations_4', 'expectations_5', 'expectations_6', 'expectations_7', 'expectations_8'],
+        $currentYear,
+        1,
+        3
+    );
+    $aprilToJuneExpectationsBreakdown = $this->aggregateExpectations(
+        ['expectations_0', 'expectations_1', 'expectations_2', 'expectations_3', 'expectations_4', 'expectations_5', 'expectations_6', 'expectations_7', 'expectations_8'],
+        $currentYear,
+        4,
+        6
+    );
+    $julyToSeptemberExpectationsBreakdown = $this->aggregateExpectations(
+        ['expectations_0', 'expectations_1', 'expectations_2', 'expectations_3', 'expectations_4', 'expectations_5', 'expectations_6', 'expectations_7', 'expectations_8'],
+        $currentYear,
+        7,
+        9
+    );
+    $octoberToDecemberExpectationsBreakdown = $this->aggregateExpectations(
+        ['expectations_0', 'expectations_1', 'expectations_2', 'expectations_3', 'expectations_4', 'expectations_5', 'expectations_6', 'expectations_7', 'expectations_8'],
+        $currentYear,
+        10,
+        12
+    );
+
+    $calculateTotals = function ($breakdown) {
+        $totals = [
+            'strongly_agree' => 0,
+            'agree' => 0,
+            'neither' => 0,
+            'disagree' => 0,
+            'strongly_disagree' => 0,
+            'na' => 0,
+            'total_responses' => 0,
+            'average_overall_score' => 0,
+        ];
+    
+        $sumOverallScores = 0;
+        $countOverallScores = 0;
+    
+        foreach ($breakdown as $fieldBreakdown) {
+            $totals['strongly_agree'] += $fieldBreakdown['strongly-agree']['count'];
+            $totals['agree'] += $fieldBreakdown['agree']['count'];
+            $totals['neither'] += $fieldBreakdown['neither']['count'];
+            $totals['disagree'] += $fieldBreakdown['disagree']['count'];
+            $totals['strongly_disagree'] += $fieldBreakdown['strongly-disagree']['count'];
+            $totals['na'] += $fieldBreakdown['na']['count'];
+            $totals['total_responses'] += $fieldBreakdown['total_responses'];
+    
+            $totalRelevantResponses = $fieldBreakdown['total_responses'] - $fieldBreakdown['na']['count'];
+            $agreeResponses = $fieldBreakdown['strongly-agree']['count'] + $fieldBreakdown['agree']['count'];
+            $overallScore = $totalRelevantResponses > 0 ? ($agreeResponses / $totalRelevantResponses) * 100 : 0;
+    
+            $sumOverallScores += $overallScore;
+            $countOverallScores++;
+        }
+    
+        $totals['average_overall_score'] = $countOverallScores > 0 ? $sumOverallScores / $countOverallScores : 0;
+    
+        return $totals;
+    };
+
+    // Calculate totals for each quarter
+    $januaryToMarchTotals = $calculateTotals($januaryToMarchExpectationsBreakdown);
+    $aprilToJuneTotals = $calculateTotals($aprilToJuneExpectationsBreakdown);
+    $julyToSeptemberTotals = $calculateTotals($julyToSeptemberExpectationsBreakdown);
+    $octoberToDecemberTotals = $calculateTotals($octoberToDecemberExpectationsBreakdown);
+
+    // Custom field labels
+    $fieldLabels = [
+        'expectations_0' => 'Responsiveness',
+        'expectations_1' => 'Reliability',
+        'expectations_2' => 'Access and Facilities',
+        'expectations_3' => 'Communication',
+        'expectations_4' => 'Costs',
+        'expectations_5' => 'Integrity',
+        'expectations_6' => 'Assurance',
+        'expectations_7' => 'Outcome',
+        'expectations_8' => 'Overall'
+    ];
+
+    // Option descriptions
     $yourOptions = [
         'cc1' => [
             '1' => 'I know what a CC is and I saw this Office\'s CC.',
@@ -415,11 +671,162 @@ private function computeCcResponses($startMonth, $endMonth, $year, $totalForms)
         ]
     ];
 
-        return view('admin.reports_quarterly', compact('januaryToMarchData', 'aprilToJuneData', 'julyToSeptemberData', 'octoberToDecemberData','januaryToMarchResponses','aprilToJuneResponses','julyToSeptemberResponses','octoberToDecemberResponses','yourOptions'));
+    // Return the view with data for each quarter and their totals
+    return view('admin.reports_quarterly', compact(
+        'januaryToMarchData',
+        'aprilToJuneData',
+        'julyToSeptemberData',
+        'octoberToDecemberData',
+        'januaryToMarchResponses',
+        'aprilToJuneResponses',
+        'julyToSeptemberResponses',
+        'octoberToDecemberResponses',
+        'januaryToMarchExpectationsBreakdown',
+        'aprilToJuneExpectationsBreakdown',
+        'julyToSeptemberExpectationsBreakdown',
+        'octoberToDecemberExpectationsBreakdown',
+        'januaryToMarchTotals',
+        'aprilToJuneTotals',
+        'julyToSeptemberTotals',
+        'octoberToDecemberTotals',
+        'fieldLabels',
+        'serviceAveragesQ1',
+        'serviceAveragesQ2',
+        'serviceAveragesQ3',
+        'serviceAveragesQ4',
+        'yourOptions'
+    ));
+}
+
+
+private function aggregateExpectations($expectationsFields, $year, $startMonth, $endMonth)
+{
+    $responseOptions = ['strongly-agree', 'agree', 'neither', 'disagree', 'strongly-disagree', 'na'];
+
+    $expectationsBreakdown = [];
+
+    foreach ($expectationsFields as $field) {
+        $breakdown = [];
+        $totalResponses = 0;
+
+        foreach ($responseOptions as $option) {
+            $count = Form::whereYear('date', $year)
+                ->whereMonth('date', '>=', $startMonth)
+                ->whereMonth('date', '<=', $endMonth)
+                ->where($field, $option)
+                ->count();
+            $breakdown[$option] = [
+                'count' => $count,
+                'percentage' => 0,  // Placeholder for percentage calculation
+            ];
+            $totalResponses += $count;
+        }
+
+        // Calculate percentages
+        foreach ($breakdown as $option => &$data) {
+            $data['percentage'] = ($totalResponses > 0) ? ($data['count'] / $totalResponses) * 100 : 0;
+        }
+
+        // Store total responses and overall percentage for each field
+        $expectationsBreakdown[$field] = $breakdown;
+        $expectationsBreakdown[$field]['total_responses'] = $totalResponses;
+        $expectationsBreakdown[$field]['overall_percentage'] = ($totalResponses > 0) ? 100 : 0;
     }
 
+    return $expectationsBreakdown;
+}
+
+
+
+
+    private function computeServiceAverages($startMonth, $endMonth, $year)
+    {
+        $services = Services::all();
+        $expectationsFields = [
+            'expectations_0', 'expectations_1', 'expectations_2',
+            'expectations_3', 'expectations_4', 'expectations_5',
+            'expectations_6', 'expectations_7', 'expectations_8'
+        ];
+    
+        $serviceAverages = [];
+    
+        foreach ($services as $service) {
+            $averages = [];
+            $overallSum = 0;
+            $overallCount = 0;
+    
+            // Fetch total respondents for the service
+            $totalRespondents = Form::where('service_id', $service->id)
+                ->whereYear('date', $year)
+                ->whereMonth('date', '>=', $startMonth)
+                ->whereMonth('date', '<=', $endMonth)
+                ->distinct('id') // Use a unique respondent identifier column
+                ->count();
+    
+            foreach ($expectationsFields as $field) {
+                // Sum of responses for this expectation field
+                $sum = Form::where('service_id', $service->id)
+                    ->whereYear('date', $year)
+                    ->whereMonth('date', '>=', $startMonth)
+                    ->whereMonth('date', '<=', $endMonth)
+                    ->sum($field);
+    
+                // Count of responses for this expectation field
+                $count = Form::where('service_id', $service->id)
+                    ->whereYear('date', $year)
+                    ->whereMonth('date', '>=', $startMonth)
+                    ->whereMonth('date', '<=', $endMonth)
+                    ->count();
+    
+                // Calculate the average for this expectation field
+                $average = $count > 0 ? $sum / $count : 0;
+    
+                $averages[$field] = $average;
+                $overallSum += $sum;
+                $overallCount += $count;
+            }
+    
+            // Calculate Overall Arithmetic Weighted Mean (AWM)
+            $overallAWM = $overallCount > 0 ? ($overallSum / $overallCount) * 20 : 0;
+    
+            // Determine the descriptive rating
+            $descriptiveRating = $this->getDescriptiveRating($overallAWM);
+    
+            $serviceAverages[] = [
+                'service_name' => $service->services_name,
+                'service_type' => $service->service_type, // Include service type
+                'averages' => $averages,
+                'overall_awm' => $overallAWM,
+                'descriptive_rating' => $descriptiveRating,
+                'total_respondents' => $totalRespondents
+            ];
+        }
+    
+        return $serviceAverages;
+    }
+    
+    private function getDescriptiveRating($score)
+    {
+        if ($score < 60) {
+            return 'Poor';
+        } elseif ($score >= 60 && $score < 80) {
+            return 'Fair';
+        } elseif ($score >= 80 && $score < 90) {
+            return 'Satisfactory';
+        } elseif ($score >= 90 && $score < 95) {
+            return 'Very Satisfactory';
+        } elseif ($score >= 95) {
+            return 'Outstanding';
+        }
+    
+        return 'Not Rated';
+    }
+    
 
 }
+
+    
+
 
 
 

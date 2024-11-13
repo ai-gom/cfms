@@ -128,10 +128,12 @@
                 <div class="mb-3">
                     <label>Office Department Visited</label>
                     <select name="department" class="form-control" required>
-                        <option value="">Select Department</option>
-                        @foreach($services as $service)
-                            <option value="{{ $service->id }}">{{ $service->services_name }}</option>
-                        @endforeach
+                    <option value="">Select Department</option>
+            @foreach($services as $service)
+                <option value="{{ $service->id }}">
+                    {{ $service->services_name }} ({{ ucfirst($service->service_type) }})
+                </option>
+            @endforeach
                     </select>
                 </div>
                 <div class="mb-3">
@@ -181,80 +183,111 @@
                 <div class="mb-3">
                     <label for="client-category">Client Category</label>
                     <select id="client-category" name="client_category" class="form-control" required>
-                        <option value="">Select Client Category</option>
-                        <option value="student">Student</option>
-                        <option value="faculty">Faculty</option>
-                        <option value="non-teaching-staff">Non-teaching Staff</option>
-                        <option value="alumni">Alumni</option>
-                        <option value="parents">Parents</option>
-                        <option value="supplier">Supplier</option>
-                        <option value="community-member">Community Member</option>
-                        <option value="industry-partner">Industry Partner</option>
-                        <option value="regulatory">Regulatory</option>
+                    <option value="Student">Student</option>
+    <option value="faculty">Faculty</option>
+    <option value="Non-teaching staff">Non-teaching staff</option>
+    <option value="Alumni">Alumni</option>
+    <option value="parents">Parents</option>
+    <option value="supplier">Supplier</option>
+    <option value="Community_member">Community Member</option>
+    <option value="industry_partner">Industry Partner</option>
+    <option value="Regulatory">Regulatory</option>
+    <option value="Others">Others</option>
                     </select>
                 </div>
             </div>
         </div>
             
 
-            <!-- Citizen Charter Ratings Section -->
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Citizen Charter Ratings</h4>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted">Rate each question based on your experience (1 = Strongly Disagree, 5 = Strongly Agree):</p>
-                    <div class="accordion" id="charterAccordion">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingCC1">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCC1" aria-expanded="true">
-                                    CC1. I know what a Citizen Charter (CC) is and saw this office's CC.
-                                </button>
-                            </h2>
-                            <div id="collapseCC1" class="accordion-collapse collapse show" data-bs-parent="#charterAccordion">
-                                <div class="accordion-body d-flex gap-2">
-                                    <input type="radio" name="cc1" value="1" required /> 1
-                                    <input type="radio" name="cc1" value="2" required /> 2
-                                    <input type="radio" name="cc1" value="3" required /> 3
-                                    <input type="radio" name="cc1" value="4" required /> 4
-                                    <input type="radio" name="cc1" value="5" required /> 5
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingCC2">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCC2" aria-expanded="false">
-                                    CC2. It was easy to see this office's Citizen Charter.
-                                </button>
-                            </h2>
-                            <div id="collapseCC2" class="accordion-collapse collapse" data-bs-parent="#charterAccordion">
-                                <div class="accordion-body d-flex gap-2">
-                                    <input type="radio" name="cc2" value="1" required /> 1
-                                    <input type="radio" name="cc2" value="2" required /> 2
-                                    <input type="radio" name="cc2" value="3" required /> 3
-                                    <input type="radio" name="cc2" value="4" required /> 4
-                                    <input type="radio" name="cc2" value="5" required /> 5
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingCC3">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCC3" aria-expanded="false">
-                                    CC3. The Citizen Charter helped me understand the services provided.
-                                </button>
-                            </h2>
-                            <div id="collapseCC3" class="accordion-collapse collapse" data-bs-parent="#charterAccordion">
-                                <div class="accordion-body d-flex gap-2">
-                                    <input type="radio" name="cc3" value="1" required /> 1
-                                    <input type="radio" name="cc3" value="2" required /> 2
-                                    <input type="radio" name="cc3" value="3" required /> 3
-                                    <input type="radio" name="cc3" value="4" required /> 4
-                                </div>
-                            </div>
-                        </div>
+<!-- Citizen Charter Ratings Section -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0 text-center text-md-start">Citizen Charter Ratings</h4>
+    </div>
+    <div class="card-body">
+        <p class="text-muted text-center text-md-start">INSTRUCTIONS:</p>
+        <div class="accordion" id="charterAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingCC1">
+                    <button class="accordion-button text-start" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCC1" aria-expanded="true">
+                        <span class="fw-bold">CC1.</span> I know what a Citizen Charter (CC) is and saw this office's CC.
+                    </button>
+                </h2>
+                <div id="collapseCC1" class="accordion-collapse collapse show" data-bs-parent="#charterAccordion">
+                    <div class="accordion-body d-flex flex-wrap gap-2">
+                        <label class="form-check-label w-100 w-md-auto">
+                            <input type="radio" name="cc1" value="1" required onchange="handleCC1Change(this.value)" /> 
+                            I know what a CC is and I saw this office's CC.
+                        </label>
+                        <label class="form-check-label w-100 w-md-auto">
+                            <input type="radio" name="cc1" value="2" required onchange="handleCC1Change(this.value)" /> 
+                            I know what a CC is but did not see this office's CC.
+                        </label>
+                        <label class="form-check-label w-100 w-md-auto">
+                            <input type="radio" name="cc1" value="3" required onchange="handleCC1Change(this.value)" /> 
+                            I learned of the CC when I saw this office's CC.
+                        </label>
+                        <label class="form-check-label w-100 w-md-auto">
+                            <input type="radio" name="cc1" value="4" required onchange="handleCC1Change(this.value)" /> 
+                            I do not know what a CC is and I did not see one in this office.
+                        </label>
                     </div>
                 </div>
             </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingCC2">
+                    <button class="accordion-button collapsed text-start" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCC2" aria-expanded="false">
+                        <span class="fw-bold">CC2.</span> It was easy to see this office's Citizen Charter.
+                    </button>
+                </h2>
+                <div id="collapseCC2" class="accordion-collapse collapse" data-bs-parent="#charterAccordion">
+                    <div class="accordion-body d-flex flex-wrap gap-2">
+                        <label class="form-check-label w-100 w-md-auto">
+                            <input type="radio" name="cc2" value="1" required /> Easy to See
+                        </label>
+                        <label class="form-check-label w-100 w-md-auto">
+                            <input type="radio" name="cc2" value="2" required /> Somewhat easy to see
+                        </label>
+                        <label class="form-check-label w-100 w-md-auto">
+                            <input type="radio" name="cc2" value="3" required /> Difficult to see
+                        </label>
+                        <label class="form-check-label w-100 w-md-auto">
+                            <input type="radio" name="cc2" value="4" required /> Not Visible at all
+                        </label>
+                        <label class="form-check-label w-100 w-md-auto">
+                            <input type="radio" name="cc2" value="5" required /> N/A
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingCC3">
+                    <button class="accordion-button collapsed text-start" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCC3" aria-expanded="false">
+                        <span class="fw-bold">CC3.</span> The Citizen Charter helped me understand the services provided.
+                    </button>
+                </h2>
+                <div id="collapseCC3" class="accordion-collapse collapse" data-bs-parent="#charterAccordion">
+                    <div class="accordion-body d-flex flex-wrap gap-2">
+                        <label class="form-check-label w-100 w-md-auto">
+                            <input type="radio" name="cc3" value="1" required /> Helped Very Much
+                        </label>
+                        <label class="form-check-label w-100 w-md-auto">
+                            <input type="radio" name="cc3" value="2" required /> Somewhat Helped
+                        </label>
+                        <label class="form-check-label w-100 w-md-auto">
+                            <input type="radio" name="cc3" value="3" required /> Did not Help
+                        </label>
+                        <label class="form-check-label w-100 w-md-auto">
+                            <input type="radio" name="cc3" value="4" required /> N/A
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
             <div class="card mb-4">
     <div class="card-header bg-primary text-white">
@@ -439,6 +472,36 @@
 
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
+
+
+    <script>
+    function handleCC1Change(value) {
+        const cc2Radios = document.getElementsByName('cc2');
+        const cc3Radios = document.getElementsByName('cc3');
+
+        if (value === '4') {
+            setSelectedAndReadOnly(cc2Radios, '5');
+            setSelectedAndReadOnly(cc3Radios, '4');
+        } else {
+            enableRadios(cc2Radios);
+            enableRadios(cc3Radios);
+        }
+    }
+
+    function setSelectedAndReadOnly(radioGroup, value) {
+        radioGroup.forEach(radio => {
+            radio.checked = radio.value === value;
+            radio.readOnly = true;
+        });
+    }
+
+    function enableRadios(radioGroup) {
+        radioGroup.forEach(radio => {
+            radio.checked = false;
+            radio.readOnly = false;
+        });
+    }
+</script>
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
