@@ -11,36 +11,6 @@
             </a>
 
             <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle {{ Request::is('external*') ? 'active' : '' }}" data-bs-toggle="dropdown">
-                    <i class="fa fa-external-link-alt me-2"></i>External Forms
-                </a>
-                <div class="dropdown-menu bg-transparent border-0">
-                    <a href="{{ url('external/admission') }}" class="dropdown-item">Admission, Guidance and Testing</a>
-                    <a href="{{ url('external/cashier') }}" class="dropdown-item">Cashier</a>
-                    <a href="{{ url('external/college') }}" class="dropdown-item">College/Department</a>
-                    <a href="{{ url('external/library') }}" class="dropdown-item">Library and Audio Visuals</a>
-                    <a href="{{ url('external/nstp') }}" class="dropdown-item">NSTP</a>
-                    <a href="{{ url('external/registrar') }}" class="dropdown-item">Registrar</a>
-                    <a href="{{ url('external/student_services') }}" class="dropdown-item">Student Services and Alumni affairs</a>
-                </div>
-            </div>
-
-            <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle {{ Request::is('internal*') ? 'active' : '' }}" data-bs-toggle="dropdown">
-                    <i class="fa fa-file-alt"></i>Internal Forms
-                </a>
-                <div class="dropdown-menu bg-transparent border-0">
-                    <a href="{{ url('internal/admission') }}" class="dropdown-item">Admission, Guidance and Testing</a>
-                    <a href="{{ url('internal/cashier') }}" class="dropdown-item">Cashier</a>
-                    <a href="{{ url('internal/college') }}" class="dropdown-item">College/Department</a>
-                    <a href="{{ url('internal/library') }}" class="dropdown-item">Library and Audio Visuals</a>
-                    <a href="{{ url('internal/nstp') }}" class="dropdown-item">NSTP</a>
-                    <a href="{{ url('internal/registrar') }}" class="dropdown-item">Registrar</a>
-                    <a href="{{ url('internal/student_services') }}" class="dropdown-item">Student Services and Alumni affairs</a>
-                </div>
-            </div>
-
-            <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle {{ Request::is('reports*') ? 'active' : '' }}" data-bs-toggle="dropdown">
                     <i class="fa fa-chart-bar me-2"></i>Reports
                 </a>
@@ -60,6 +30,9 @@
             <a href="{{ url('account') }}" class="nav-item nav-link {{ Request::is('account') ? 'active' : '' }}">
                 <i class="fa fa-user me-2"></i>Account
             </a>
+            <a href="{{ url('forms') }}" class="nav-item nav-link {{ Request::is('forms') ? 'active' : '' }}">
+    <i class="fa fa-file-alt me-2"></i>Forms
+</a>
         </div>
     </nav>
 </div>

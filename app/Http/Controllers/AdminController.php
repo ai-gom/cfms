@@ -138,10 +138,41 @@ private function getAgeRange($range)
         return view('admin.Account');
     }
 
-    public function rankings()
-    {
-        return view('admin.rankings');
+    public function rankings(Request $request)
+{
+    $currentYear = $request->input('year', Carbon::now()->year); // Default to current year
+    $period = $request->input('period', 'Annual'); // Default to Annual
+
+    // Define periods
+    $periods = [
+        'Q1' => [1, 3],
+        'Q2' => [4, 6],
+        'Q3' => [7, 9],
+        'Q4' => [10, 12],
+        'H1' => [1, 4],
+        'H2' => [5, 9],
+        'H3' => [10, 12], // May to August
+        'Annual' => [1, 12],
+    ];
+
+    if (!isset($periods[$period])) {
+        abort(404, 'Invalid period specified.');
     }
+
+    [$startMonth, $endMonth] = $periods[$period];
+
+    // Fetch service averages for the selected period
+    $serviceAverages = $this->computeServiceAverages($startMonth, $endMonth, $currentYear);
+
+    // Prepare rankings
+    $rankings = collect($serviceAverages)->sortByDesc('overall_awm')->values()->all();
+
+    // Always highlight the current year for the filter dropdown
+    $highlightedYear = Carbon::now()->year;
+
+    return view('admin.rankings', compact('rankings', 'currentYear', 'period', 'serviceAverages', 'highlightedYear'));
+}
+
 
     public function view_services()
     {
@@ -1064,10 +1095,71 @@ private function calculateTotals($data)
 
     return $totals;
 }
+
+// public function reportsByYear(Request $request)
+// {
+//     $selectedYear = $request->input('year', Carbon::now()->year); // Default to current year
+//     $period = $request->input('period', 'annual'); // Default to annual
+//     $currentYear = Carbon::now()->year;
+
+//     // Define periods
+//     $periods = [
+//         'Q1' => [1, 3],
+//         'Q2' => [4, 6],
+//         'Q3' => [7, 9],
+//         'Q4' => [10, 12],
+//         'H1' => [1, 6],
+//         'H2' => [7, 12],
+//         'Annual' => [1, 12],
+//     ];
+
+//     if (!isset($periods[$period])) {
+//         abort(404, 'Invalid period specified.');
+//     }
+
+//     [$startMonth, $endMonth] = $periods[$period];
+
+//     // Fetch data for the selected year and period
+//     $data = $this->fetchDataByPeriod($startMonth, $endMonth, $selectedYear);
+//     $responses = $this->computeCcResponses($startMonth, $endMonth, $selectedYear, $data['totalForms']);
+//     $expectationsBreakdown = $this->aggregateExpectations(
+//         [
+//             'expectations_0', 'expectations_1', 'expectations_2',
+//             'expectations_3', 'expectations_4', 'expectations_5',
+//             'expectations_6', 'expectations_7', 'expectations_8'
+//         ],
+//         $selectedYear,
+//         $startMonth,
+//         $endMonth
+//     );
+
+//     // Totals and averages
+//     $totals = $this->calculateTotals($expectationsBreakdown);
+
+//     // Fetch service averages
+//     $serviceAverages = $this->computeServiceAverages($startMonth, $endMonth, $selectedYear);
+
+//     // Return view with all necessary data
+//     return view('admin.reports_by_year', compact(
+//         'data',
+//         'responses',
+//         'expectationsBreakdown',
+//         'totals',
+//         'serviceAverages',
+//         'selectedYear',
+//         'period',
+//         'currentYear'
+//     ));
+
+
+// }
+
+
+
+
 }
 
     
-
 
 
 

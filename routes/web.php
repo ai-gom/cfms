@@ -31,7 +31,9 @@ Route::get('account', [AdminController::class, 'Account'])->middleware(['auth', 
 
 Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');
 
-route::get('rankings',[AdminController::class,'rankings'])->middleware(['auth','admin']);
+Route::get('rankings', [AdminController::class, 'rankings'])
+    ->name('admin.rankings')
+    ->middleware(['auth', 'admin']);
 
 route::get('view_services',[AdminController::class,'view_services'])->middleware(['auth','admin']);
 
@@ -46,4 +48,11 @@ route::get('reports_bi_quarterly',[AdminController::class,'reports_bi_quarterly'
 route::get('reports_quarterly',[AdminController::class,'reports_quarterly'])->middleware(['auth','admin']);
 
 Route::get('/print-report/{quarter}', [AdminController::class, 'printQuarterReport'])->name('print.report');
+
+Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->middleware('auth');
+Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update')->middleware('auth');
+
+
+
+
 
