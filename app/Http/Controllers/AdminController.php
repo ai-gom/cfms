@@ -981,6 +981,13 @@ private function aggregateExpectations($expectationsFields, $year, $startMonth, 
 
     // Fetch data for the specified quarter
     $quarterData = $this->fetchDataByPeriod($startMonth, $endMonth, $currentYear);
+
+    if ($quarterData['totalForms'] === 0) {
+        // If no data, return a view with "No Data Available"
+        return view('admin.no_data', ['message' => 'Try Again if there is a Data Available.']);
+    }
+
+
     $responses = $this->computeCcResponses($startMonth, $endMonth, $currentYear, $quarterData['totalForms']);
     $quarterData['cc1'] = $responses['cc1'];
     $quarterData['cc2'] = $responses['cc2'];
