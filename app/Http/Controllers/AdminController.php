@@ -967,10 +967,10 @@ private function aggregateExpectations($expectationsFields, $year, $startMonth, 
         'Q2' => [4, 6],
         'Q3' => [7, 9],
         'Q4' => [10, 12],
-        'Q5' => [1, 4],
-        'Q6' => [5, 8],
-        'Q7' => [9, 12],
-        'Q8' => [1, 12],
+        'H1' => [1, 4],
+        'H2' => [5, 8],
+        'H3' => [9, 12],
+        'annually' => [1, 12],
     ];
 
     if (!isset($quarters[$quarter])) {
