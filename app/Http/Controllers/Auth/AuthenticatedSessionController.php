@@ -28,12 +28,16 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Add toast message to session with the admin's name
+    $adminName = $request->user()->name;
+    toastr()->success("Welcome Back, {$adminName}!!!");
+
         if($request->user()->usertype === 'admin')
         {
             return redirect('admin/dashboard');
         }
 
-        return redirect()->intended(route('dashboard', ));
+        return redirect()->intended(route('home.form', ));
     }
 
     /**

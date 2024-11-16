@@ -23,7 +23,7 @@
           <!-- Card Start for Age Table -->
 
           <div style="text-align: right; margin: 20px;">
-    <a href="{{ route('print.report', ['quarter' => 'annually']) }}" target="_blank" class="btn btn-primary">
+    <a href="{{ route('print.report', ['quarter' => 'Annually']) }}" target="_blank" class="btn btn-primary">
         <i class="bi bi-printer"></i> Print Annually Report
     </a>
 </div>

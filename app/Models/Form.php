@@ -18,4 +18,5 @@ class Form extends Model
     {
         return $this->belongsTo(Services::class, 'service_id');  // 'service_id' is the foreign key
     }
+    
 }

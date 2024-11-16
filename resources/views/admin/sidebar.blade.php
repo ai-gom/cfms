@@ -6,33 +6,53 @@
         </a>
 
         <div class="navbar-nav w-100">
+            <!-- Dashboard -->
             <a href="{{ url('admin/dashboard') }}" class="nav-item nav-link {{ Request::is('admin/dashboard') ? 'active' : '' }}">
                 <i class="fa fa-tachometer-alt me-2"></i>Dashboard
             </a>
 
+            <!-- Reports Dropdown -->
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle {{ Request::is('reports*') ? 'active' : '' }}" data-bs-toggle="dropdown">
-                    <i class="fa fa-chart-bar me-2"></i>Reports
+                    <i class="fa fa-chart-line me-2"></i>Reports
                 </a>
-                <div class="dropdown-menu bg-transparent border-0">
-                    <a href="{{ url('reports') }}" class="dropdown-item">Annually</a>
-                    <a href="{{ url('reports_bi_quarterly') }}" class="dropdown-item">Bi-Quarterly</a>
-                    <a href="{{ url('reports_quarterly') }}" class="dropdown-item">Quarterly</a>
-                </div>
+                <ul class="dropdown-menu bg-light shadow-sm border-0 rounded">
+                    <li>
+                        <a href="{{ url('reports') }}" class="dropdown-item {{ Request::is('reports') ? 'active' : '' }}">
+                            <i class="fa fa-calendar-day me-2"></i>Annually
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('reports_bi_quarterly') }}" class="dropdown-item {{ Request::is('reports_bi_quarterly') ? 'active' : '' }}">
+                            <i class="fa fa-calendar-week me-2"></i>Bi-Annually
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('reports_quarterly') }}" class="dropdown-item {{ Request::is('reports_quarterly') ? 'active' : '' }}">
+                            <i class="fa fa-calendar-alt me-2"></i>Quarterly
+                        </a>
+                    </li>
+                </ul>
             </div>
 
+            <a href="{{ url('past_reports') }}" class="nav-item nav-link {{ Request::is('past_reports') ? 'active' : '' }}">
+                <i class="fa fa-archive me-2"></i>Past reports
+            </a>
+
+            <!-- Rankings -->
             <a href="{{ url('rankings') }}" class="nav-item nav-link {{ Request::is('rankings') ? 'active' : '' }}">
-                <i class="fa fa-sort-numeric-up-alt me-2"></i>Rankings
+                <i class="fa fa-trophy me-2"></i>Rankings
             </a>
+
+            <!-- Services -->
             <a href="{{ url('view_services') }}" class="nav-item nav-link {{ Request::is('view_services') ? 'active' : '' }}">
-                <i class="fa fa-building"></i>Services
+                <i class="fa fa-cogs me-2"></i>Services
             </a>
+
+            <!-- Account -->
             <a href="{{ url('account') }}" class="nav-item nav-link {{ Request::is('account') ? 'active' : '' }}">
-                <i class="fa fa-user me-2"></i>Account
+                <i class="fa fa-user-cog me-2"></i>Account
             </a>
-            <a href="{{ url('forms') }}" class="nav-item nav-link {{ Request::is('forms') ? 'active' : '' }}">
-    <i class="fa fa-file-alt me-2"></i>Forms
-</a>
         </div>
     </nav>
 </div>

@@ -20,7 +20,7 @@
                     $totalOverallCount = 0;
                 @endphp
 
-                @foreach ($septemberToDecember['ageRanges'] as $range => $data)
+                @foreach ($julyToDecember['ageRanges'] as $range => $data)
                     <tr>
                         <td>{{ $range }}</td>
                         <td>{{ $data['external']['count'] }} ({{ number_format($data['external']['percentage'], 2) }}%)</td>
@@ -79,40 +79,40 @@
                 <!-- Male Row -->
                 <tr>
                     <td>Male</td>
-                    <td>{{ number_format($septemberToDecember['maleExternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($septemberToDecember['maleInternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($septemberToDecember['maleOverallPercentage'], 2) }}%</td>
+                    <td>{{ number_format($julyToDecember['maleExternalPercentage'], 2) }}%</td>
+                    <td>{{ number_format($julyToDecember['maleInternalPercentage'], 2) }}%</td>
+                    <td>{{ number_format($julyToDecember['maleOverallPercentage'], 2) }}%</td>
                 </tr>
                 @php
-                    $totalExternalPercentage += $septemberToDecember['maleExternalPercentage'];
-                    $totalInternalPercentage += $septemberToDecember['maleInternalPercentage'];
-                    $totalOverallPercentage += $septemberToDecember['maleOverallPercentage'];
+                    $totalExternalPercentage += $julyToDecember['maleExternalPercentage'];
+                    $totalInternalPercentage += $julyToDecember['maleInternalPercentage'];
+                    $totalOverallPercentage += $julyToDecember['maleOverallPercentage'];
                 @endphp
 
                 <!-- Female Row -->
                 <tr>
                     <td>Female</td>
-                    <td>{{ number_format($septemberToDecember['femaleExternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($septemberToDecember['femaleInternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($septemberToDecember['femaleOverallPercentage'], 2) }}%</td>
+                    <td>{{ number_format($julyToDecember['femaleExternalPercentage'], 2) }}%</td>
+                    <td>{{ number_format($julyToDecember['femaleInternalPercentage'], 2) }}%</td>
+                    <td>{{ number_format($julyToDecember['femaleOverallPercentage'], 2) }}%</td>
                 </tr>
                 @php
-                    $totalExternalPercentage += $septemberToDecember['femaleExternalPercentage'];
-                    $totalInternalPercentage += $septemberToDecember['femaleInternalPercentage'];
-                    $totalOverallPercentage += $septemberToDecember['femaleOverallPercentage'];
+                    $totalExternalPercentage += $julyToDecember['femaleExternalPercentage'];
+                    $totalInternalPercentage += $julyToDecember['femaleInternalPercentage'];
+                    $totalOverallPercentage += $julyToDecember['femaleOverallPercentage'];
                 @endphp
 
                 <!-- Prefer Not to Say Row -->
                 <tr>
                     <td>Prefer Not to Say</td>
-                    <td>{{ number_format($septemberToDecember['preferNotToSayExternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($septemberToDecember['preferNotToSayInternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($septemberToDecember['preferNotToSayOverallPercentage'], 2) }}%</td>
+                    <td>{{ number_format($julyToDecember['preferNotToSayExternalPercentage'], 2) }}%</td>
+                    <td>{{ number_format($julyToDecember['preferNotToSayInternalPercentage'], 2) }}%</td>
+                    <td>{{ number_format($julyToDecember['preferNotToSayOverallPercentage'], 2) }}%</td>
                 </tr>
                 @php
-                    $totalExternalPercentage += $septemberToDecember['preferNotToSayExternalPercentage'];
-                    $totalInternalPercentage += $septemberToDecember['preferNotToSayInternalPercentage'];
-                    $totalOverallPercentage += $septemberToDecember['preferNotToSayOverallPercentage'];
+                    $totalExternalPercentage += $julyToDecember['preferNotToSayExternalPercentage'];
+                    $totalInternalPercentage += $julyToDecember['preferNotToSayInternalPercentage'];
+                    $totalOverallPercentage += $julyToDecember['preferNotToSayOverallPercentage'];
                 @endphp
 
                 <!-- Totals Row -->
@@ -151,7 +151,7 @@
                     $totalOverallCount = 0;
                 @endphp
 
-                @foreach ($septemberToDecember['municipalityData'] as $municipality => $data)
+                @foreach ($julyToDecember['municipalityData'] as $municipality => $data)
                     <tr>
                         <td>{{ $municipality }}</td>
                         <td>{{ $data['external']['count'] }} ({{ number_format($data['external']['percentage'], 2) }}%)</td>
@@ -169,7 +169,7 @@
 
                 @php
                     // Calculate total percentages based on total forms
-                    $totalForms = $septemberToDecember['totalForms'];
+                    $totalForms = $julyToDecember['totalForms'];
                     $totalExternalPercentage = ($totalForms > 0) ? ($totalExternalCount / $totalForms) * 100 : 0;
                     $totalInternalPercentage = ($totalForms > 0) ? ($totalInternalCount / $totalForms) * 100 : 0;
                     $totalOverallPercentage = ($totalForms > 0) ? ($totalOverallCount / $totalForms) * 100 : 0;
@@ -212,7 +212,7 @@
                     $grandTotalCount = 0;
                 @endphp
 
-                @foreach ($septemberToDecember['clientCategories'] as $category => $data)
+                @foreach ($julyToDecember['clientCategories'] as $category => $data)
                     <tr>
                         <td>{{ $category }}</td>
                         <td>{{ $data['external']['count'] }} ({{ number_format($data['external']['percentage'], 2) }}%)</td>
@@ -268,7 +268,7 @@
                                     <tr>
                                         <td colspan="3">{{ ucfirst($ccKey) }} - Response Breakdown</td>
                                     </tr>
-                                    @foreach($septemberToDecemberResponses[$ccKey] as $option => $data)
+                                    @foreach($julyToDecemberResponses[$ccKey] as $option => $data)
                                         <tr>
                                             <td>{{ $option }}. {{ $yourOptions[$ccKey][$option] ?? 'Description not found' }}</td>
                                             <td>{{ $data['count'] }}</td>
@@ -307,7 +307,7 @@
                     $sumOverallScores = 0;
                     $countOverallScores = 0;
                 @endphp
-                @foreach($septemberToDecemberExpectationsBreakdown as $field => $breakdown)
+                @foreach($julyToDecemberExpectationsBreakdown as $field => $breakdown)
                     @php
                         // Calculate individual overall score
                         $totalRelevantResponses = $breakdown['total_responses'] - $breakdown['na']['count'];
@@ -332,14 +332,14 @@
                 <!-- Totals Row -->
                 <tr style="font-weight: bold;">
                     <td>Total</td>
-                    <td>{{ $septemberToDecemberTotals['strongly_agree'] }}</td>
-                    <td>{{ $septemberToDecemberTotals['agree'] }}</td>
-                    <td>{{ $septemberToDecemberTotals['neither'] }}</td>
-                    <td>{{ $septemberToDecemberTotals['disagree'] }}</td>
-                    <td>{{ $septemberToDecemberTotals['strongly_disagree'] }}</td>
-                    <td>{{ $septemberToDecemberTotals['na'] }}</td>
-                    <td>{{ $septemberToDecemberTotals['total_responses'] }}</td>
-                    <td>{{ number_format($septemberToDecemberTotals['average_overall_score'], 2) }}%</td>
+                    <td>{{ $julyToDecemberTotals['strongly_agree'] }}</td>
+                    <td>{{ $julyToDecemberTotals['agree'] }}</td>
+                    <td>{{ $julyToDecemberTotals['neither'] }}</td>
+                    <td>{{ $julyToDecemberTotals['disagree'] }}</td>
+                    <td>{{ $julyToDecemberTotals['strongly_disagree'] }}</td>
+                    <td>{{ $julyToDecemberTotals['na'] }}</td>
+                    <td>{{ $julyToDecemberTotals['total_responses'] }}</td>
+                    <td>{{ number_format($julyToDecemberTotals['average_overall_score'], 2) }}%</td>
                 </tr>
             </tbody>
         </table>
@@ -365,7 +365,7 @@
                 <tr>
                     <td colspan="2" style="font-weight: bold; text-align: center;">External Services</td>
                 </tr>
-                @foreach( $serviceAveragesSepToDec as $service)
+                @foreach( $serviceAveragesJulToDec as $service)
                     @if($service['service_type'] == 'external') <!-- Assuming service_type is available -->
                     <tr>
                         <td>{{ $service['service_name'] }}</td>
@@ -383,7 +383,7 @@
                 <tr>
                     <td colspan="2" style="font-weight: bold; text-align: center;">Internal Services</td>
                 </tr>
-                @foreach( $serviceAveragesSepToDec as $service)
+                @foreach( $serviceAveragesJulToDec as $service)
                     @if($service['service_type'] == 'internal') <!-- Assuming service_type is available -->
                     <tr>
                         <td>{{ $service['service_name'] }}</td>
@@ -422,7 +422,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach( $serviceAveragesSepToDec as $service)
+                @foreach( $serviceAveragesJulToDec as $service)
                 <tr>
                     <td>{{ $service['service_name'] }}</td>
                     @php

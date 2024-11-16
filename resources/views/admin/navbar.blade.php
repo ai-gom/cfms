@@ -21,7 +21,7 @@
                         <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editProfileModal">My Profile</a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
-                            <button type="submit" class="dropdown-item" style="cursor: pointer;">Log Out</button>
+                            <button type="button" class="dropdown-item" style="cursor: pointer;" id="logoutBtn">Log Out</button>
                         </form>
                     </div>
                 </div>
@@ -89,4 +89,25 @@
         });
     </script>
     @endif
+
+    <!-- SweetAlert Logout Confirmation -->
+    <script>
+        document.getElementById('logoutBtn').addEventListener('click', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You will be logged out!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#007bff',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, log me out!',
+                cancelButtonText: 'No, cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('logout-form').submit(); // Submit the logout form
+                }
+            });
+        });
+    </script>
 </body>

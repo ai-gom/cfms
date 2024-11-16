@@ -22,47 +22,36 @@
 
             <!-- Toggle Button for Sorting -->
             <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
-                <div onclick="showData('januaryToApril')" style="color: #343a40; text-decoration: none; cursor: pointer; font-weight: bold;">January - April</div>
-                <div onclick="showData('mayToAugust')" style="color: #343a40; text-decoration: none; cursor: pointer; font-weight: bold;">May - August</div>
-                <div onclick="showData('septemberToDecember')" style="color: #343a40; text-decoration: none; cursor: pointer; font-weight: bold;">September - December</div>
+                <div onclick="showData('januaryToJune')" style="color: #343a40; text-decoration: none; cursor: pointer; font-weight: bold;">January - June</div>
+                <div onclick="showData('julyToDecember')" style="color: #343a40; text-decoration: none; cursor: pointer; font-weight: bold;">July - December</div>
             </div>
 
-            <!-- January - April Data -->
-            <div id="januaryToApril" style="display: block;">
-                <h2 style="margin-left: 20px;">January - April Data</h2>
+            <!-- January - June Data -->
+            <div id="januaryToJune" style="display: block;">
+                <h2 style="margin-left: 20px;">January - June Data</h2>
 
                 <div style="text-align: right; margin: 20px;">
     <a href="{{ route('print.report', ['quarter' => 'H1']) }}" target="_blank" class="btn btn-primary">
-        <i class="bi bi-printer"></i> Print Jan - Apr Report
+        <i class="bi bi-printer"></i> Print Jan - June Report
     </a>
 </div>
-                @include('admin.H1january_aprilData')
+                @include('admin.H1january_juneData')
             </div>
 
-            <!-- May - August Data -->
-            <div id="mayToAugust" style="display: none;">
-                <h2 style="margin-left: 20px;">May - August Data</h2>
+
+
+
+            <!-- July - December Data -->
+            <div id="julyToDecember" style="display: none;">
+                <h2 style="margin-left: 20px;">July - December Data</h2>
 
                 <div style="text-align: right; margin: 20px;">
     <a href="{{ route('print.report', ['quarter' => 'H2']) }}" target="_blank" class="btn btn-primary">
-        <i class="bi bi-printer"></i> Print May - Aug Report
+        <i class="bi bi-printer"></i> Print July - December Report
     </a>
 </div>
 
-                @include('admin.H2may_augustData')
-            </div>
-
-            <!-- September - December Data -->
-            <div id="septemberToDecember" style="display: none;">
-                <h2 style="margin-left: 20px;">September - December Data</h2>
-
-                <div style="text-align: right; margin: 20px;">
-    <a href="{{ route('print.report', ['quarter' => 'H3']) }}" target="_blank" class="btn btn-primary">
-        <i class="bi bi-printer"></i> Print Sept - Dec Report
-    </a>
-</div>
-
-                @include('admin.H3september_decemberData')
+                @include('admin.H3july_decemberData')
             </div>
 
             <!-- Content End -->
@@ -76,9 +65,8 @@
 
         <script>
             function showData(period) {
-                document.getElementById('januaryToApril').style.display = (period === 'januaryToApril') ? 'block' : 'none';
-                document.getElementById('mayToAugust').style.display = (period === 'mayToAugust') ? 'block' : 'none';
-                document.getElementById('septemberToDecember').style.display = (period === 'septemberToDecember') ? 'block' : 'none';
+                document.getElementById('januaryToJune').style.display = (period === 'januaryToJune') ? 'block' : 'none';
+                document.getElementById('julyToDecember').style.display = (period === 'julyToDecember') ? 'block' : 'none';
             }
         </script>
     </div>

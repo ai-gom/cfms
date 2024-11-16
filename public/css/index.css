@@ -73,16 +73,15 @@
     height: 100vh;
     overflow-y: auto;
     background: var(--light);
-    transition: 0.5s;
+    padding-top: 20px;
     z-index: 999;
-    padding-top: 20px; /* Add padding to the top */
 }
 
 .content {
-    margin-left: 250px;
+    margin-left: 150px; /* Aligns content right next to the sidebar */
     min-height: 100vh;
     background: #ffffff;
-    transition: 0.5s;
+    padding: 15px; /* Optional padding for inner content */
 }
 
 @media (min-width: 992px) {

@@ -41,7 +41,10 @@ class ProfileController extends Controller
 
     $user->save();
 
-    return Redirect::back()->with('success', 'Profile updated successfully!');
+    // Add a success toast message
+    toastr()->success('Profile successfully updated.');
+
+    return Redirect::back();
 }
 
     /**

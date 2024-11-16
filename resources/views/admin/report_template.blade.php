@@ -28,7 +28,7 @@
     <p><strong>Year:</strong> {{ now()->year }}</p>
 
      <!-- Table 1: Age -->
-     <h2>Table 1: Age</h2>
+<h2>Table 1: Age</h2>
 <table>
     <thead>
         <tr>
@@ -57,6 +57,45 @@
         </tr>
     </tfoot>
 </table>
+
+<!-- Analysis Text -->
+@php
+    // Determine the highest and lowest service types
+    $highestServiceType = collect($ageTotals)->except('total')->sortDesc()->keys()->first();
+    $lowestServiceType = collect($ageTotals)->except('total')->sort()->keys()->first();
+
+    $highestServiceCount = $ageTotals[$highestServiceType];
+    $lowestServiceCount = $ageTotals[$lowestServiceType];
+
+    $highestServicePercentage = ($ageTotals['total'] > 0) ? ($highestServiceCount / $ageTotals['total']) * 100 : 0;
+    $lowestServicePercentage = ($ageTotals['total'] > 0) ? ($lowestServiceCount / $ageTotals['total']) * 100 : 0;
+
+    // Determine the highest age range
+    $highestAgeRange = collect($quarterData['ageRanges'])->sortByDesc(fn($data) => $data['total']['percentage'])->keys()->first();
+    $highestAgeData = $quarterData['ageRanges'][$highestAgeRange];
+
+    $highestOverallPercentage = $highestAgeData['total']['percentage'];
+    $highestExternalPercentage = $highestAgeData['external']['percentage'];
+    $highestInternalPercentage = $highestAgeData['internal']['percentage'];
+@endphp
+
+<p>
+    Table 1 presents the demographic breakdown of clients by age and customer type. 
+    It reveals that most clients are classified as <strong>{{ ucfirst($highestServiceType) }}</strong>, 
+    comprising <strong>{{ number_format($highestServicePercentage, 2) }}%</strong> 
+    (<strong>{{ $highestServiceCount }}</strong>) of the total, while 
+    <strong>{{ ucfirst($lowestServiceType) }}</strong> clients make up 
+    <strong>{{ number_format($lowestServicePercentage, 2) }}%</strong> 
+    (<strong>{{ $lowestServiceCount }}</strong>) of the total.
+</p>
+<p>
+    Additionally, the data indicates that most clients fall within the age range of 
+    <strong>{{ $highestAgeRange }}</strong>, accounting for 
+    <strong>{{ number_format($highestOverallPercentage, 2) }}%</strong> of the total, 
+    with <strong>{{ number_format($highestExternalPercentage, 2) }}%</strong> categorized as External 
+    and only <strong>{{ number_format($highestInternalPercentage, 2) }}%</strong> as Internal.
+</p>
+
 
     <!-- Table 2: Sex -->
     <h2>Table 2: Sex</h2>
@@ -99,8 +138,34 @@
     </tfoot>
 </table>
 
+<!-- Analysis Text -->
+@php
+    // Extract key data for description
+    $totalFemale = $sexTotals['female'];
+    $femaleExternal = $quarterData['femaleExternalPercentage'];
+    $femaleInternal = $quarterData['femaleInternalPercentage'];
+
+    $totalMale = $sexTotals['male'];
+    $maleExternal = $quarterData['maleExternalPercentage'];
+    $maleInternal = $quarterData['maleInternalPercentage'];
+
+    // Calculate "Prefer Not to Say" only if needed in the text
+    $preferNotToSayExternal = $quarterData['preferNotToSayExternalPercentage'];
+    $preferNotToSayInternal = $quarterData['preferNotToSayInternalPercentage'];
+@endphp
+
+<p>
+    Table II presents the breakdown of clients by sex and customer type. Of the total clients, 
+    <strong>{{ number_format($totalFemale, 2) }}%</strong> were female, with 
+    <strong>{{ number_format($femaleExternal, 2) }}%</strong> being external clients and 
+    <strong>{{ number_format($femaleInternal, 2) }}%</strong> internal clients. In contrast, 
+    <strong>{{ number_format($totalMale, 2) }}%</strong> of the clients were male, with 
+    <strong>{{ number_format($maleExternal, 2) }}%</strong> being external and 
+    <strong>{{ number_format($maleInternal, 2) }}%</strong> internal clients.
+</p>
+
    <!-- Table 3: Municipality -->
-   <h2>Table 3: Municipality of Residence</h2>
+<h2>Table 3: Municipality of Residence</h2>
 <table>
     <thead>
         <tr>
@@ -112,7 +177,7 @@
     </thead>
     <tbody>
         @foreach($quarterData['municipalityData'] as $municipality => $data)
-            @if($data['external']['percentage'] > 0 || $data['internal']['percentage'] > 0)
+            @if($data['external']['percentage'] > 0 || $data['internal']['percentage'] > 0 || $data['total']['percentage'] > 0)
                 <tr>
                     <td>{{ $municipality }}</td>
                     <td>{{ number_format($data['external']['percentage'], 2) }}%</td>
@@ -127,12 +192,12 @@
             <td>Total</td>
             <td>
                 {{ number_format(array_reduce($quarterData['municipalityData'], function ($carry, $item) {
-                    return $carry + $item['external']['percentage'];
+                    return $carry + ($item['external']['percentage'] > 0 ? $item['external']['percentage'] : 0);
                 }, 0), 2) }}%
             </td>
             <td>
                 {{ number_format(array_reduce($quarterData['municipalityData'], function ($carry, $item) {
-                    return $carry + $item['internal']['percentage'];
+                    return $carry + ($item['internal']['percentage'] > 0 ? $item['internal']['percentage'] : 0);
                 }, 0), 2) }}%
             </td>
             <td>100.00%</td>
@@ -140,7 +205,42 @@
     </tfoot>
 </table>
 
-   <!-- Table 4: Client Category -->
+<!-- Analysis Text -->
+@php
+    // Filter out municipalities with 0% in all categories
+    $filteredData = collect($quarterData['municipalityData'])->filter(function ($data) {
+        return $data['external']['percentage'] > 0 || $data['internal']['percentage'] > 0 || $data['total']['percentage'] > 0;
+    });
+
+    // Sort remaining municipalities by total percentage in descending order
+    $sortedData = $filteredData->sortByDesc(function ($data) {
+        return $data['total']['percentage'];
+    });
+
+    // Get the top municipality
+    $topMunicipality = $sortedData->keys()->first();
+    $topData = $sortedData->first();
+
+    // Get additional top municipalities
+    $additionalMunicipalities = $sortedData->skip(1)->take(5);
+
+    // Format descriptions for additional municipalities
+    $additionalDescriptions = $additionalMunicipalities->map(function ($data, $municipality) {
+        return "{$municipality} at " . number_format($data['total']['percentage'], 2) . "%";
+    })->implode(', ');
+@endphp
+
+<p>
+    Table III presents the clients' municipalities of residence and their client type. Most clients, 
+    <strong>{{ number_format($topData['total']['percentage'], 2) }}%</strong>, were from 
+    <strong>{{ $topMunicipality }}</strong>, with 
+    <strong>{{ number_format($topData['external']['percentage'], 2) }}%</strong> being external clients and 
+    <strong>{{ number_format($topData['internal']['percentage'], 2) }}%</strong> internal. This is followed by clients from 
+    {{ $additionalDescriptions }}. The data suggests that due to the campus's geographical location, most clients come from 
+    Western Pangasinan, nearby municipalities, and other towns in Pangasinan.
+</p>
+
+  
 <!-- Table 4: Client Category -->
 <h2>Table 4: Client Category</h2>
 <table>
@@ -181,6 +281,40 @@
         </tr>
     </tfoot>
 </table>
+
+<!-- Analysis Text -->
+@php
+    // Filter out categories with 0% in all categories
+    $filteredCategories = collect($quarterData['clientCategories'])->filter(function ($data) {
+        return $data['external']['percentage'] > 0 || $data['internal']['percentage'] > 0;
+    });
+
+    // Identify top categories by proportion
+    $topExternalCategory = $filteredCategories->sortByDesc(fn($data) => $data['external']['percentage'])->keys()->first();
+    $topExternalData = $filteredCategories[$topExternalCategory];
+
+    $topInternalCategory = $filteredCategories->sortByDesc(fn($data) => $data['internal']['percentage'])->keys()->first();
+    $topInternalData = $filteredCategories[$topInternalCategory];
+@endphp
+
+<p>
+    Table IV shows the percentage distribution of clients by category. Among external clients, 
+    <strong>{{ $topExternalCategory }}</strong> made up the largest proportion, accounting for 
+    <strong>{{ number_format($topExternalData['external']['percentage'], 2) }}%</strong> 
+    ({{ $topExternalData['external']['count'] }} clients). This was followed by 
+    @foreach($filteredCategories->except($topExternalCategory)->take(2) as $category => $data)
+        <strong>{{ $category }}</strong> ({{ number_format($data['external']['percentage'], 2) }}%),
+    @endforeach
+    and other categories making up the rest. 
+
+    For internal clients, <strong>{{ $topInternalCategory }}</strong> constituted the majority, representing 
+    <strong>{{ number_format($topInternalData['internal']['percentage'], 2) }}%</strong> 
+    ({{ $topInternalData['internal']['count'] }} clients). Other categories included 
+    @foreach($filteredCategories->except($topInternalCategory)->take(2) as $category => $data)
+        <strong>{{ $category }}</strong> ({{ number_format($data['internal']['percentage'], 2) }}%),
+    @endforeach
+    and additional smaller groups.
+</p>
 
     <!-- Table 5: Citizen's Charter Awareness -->
     <h2>Table 5: Citizen's Charter Awareness</h2>

@@ -41,6 +41,8 @@ route::post('add_services',[AdminController::class,'add_services'])->middleware(
 
 route::get('delete_services/{id}',[AdminController::class,'delete_services'])->middleware(['auth','admin']);
 
+Route::put('update_services/{id}', [AdminController::class, 'update_services'])->name('update_services');
+
 Route::post('submit_form', [HomeController::class, 'submit_form']);
 
 route::get('reports_bi_quarterly',[AdminController::class,'reports_bi_quarterly'])->middleware(['auth','admin']);
@@ -51,6 +53,12 @@ Route::get('/print-report/{quarter}', [AdminController::class, 'printQuarterRepo
 
 Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->middleware('auth');
 Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update')->middleware('auth');
+
+Route::get('/past_reports', [AdminController::class, 'pastReports'])->name('past.reports');
+
+
+
+
 
 
 

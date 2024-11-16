@@ -11,90 +11,92 @@
         @include('admin.spinner')
         <!-- Spinner End -->
 
-
         <!-- Sidebar Start -->
         @include('admin.sidebar')
         <!-- Sidebar End -->
 
         <div class="content">
             <!-- Navbar Start -->
-        @include('admin.navbar')
-        <!-- Navbar End -->
+            @include('admin.navbar')
+            <!-- Navbar End -->
 
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <!-- Gender Responses Chart -->
-        <div class="col-sm-12">
-            <div class="card border-0 rounded-3 shadow-lg mb-4" style="background-color: #f8f9fa;">
-                <div class="card-body text-center">
-                    <h5 class="card-title" style="color: #343a40;">Male and Female Responses by Service Type</h5>
-
-                    <!-- Buttons -->
-                    <div class="d-flex justify-content-center mb-3">
-                        <button onclick="updateGenderChart('annually')" class="btn btn-outline-primary mx-1">Annually</button>
-                        <button onclick="updateGenderChart('january-march')" class="btn btn-outline-primary mx-1">Q1</button>
-                        <button onclick="updateGenderChart('april-june')" class="btn btn-outline-primary mx-1">Q2</button>
-                        <button onclick="updateGenderChart('july-september')" class="btn btn-outline-primary mx-1">Q3</button>
-                        <button onclick="updateGenderChart('october-december')" class="btn btn-outline-primary mx-1">Q4</button>
-                        <button onclick="updateGenderChart('january-april')" class="btn btn-outline-primary mx-1">H1</button>
-                        <button onclick="updateGenderChart('may-august')" class="btn btn-outline-primary mx-1">H2</button>
-                        <button onclick="updateGenderChart('september-december')" class="btn btn-outline-primary mx-1">H3</button>
-                    </div>
-
-                    <canvas id="genderServiceChart" style="width: 100%; height: 400px;"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Additional 3 Cards -->
-        <div class="col-sm-12 col-md-4">
-            <div class="card border-0 rounded-3 shadow-lg">
-                <div class="card-body text-center" style="background-color: #f8f9fa;">
-                    <h5 class="card-title" style="color: #343a40;">All Services</h5>
-                    <p class="card-text" style="color: #6c757d;">{{ $data->count() }}</p> <!-- Total count of all services -->
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-12 col-md-4">
-            <div class="card border-0 rounded-3 shadow-lg">
-                <div class="card-body text-center" style="background-color: #f8f9fa;">
-                    <h5 class="card-title" style="color: #343a40;">External Services</h5>
-                    <p class="card-text" style="color: #6c757d;">{{ $data->where('service_type', 'external')->count() }}</p> <!-- Count of external services -->
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-12 col-md-4">
-            <div class="card border-0 rounded-3 shadow-lg">
-                <div class="card-body text-center" style="background-color: #f8f9fa;">
-                    <h5 class="card-title" style="color: #343a40;">Internal Services</h5>
-                    <p class="card-text" style="color: #6c757d;">{{ $data->where('service_type', 'internal')->count() }}</p> <!-- Count of internal services -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Line Chart Section -->
-        <div class="col-sm-20 col-md-12">
-            <div class="text-center my-3">
-                <div class="card border-0 rounded-3 shadow-lg" style="height: 400px;"> <!-- Custom height added here -->
-                    <div class="card-body text-center" style="background-color: #f8f9fa;">
-                        <div class="text-center my-3">
-                            <button onclick="updateChart('monthly')" class="btn btn-outline-primary mx-1">Monthly</button>
-                            <button onclick="updateChart('quarterly')" class="btn btn-outline-primary mx-1">Quarterly</button>
-                            <button onclick="updateChart('biannual')" class="btn btn-outline-primary mx-1">Bi-Annual</button>
-                            <button onclick="updateChart('annual')" class="btn btn-outline-primary mx-1">Annual</button>
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <!-- Gender Responses Chart -->
+                    <div class="col-lg-9">
+                        <div class="card border-0 rounded-3 shadow-lg">
+                            <div class="card-body" style="background-color: #f8f9fa;">
+                                <h5 class="card-title text-center mb-4" style="color: #343a40;">
+                                    Male and Female Responses by Service Type
+                                </h5>
+                                <div class="btn-group d-flex justify-content-center mb-4" role="group" aria-label="Period Selection">
+                                    <button onclick="updateGenderChart('annually')" class="btn btn-outline-primary mx-1" aria-label="View data for Annually">Annually</button>
+                                    <button onclick="updateGenderChart('january-march')" class="btn btn-outline-primary mx-1" aria-label="View data for Q1">Q1</button>
+                                    <button onclick="updateGenderChart('april-june')" class="btn btn-outline-primary mx-1" aria-label="View data for Q2">Q2</button>
+                                    <button onclick="updateGenderChart('july-september')" class="btn btn-outline-primary mx-1" aria-label="View data for Q3">Q3</button>
+                                    <button onclick="updateGenderChart('october-december')" class="btn btn-outline-primary mx-1" aria-label="View data for Q4">Q4</button>
+                                    <button onclick="updateGenderChart('january-june')" class="btn btn-outline-primary mx-1" aria-label="View data for H1">H1</button>
+                                    <button onclick="updateGenderChart('july-december')" class="btn btn-outline-primary mx-1" aria-label="View data for H2">H2</button>
+                                </div>
+                                <canvas id="genderServiceChart" style="width: 100%; height: 400px;"></canvas>
+                            </div>
                         </div>
-                        <canvas id="myLineChart" width="400" height="200"></canvas>
+                    </div>
+
+                    <!-- Services Summary Section -->
+                    <div class="col-lg-3">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <div class="card border-0 rounded-3 shadow-lg text-center">
+                                    <div class="card-body" style="background-color: #ffffff;">
+                                        <i class="bi bi-list-check fs-1 mb-3" style="color: #0d6efd;" aria-hidden="true"></i>
+                                        <h5 class="card-title" style="color: #343a40;">All Services</h5>
+                                        <p class="card-text fs-2" style="color: #6c757d;">{{ $data->count() }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="card border-0 rounded-3 shadow-lg text-center">
+                                    <div class="card-body" style="background-color: #ffffff;">
+                                        <i class="bi bi-arrow-bar-up fs-1 mb-3" style="color: #198754;" aria-hidden="true"></i>
+                                        <h5 class="card-title" style="color: #343a40;">External Services</h5>
+                                        <p class="card-text fs-2" style="color: #6c757d;">{{ $data->where('service_type', 'external')->count() }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="card border-0 rounded-3 shadow-lg text-center">
+                                    <div class="card-body" style="background-color: #ffffff;">
+                                        <i class="bi bi-house-door fs-1 mb-3" style="color: #ffc107;" aria-hidden="true"></i>
+                                        <h5 class="card-title" style="color: #343a40;">Internal Services</h5>
+                                        <p class="card-text fs-2" style="color: #6c757d;">{{ $data->where('service_type', 'internal')->count() }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Submission Trends -->
+                    <div class="col-lg-12 mt-4">
+                        <div class="card border-0 rounded-3 shadow-lg">
+                            <div class="card-body" style="background-color: #f8f9fa;">
+                                <h5 class="card-title text-center mb-4" style="color: #343a40;">Form Submission Trends</h5>
+                                <div class="btn-group d-flex justify-content-center mb-4" role="group" aria-label="View Selection">
+                                    <button onclick="updateChart('monthly')" class="btn btn-outline-primary mx-1" aria-label="View data for Monthly submissions">Monthly</button>
+                                    <button onclick="updateChart('quarterly')" class="btn btn-outline-primary mx-1" aria-label="View data for Quarterly submissions">Quarterly</button>
+                                    <button onclick="updateChart('biannual')" class="btn btn-outline-primary mx-1" aria-label="View data for Bi-Annual submissions">Bi-Annual</button>
+                                    <button onclick="updateChart('annual')" class="btn btn-outline-primary mx-1" aria-label="View data for Annual submissions">Annual</button>
+                                </div>
+                                <canvas id="myLineChart" style="width: 100%; height: 400px;"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-        <!-- Content End -->
 
         <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top" aria-label="Back to top"><i class="bi bi-arrow-up"></i></a>
     </div>
 
     <!-- JavaScript Libraries -->
@@ -103,12 +105,11 @@
     <!-- JavaScript for Line Chart -->
     <script>
         const ctx = document.getElementById('myLineChart').getContext('2d');
-
         const chartData = {
             monthly: @json($monthlySubmissions),
             quarterly: @json($quarterlySubmissions),
             biannual: @json($biAnnualSubmissions),
-            annual: @json([$annualSubmissions])  // Single value array for consistency
+            annual: @json([$annualSubmissions])
         };
 
         const labels = {
@@ -123,13 +124,13 @@
             data: {
                 labels: labels.monthly,
                 datasets: [{
-                    label: 'Form Submitted',
+                    label: 'Form Submissions',
                     data: chartData.monthly,
-                    backgroundColor: 'rgba(0, 123, 255, 0.2)',
-                    borderColor: 'rgba(0, 123, 255, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 2,
                     fill: true,
-                    tension: 0.4,
+                    tension: 0.4
                 }]
             },
             options: {
@@ -150,67 +151,40 @@
     <!-- JavaScript for Gender Responses Chart -->
     <script>
         const genderCtx = document.getElementById('genderServiceChart').getContext('2d');
-
-        // Data for different periods
         const genderData = {
             annually: @json($genderResponses['annually']),
             "january-march": @json($genderResponses['january-march']),
             "april-june": @json($genderResponses['april-june']),
             "july-september": @json($genderResponses['july-september']),
             "october-december": @json($genderResponses['october-december']),
-            "january-april": @json($genderResponses['january-april']),
-            "may-august": @json($genderResponses['may-august']),
-            "september-december": @json($genderResponses['september-december']),
+            "january-june": @json($genderResponses['january-june']),
+            "july-december": @json($genderResponses['july-december']),
         };
 
-        const serviceLabels = ['External Services', 'Internal Services']; // Service types
+        const serviceLabels = ['External Services', 'Internal Services'];
 
         const genderChart = new Chart(genderCtx, {
             type: 'bar',
             data: {
                 labels: serviceLabels,
-                datasets: [
-                    {
-                        label: 'Male',
-                        data: genderData.annually.male, // Default data for annually
-                        backgroundColor: 'rgba(0, 123, 255, 0.7)',
-                        borderWidth: 1,
-                    },
-                    {
-                        label: 'Female',
-                        data: genderData.annually.female, // Default data for annually
-                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
-                        borderWidth: 1,
-                    },
-                ],
+                datasets: [{
+                    label: 'Male Responses',
+                    data: genderData.annually.male,
+                    backgroundColor: '#0d6efd'
+                }, {
+                    label: 'Female Responses',
+                    data: genderData.annually.female,
+                    backgroundColor: '#ffc107'
+                }]
             },
             options: {
                 responsive: true,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                return context.dataset.label + ': ' + context.raw;
-                            },
-                        },
-                    },
-                    legend: {
-                        position: 'top',
-                    },
-                },
                 scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Number of Responses',
-                        },
-                    },
-                },
-            },
+                    y: { beginAtZero: true }
+                }
+            }
         });
 
-        // Function to update the chart based on the selected period
         function updateGenderChart(period) {
             genderChart.data.datasets[0].data = genderData[period].male;
             genderChart.data.datasets[1].data = genderData[period].female;

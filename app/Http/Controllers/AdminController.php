@@ -143,15 +143,13 @@ private function getAgeRange($range)
     $currentYear = $request->input('year', Carbon::now()->year); // Default to current year
     $period = $request->input('period', 'Annual'); // Default to Annual
 
-    // Define periods
     $periods = [
         'Q1' => [1, 3],
         'Q2' => [4, 6],
         'Q3' => [7, 9],
         'Q4' => [10, 12],
-        'H1' => [1, 4],
-        'H2' => [5, 9],
-        'H3' => [10, 12], // May to August
+        'H1' => [1, 6],
+        'H2' => [7, 12],
         'Annual' => [1, 12],
     ];
 
@@ -161,16 +159,47 @@ private function getAgeRange($range)
 
     [$startMonth, $endMonth] = $periods[$period];
 
-    // Fetch service averages for the selected period
+    // Fetch service averages
     $serviceAverages = $this->computeServiceAverages($startMonth, $endMonth, $currentYear);
 
-    // Prepare rankings
+    if (empty($serviceAverages)) {
+        logger('No service averages found for the selected period.');
+    }
+
+    // Sort rankings by overall AWM
     $rankings = collect($serviceAverages)->sortByDesc('overall_awm')->values()->all();
 
-    // Always highlight the current year for the filter dropdown
+    // Sort most used services by total respondents
+    $mostUsedServices = collect($serviceAverages)->sortByDesc('total_respondents')->values()->all();
+
+    // Compute weighted rankings
+    $totalRespondentsSum = array_sum(array_column($serviceAverages, 'total_respondents'));
+    $weightedRankings = collect($serviceAverages)
+        ->map(function ($service) use ($totalRespondentsSum) {
+            $weightedAverage = $totalRespondentsSum > 0
+                ? (($service['overall_awm'] ?? 0) * ($service['total_respondents'] ?? 0)) / $totalRespondentsSum
+                : 0;
+
+            return [
+                'service_name' => $service['service_name'] ?? 'Unknown',
+                'weighted_average' => $weightedAverage,
+            ];
+        })
+        ->sortByDesc('weighted_average')
+        ->values()
+        ->all();
+
     $highlightedYear = Carbon::now()->year;
 
-    return view('admin.rankings', compact('rankings', 'currentYear', 'period', 'serviceAverages', 'highlightedYear'));
+    return view('admin.rankings', compact(
+        'rankings',
+        'currentYear',
+        'period',
+        'serviceAverages',
+        'highlightedYear',
+        'mostUsedServices',
+        'weightedRankings'
+    ));
 }
 
 
@@ -191,10 +220,30 @@ private function getAgeRange($range)
 
         $services->save();
 
-        toastr()->addSuccess('Services Added Succesfully');
+        toastr()->success('Services Succesfully Added.'); 
 
         return redirect()->back();
     }
+
+    public function update_services(Request $request, $id)
+{
+    // Find the service by ID
+    $service = Services::findOrFail($id);
+
+    // Update the service fields
+    $service->services_name = $request->services_name;
+    $service->service_type = $request->service_type;
+
+    // Save the updated service
+    $service->save();
+
+    // Toastr success message
+    toastr()->success('Service updated successfully.');
+
+    // Redirect back
+    return redirect()->back();
+}
+
 
     public function index()
     {
@@ -234,9 +283,8 @@ private function getAgeRange($range)
         'april-june' => $this->getGenderDataByPeriod(4, 6, $currentYear),
         'july-september' => $this->getGenderDataByPeriod(7, 9, $currentYear),
         'october-december' => $this->getGenderDataByPeriod(10, 12, $currentYear),
-        'january-april' => $this->getGenderDataByPeriod(1, 4, $currentYear),
-        'may-august' => $this->getGenderDataByPeriod(5, 8, $currentYear),
-        'september-december' => $this->getGenderDataByPeriod(9, 12, $currentYear),
+        'january-june' => $this->getGenderDataByPeriod(1, 6, $currentYear),
+        'july-december' => $this->getGenderDataByPeriod(7, 12, $currentYear),
     ];
 
     
@@ -293,50 +341,45 @@ private function getAgeRange($range)
 
     if ($data) {
         $data->delete();
-    }
+    
+         // Toastr success message for successful deletion
+         toastr()->success('Service deleted successfully.');
+        } else {
+            // If service not found, toastr error message
+            toastr()->error('Service not found.');
+        }
 
     // Redirect with success message
-    return redirect()->back()->with('success', 'Service deleted successfully.');
+    return redirect()->back();
 
     }
 
     public function reports_bi_quarterly()
     {
         $currentYear = Carbon::now()->year;
-        $januaryToAprilData = $this->fetchDataByPeriod(1, 4, $currentYear);
-        $mayToAugustData = $this->fetchDataByPeriod(5, 8, $currentYear);
-        $septemberToDecember = $this->fetchDataByPeriod(9, 12, $currentYear);
+        $januaryToJuneData = $this->fetchDataByPeriod(1, 6, $currentYear);
+        $julyToDecember = $this->fetchDataByPeriod(7, 12, $currentYear);
 
-        $januaryToAprilResponses = $this->computeCcResponses(1, 4, $currentYear, $januaryToAprilData['totalForms']);
-        $mayToAugustResponses = $this->computeCcResponses(5, 8, $currentYear, $mayToAugustData['totalForms']);
-        $septemberToDecemberResponses = $this->computeCcResponses(9, 12, $currentYear, $septemberToDecember['totalForms']);
+        $januaryToJuneResponses = $this->computeCcResponses(1, 4, $currentYear, $januaryToJuneData['totalForms']);
+        $julyToDecemberResponses = $this->computeCcResponses(9, 12, $currentYear, $julyToDecember['totalForms']);
 
         // Compute averages per service for January to April
-            $serviceAveragesJanToApr = $this->computeServiceAverages(1, 4, $currentYear);
-
-// Compute averages per service for May to August
-        $serviceAveragesMayToAug = $this->computeServiceAverages(5, 8, $currentYear);
+            $serviceAveragesJanToJune = $this->computeServiceAverages(1, 6, $currentYear);
 
 // Compute averages per service for September to December
-        $serviceAveragesSepToDec = $this->computeServiceAverages(9, 12, $currentYear); ////remove it if the table is wrong
+        $serviceAveragesJulToDec = $this->computeServiceAverages(7, 12, $currentYear); ////remove it if the table is wrong
 
         // Compute expectations breakdown for each bi-quarter
-    $januaryToAprilExpectationsBreakdown = $this->aggregateExpectations(
+    $januaryToJuneExpectationsBreakdown = $this->aggregateExpectations(
         ['expectations_0', 'expectations_1', 'expectations_2', 'expectations_3', 'expectations_4', 'expectations_5', 'expectations_6', 'expectations_7', 'expectations_8'],
         $currentYear,
         1,
-        4
+        6
     );
-    $mayToAugustExpectationsBreakdown = $this->aggregateExpectations(
+    $julyToDecemberExpectationsBreakdown = $this->aggregateExpectations(
         ['expectations_0', 'expectations_1', 'expectations_2', 'expectations_3', 'expectations_4', 'expectations_5', 'expectations_6', 'expectations_7', 'expectations_8'],
         $currentYear,
-        5,
-        8
-    );
-    $septemberToDecemberExpectationsBreakdown = $this->aggregateExpectations(
-        ['expectations_0', 'expectations_1', 'expectations_2', 'expectations_3', 'expectations_4', 'expectations_5', 'expectations_6', 'expectations_7', 'expectations_8'],
-        $currentYear,
-        9,
+        7,
         12
     );
 
@@ -379,9 +422,8 @@ private function getAgeRange($range)
     };
 
     // Calculate totals for each quarter
-    $januaryToAprilTotals = $calculateTotals($januaryToAprilExpectationsBreakdown);
-    $mayToAugustTotals = $calculateTotals($mayToAugustExpectationsBreakdown);
-    $septemberToDecemberTotals = $calculateTotals($septemberToDecemberExpectationsBreakdown);
+    $januaryToJuneTotals = $calculateTotals($januaryToJuneExpectationsBreakdown);
+    $julyToDecemberTotals = $calculateTotals($julyToDecemberExpectationsBreakdown);
 
     // Custom field labels
     $fieldLabels = [
@@ -421,22 +463,17 @@ private function getAgeRange($range)
 
     
         return view('admin.reports_bi_quarterly', compact(
-            'januaryToAprilData',
-            'mayToAugustData',
-            'septemberToDecember',
-            'januaryToAprilResponses',
-            'mayToAugustResponses',
-            'septemberToDecemberResponses',
-            'januaryToAprilExpectationsBreakdown',
-            'mayToAugustExpectationsBreakdown',
-            'septemberToDecemberExpectationsBreakdown',
-            'januaryToAprilTotals',
-            'mayToAugustTotals',
-            'septemberToDecemberTotals',
+            'januaryToJuneData',
+            'julyToDecember',
+            'januaryToJuneResponses',
+            'julyToDecemberResponses',
+            'januaryToJuneExpectationsBreakdown',
+            'julyToDecemberExpectationsBreakdown',
+            'januaryToJuneTotals',
+            'julyToDecemberTotals',
             'fieldLabels',
-            'serviceAveragesJanToApr',
-            'serviceAveragesMayToAug',
-            'serviceAveragesSepToDec',  
+            'serviceAveragesJanToJune',
+            'serviceAveragesJulToDec',  
             'yourOptions'
         ));
 
@@ -967,10 +1004,9 @@ private function aggregateExpectations($expectationsFields, $year, $startMonth, 
         'Q2' => [4, 6],
         'Q3' => [7, 9],
         'Q4' => [10, 12],
-        'H1' => [1, 4],
-        'H2' => [5, 8],
-        'H3' => [9, 12],
-        'annually' => [1, 12],
+        'H1' => [1, 6],
+        'H2' => [7, 12],
+        'Annually' => [1, 12],
     ];
 
     if (!isset($quarters[$quarter])) {
@@ -1103,66 +1139,145 @@ private function calculateTotals($data)
     return $totals;
 }
 
-// public function reportsByYear(Request $request)
-// {
-//     $selectedYear = $request->input('year', Carbon::now()->year); // Default to current year
-//     $period = $request->input('period', 'annual'); // Default to annual
-//     $currentYear = Carbon::now()->year;
 
-//     // Define periods
-//     $periods = [
-//         'Q1' => [1, 3],
-//         'Q2' => [4, 6],
-//         'Q3' => [7, 9],
-//         'Q4' => [10, 12],
-//         'H1' => [1, 6],
-//         'H2' => [7, 12],
-//         'Annual' => [1, 12],
-//     ];
+public function pastReports(Request $request)
+{
+    $selectedYear = $request->input('year', now()->year);
+    $selectedPeriod = $request->input('period', 'annual');
 
-//     if (!isset($periods[$period])) {
-//         abort(404, 'Invalid period specified.');
-//     }
+    // Define periods
+    $periods = [
+        'Q1' => [1, 3],
+        'Q2' => [4, 6],
+        'Q3' => [7, 9],
+        'Q4' => [10, 12],
+        'H1' => [1, 6],
+        'H2' => [7, 12],
+        'annual' => [1, 12],
+    ];
 
-//     [$startMonth, $endMonth] = $periods[$period];
+    if (!isset($periods[$selectedPeriod])) {
+        abort(404, 'Invalid period selected.');
+    }
 
-//     // Fetch data for the selected year and period
-//     $data = $this->fetchDataByPeriod($startMonth, $endMonth, $selectedYear);
-//     $responses = $this->computeCcResponses($startMonth, $endMonth, $selectedYear, $data['totalForms']);
-//     $expectationsBreakdown = $this->aggregateExpectations(
-//         [
-//             'expectations_0', 'expectations_1', 'expectations_2',
-//             'expectations_3', 'expectations_4', 'expectations_5',
-//             'expectations_6', 'expectations_7', 'expectations_8'
-//         ],
-//         $selectedYear,
-//         $startMonth,
-//         $endMonth
-//     );
+    [$startMonth, $endMonth] = $periods[$selectedPeriod];
 
-//     // Totals and averages
-//     $totals = $this->calculateTotals($expectationsBreakdown);
+    // Fetch the data for the selected period
+    $data = $this->fetchDataByPeriod($startMonth, $endMonth, $selectedYear);
 
-//     // Fetch service averages
-//     $serviceAverages = $this->computeServiceAverages($startMonth, $endMonth, $selectedYear);
+    if ($data['totalForms'] === 0) {
+        return view('admin.no_data', ['message' => 'No data available for the selected period.']);
+    }
 
-//     // Return view with all necessary data
-//     return view('admin.reports_by_year', compact(
-//         'data',
-//         'responses',
-//         'expectationsBreakdown',
-//         'totals',
-//         'serviceAverages',
-//         'selectedYear',
-//         'period',
-//         'currentYear'
-//     ));
+    // Citizen's Charter Responses
+    $annualResponses = $this->computeCcResponses($startMonth, $endMonth, $selectedYear, $data['totalForms']);
+
+    // Compute breakdown for expectations (replace 'expectations' fields with actual fields)
+    $expectationsFields = [
+        'expectations_0', 'expectations_1', 'expectations_2',
+        'expectations_3', 'expectations_4', 'expectations_5',
+        'expectations_6', 'expectations_7', 'expectations_8'
+    ];
+    $breakdown = $this->aggregateExpectations($expectationsFields, $selectedYear, $startMonth, $endMonth);
+
+    // Totals Calculation
+    $totals = [
+        'strongly_agree' => 0,
+        'agree' => 0,
+        'neither' => 0,
+        'disagree' => 0,
+        'strongly_disagree' => 0,
+        'na' => 0,
+        'total_responses' => 0,
+        'average_overall_score' => 0,
+    ];
+
+    foreach (['cc1', 'cc2', 'cc3'] as $ccKey) {
+        foreach ($annualResponses[$ccKey] as $option => $response) {
+            $totals['total_responses'] += $response['count'];
+            if (in_array($option, ['1', '2'])) { // Adjust as needed for strongly agree/agree options
+                $totals['strongly_agree'] += $response['count'];
+            }
+        }
+    }
+    $totals['average_overall_score'] = $totals['total_responses'] > 0
+        ? ($totals['strongly_agree'] / $totals['total_responses']) * 100
+        : 0;
+
+    // Service Averages
+    $services = $this->computeServiceAverages($startMonth, $endMonth, $selectedYear);
+
+    // Option Descriptions
+    $yourOptions = [
+        'cc1' => [
+            '1' => 'I know what a CC is and I saw this Office\'s CC.',
+            '2' => 'I know what a CC is but I did not see this office\'s CC.',
+            '3' => 'I learned of the CC only when I saw the office\'s CC.',
+            '4' => 'I did not know what a CC is and I did not see this office\'s CC.'
+        ],
+        'cc2' => [
+            '1' => 'Easy to see',
+            '2' => 'Somewhat easy to see',
+            '3' => 'Difficult to see',
+            '4' => 'Not Visible at all',
+            '5' => 'N/A'
+        ],
+        'cc3' => [
+            '1' => 'Helped very much',
+            '2' => 'Somewhat helped',
+            '3' => 'Did not help',
+            '4' => 'N/A'
+        ]
+    ];
 
 
-// }
+    $fieldLabels = [
+        'expectations_0' => 'Responsiveness',
+        'expectations_1' => 'Reliability',
+        'expectations_2' => 'Access and Facilities',
+        'expectations_3' => 'Communication',
+        'expectations_4' => 'Costs',
+        'expectations_5' => 'Integrity',
+        'expectations_6' => 'Assurance',
+        'expectations_7' => 'Outcome',
+        'expectations_8' => 'Overall'
+    ];
+    // Age Ranges
+    $data['ageRanges'] = $this->computeAgeRanges($startMonth, $endMonth, $selectedYear, $data['totalForms'] ?? 0);
 
+    // Return the view with data
+    return view('admin.past_reports', compact(
+        'data',
+        'selectedYear',
+        'selectedPeriod',
+        'annualResponses',
+        'totals',
+        'services',
+        'yourOptions',
+        'breakdown',
+        'fieldLabels'
 
+    ));
+}
+public function determineCustomerType($category)
+{
+    // Define internal and external categories
+    $internalCategories = ['faculty', 'non teaching'];
+    $externalCategories = ['student', 'alumni', 'parents', 'Community Member', 'industry Partner', 'Supplier', 'Regulatory', 'others'];
 
+    // Check if the category is in the internal categories array
+    if (in_array(strtolower($category), $internalCategories)) {
+        return 'Internal Customer';
+    }
+
+    // Check if the category is in the external categories array
+    if (in_array(strtolower($category), $externalCategories)) {
+        return 'External Customer';
+    }
+
+    // Default return if category is unknown
+    return 'Unknown Customer Type';
+}
 
 }
 
