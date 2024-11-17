@@ -76,6 +76,48 @@
                         </div>
                     </div>
 
+
+                    <div class="col-lg-12">
+    <div class="row g-3">
+        <!-- Customer Feedback Card -->
+        <div class="col-md-4 d-flex align-items-stretch">
+            <div class="card border-0 rounded-3 shadow-lg text-center w-100">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center" style="background-color: #ffffff;">
+                    <h5 class="card-title" style="color: #343a40;">Clients By Age</h5>
+                    <canvas id="clientAgeChart" style="max-width: 100%; height: 200px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clients by Municipality Card -->
+        <div class="col-md-4 d-flex align-items-stretch">
+    <div class="card border-0 rounded-3 shadow-lg text-center w-100">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center" style="background-color: #ffffff;">
+            <h5 class="card-title" style="color: #343a40;">Clients by Municipality</h5>
+            <canvas id="municipalityStackedBarChart" style="max-width: 100%; height: 200px;"></canvas>
+        </div>
+    </div>
+</div>
+
+        <!-- Clients by Category Card -->
+        <div class="col-md-4 d-flex align-items-stretch">
+            <div class="card border-0 rounded-3 shadow-lg text-center w-100">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center" style="background-color: #ffffff;">
+                    <h5 class="card-title" style="color: #343a40;">Clients by Category</h5>
+                    <canvas id="categoryDoughnutChart" style="max-width: 100%; height: 200px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+        <!-- End of Additional Cards Row -->
+
+
+                    
+
                     <!-- Form Submission Trends -->
                     <div class="col-lg-12 mt-4">
                         <div class="card border-0 rounded-3 shadow-lg">
@@ -94,6 +136,8 @@
                 </div>
             </div>
         </div>
+
+        
 
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top" aria-label="Back to top"><i class="bi bi-arrow-up"></i></a>
@@ -190,6 +234,182 @@
             genderChart.data.datasets[1].data = genderData[period].female;
             genderChart.update();
         }
+
+
+    //card1
+        document.addEventListener('DOMContentLoaded', () => {
+    const ctx = document.getElementById('clientAgeChart').getContext('2d');
+
+    // Data from Laravel
+    const ageBreakdown = @json($ageBreakdown);
+
+    const labels = Object.keys(ageBreakdown); // Age ranges
+    const externalData = labels.map(label => ageBreakdown[label].external.count);
+    const internalData = labels.map(label => ageBreakdown[label].internal.count);
+
+    const clientAgeChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels, // Age ranges
+            datasets: [
+                {
+                    label: 'External Clients',
+                    data: externalData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)', // Blue
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                },
+                {
+                    label: 'Internal Clients',
+                    data: internalData,
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)', // Red
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1,
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (tooltipItem) {
+                            const total = ageBreakdown[tooltipItem.label].total.count;
+                            const percentage = ageBreakdown[tooltipItem.label].total.percentage.toFixed(2);
+                            return `${tooltipItem.dataset.label}: ${tooltipItem.raw} (${percentage}%)`;
+                        },
+                    },
+                },
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Clients',
+                    },
+                },
+            },
+        },
+    });
+});
+
+
+//card2
+// Data for the stacked bar chart
+const municipalityStackedData = {
+    labels: @json(array_keys($municipalityBreakdown)),
+    datasets: [
+        {
+            label: 'Internal Clients',
+            data: @json(array_map(fn($data) => $data['internal']['count'], $municipalityBreakdown)),
+            backgroundColor: '#FFC107', // Yellow for internal clients
+        },
+        {
+            label: 'External Clients',
+            data: @json(array_map(fn($data) => $data['external']['count'], $municipalityBreakdown)),
+            backgroundColor: '#0D6EFD', // Blue for external clients
+        },
+    ],
+};
+
+// Configuration for the stacked bar chart
+const municipalityStackedBarConfig = {
+    type: 'bar',
+    data: municipalityStackedData,
+    options: {
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top',
+            },
+        },
+        responsive: true,
+        scales: {
+            x: {
+                stacked: true, // Enable stacking on the x-axis
+            },
+            y: {
+                stacked: true, // Enable stacking on the y-axis
+                beginAtZero: true,
+            },
+        },
+    },
+};
+
+// Render the stacked bar chart
+const municipalityStackedBarChart = new Chart(
+    document.getElementById('municipalityStackedBarChart'),
+    municipalityStackedBarConfig
+);
+
+
+//card 3
+
+document.addEventListener('DOMContentLoaded', () => {
+    const ctx = document.getElementById('categoryDoughnutChart').getContext('2d');
+
+    const categoryBreakdown = @json($categoryBreakdown);
+
+    // Extract data
+    const clientCategories = Object.keys(categoryBreakdown);
+    const categoryCounts = clientCategories.map((category) => categoryBreakdown[category].total.count);
+
+    // Data for the chart
+    const data = {
+        labels: clientCategories,
+        datasets: [
+            {
+                label: 'Clients by Category',
+                data: categoryCounts,
+                backgroundColor: [
+                    '#007BFF', '#FFC107', '#28A745', '#DC3545', '#17A2B8',
+                    '#6C757D', '#FD7E14', '#6610F2', '#E83E8C', '#20C997',
+                ], // Unique colors for each category
+                hoverOffset: 10,
+            },
+        ],
+    };
+
+    // Chart options
+    const options = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'right', // Display legend on the right
+                labels: {
+                    boxWidth: 20,
+                },
+            },
+            tooltip: {
+                callbacks: {
+                    label: function (tooltipItem) {
+                        const category = tooltipItem.label;
+                        const count = tooltipItem.raw;
+                        const percentage =
+                            categoryBreakdown[category].total.percentage.toFixed(1);
+                        return `${category}: ${count} (${percentage}%)`;
+                    },
+                },
+            },
+        },
+    };
+
+    // Create the chart
+    const categoryDoughnutChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: data,
+        options: options,
+    });
+});
+
+
     </script>
 </body>
 

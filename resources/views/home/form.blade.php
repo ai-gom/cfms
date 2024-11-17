@@ -18,6 +18,61 @@
     <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('css/index.css')}}" rel="stylesheet">
     <link href="{{asset('home/form.css')}}" rel="stylesheet">
+    <style>
+    /* Fullscreen Layout */
+    .form-container {
+        padding: 20px;
+        width: 100vw;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .form-wrapper {
+        width: 100%;
+        max-width: 900px;
+    }
+
+    .card {
+        margin-bottom: 15px;
+        width: 100%;
+    }
+
+    /* Mobile View Adjustments */
+    @media (max-width: 576px) {
+        .form-container {
+            display: none; /* Completely remove the container */
+        }
+
+        form {
+            width: 100%; /* Make the form full width */
+            min-height: 100vh; /* Make the form fill the viewport */
+            padding: 10px; /* Add some padding for readability */
+            display: block; /* Ensure block layout for the form */
+        }
+
+        .card {
+            margin: 0; /* Remove card margin */
+            padding: 10px; /* Keep some internal padding */
+            border: none; /* Remove borders */
+            box-shadow: none; /* Remove shadow */
+            width: 100%; /* Full width cards */
+        }
+
+        .card-header {
+            font-size: 1.2rem;
+            padding: 0;
+            background: none;
+            color: #000;
+        }
+
+        .card-body {
+            padding: 5px;
+        }
+    }
+</style>
+
 </head>
 
 <body>

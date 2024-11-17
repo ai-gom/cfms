@@ -1,250 +1,253 @@
-  <!-- Card Start for Age Table -->
-  <div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
+@php
+    // Calculate total forms only once
+    $totalForms = 0;
+
+    // Dynamically calculate totalForms based on available data
+    if (isset($q2AgeBreakdown)) {
+        $totalForms = array_sum(array_column(array_column($q2AgeBreakdown, 'total'), 'count'));
+    } elseif (isset($clientSexBreakdownAprilToJune)) {
+        $totalForms = array_sum(array_map(function ($counts) {
+            return $counts['Internal'] + $counts['External'];
+        }, $clientSexBreakdownAprilToJune));
+    } elseif (isset($q2MunicipalityBreakdown)) {
+        $totalForms = array_sum(array_column(array_column($q2MunicipalityBreakdown, 'total'), 'count'));
+    } elseif (isset($q2CategoryBreakdown)) {
+        $totalForms = array_sum(array_column(array_column($q2CategoryBreakdown, 'total'), 'count'));
+    }
+@endphp
+
+<!-- Table 1: Age Breakdown -->
+<div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
     <div class="card-header">
-        <h4>Table 1: Age</h4>
+        <h4>Table 1: Age Breakdown</h4>
     </div>
     <div class="card-body">
         <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>Age</th>
-                    <th>External</th>
-                    <th>Internal</th>
-                    <th>Overall</th>
+                    <th>External (Count & Percentage)</th>
+                    <th>Internal (Count & Percentage)</th>
+                    <th>Overall (Count & Percentage)</th>
                 </tr>
             </thead>
             <tbody>
-                @php
-                    $totalExternalCount = 0;
-                    $totalInternalCount = 0;
-                    $totalOverallCount = 0;
-                @endphp
-
-                @foreach ($aprilToJuneData['ageRanges'] as $range => $data)
+                @foreach ($q2AgeBreakdown as $ageRange => $data)
                     <tr>
-                        <td>{{ $range }}</td>
+                        <td>{{ $ageRange }}</td>
                         <td>{{ $data['external']['count'] }} ({{ number_format($data['external']['percentage'], 2) }}%)</td>
                         <td>{{ $data['internal']['count'] }} ({{ number_format($data['internal']['percentage'], 2) }}%)</td>
                         <td>{{ $data['total']['count'] }} ({{ number_format($data['total']['percentage'], 2) }}%)</td>
                     </tr>
-                    @php
-                        $totalExternalCount += $data['external']['count'];
-                        $totalInternalCount += $data['internal']['count'];
-                        $totalOverallCount += $data['total']['count'];
-                    @endphp
                 @endforeach
-
-                <!-- Totals Row -->
-                @php
-                    $totalForms = $totalExternalCount + $totalInternalCount;
-                    $totalExternalPercentage = ($totalForms > 0) ? ($totalExternalCount / $totalForms) * 100 : 0;
-                    $totalInternalPercentage = ($totalForms > 0) ? ($totalInternalCount / $totalForms) * 100 : 0;
-                    $totalOverallPercentage = ($totalForms > 0) ? ($totalOverallCount / $totalForms) * 100 : 0;
-                @endphp
                 <tr>
                     <td><strong>Total</strong></td>
-                    <td><strong>{{ $totalExternalCount }} ({{ number_format($totalExternalPercentage, 2) }}%)</strong></td>
-                    <td><strong>{{ $totalInternalCount }} ({{ number_format($totalInternalPercentage, 2) }}%)</strong></td>
-                    <td><strong>{{ $totalOverallCount }} ({{ number_format($totalOverallPercentage, 2) }}%)</strong></td>
+                    <td>
+                        <strong>
+                            {{ array_sum(array_column(array_column($q2AgeBreakdown, 'external'), 'count')) }} 
+                            ({{ number_format(array_sum(array_column(array_column($q2AgeBreakdown, 'external'), 'percentage')), 2) }}%)
+                        </strong>
+                    </td>
+                    <td>
+                        <strong>
+                            {{ array_sum(array_column(array_column($q2AgeBreakdown, 'internal'), 'count')) }} 
+                            ({{ number_format(array_sum(array_column(array_column($q2AgeBreakdown, 'internal'), 'percentage')), 2) }}%)
+                        </strong>
+                    </td>
+                    <td>
+                        <strong>
+                            {{ array_sum(array_column(array_column($q2AgeBreakdown, 'total'), 'count')) }} 
+                            ({{ number_format(array_sum(array_column(array_column($q2AgeBreakdown, 'total'), 'percentage')), 2) }}%)
+                        </strong>
+                    </td>
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
 
-    
-     <!-- Card Start for Gender Percentages -->
-<div class="card" style="margin-top: 20px; margin-left: 20px;">
+<!-- Table 2: Sex Breakdown -->
+<div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
     <div class="card-header">
-        <h4>Table 2. Sex</h4>
+        <h4>Table 2: Breakdown by Sex and Client Type</h4>
     </div>
     <div class="card-body">
         <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>Sex</th>
-                    <th>External (%)</th>
-                    <th>Internal (%)</th>
-                    <th>Overall (%)</th>
+                    <th>External (Count & Percentage)</th>
+                    <th>Internal (Count & Percentage)</th>
+                    <th>Total Count (Count & Percentage)</th>
                 </tr>
             </thead>
             <tbody>
                 @php
-                    // Initialize totals for each column
-                    $totalExternalPercentage = 0;
-                    $totalInternalPercentage = 0;
-                    $totalOverallPercentage = 0;
+                    $totalInternalCount = 0;
+                    $totalExternalCount = 0;
+                    foreach ($clientSexBreakdownAprilToJune as $counts) {
+                        $totalInternalCount += $counts['Internal'];
+                        $totalExternalCount += $counts['External'];
+                    }
+                    $grandTotalClients = $totalInternalCount + $totalExternalCount;
                 @endphp
 
-                <!-- Male Row -->
-                <tr>
-                    <td>Male</td>
-                    <td>{{ number_format($aprilToJuneData['maleExternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($aprilToJuneData['maleInternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($aprilToJuneData['maleOverallPercentage'], 2) }}%</td>
-                </tr>
-                @php
-                    $totalExternalPercentage += $aprilToJuneData['maleExternalPercentage'];
-                    $totalInternalPercentage += $aprilToJuneData['maleInternalPercentage'];
-                    $totalOverallPercentage += $aprilToJuneData ['maleOverallPercentage'];
-                @endphp
+                @foreach ($clientSexBreakdownAprilToJune as $sex => $counts)
+                    @php
+                        $totalClients = $counts['Internal'] + $counts['External'];
+                        $externalPercentage = ($totalClients > 0) ? ($counts['External'] / $totalClients) * 100 : 0;
+                        $internalPercentage = ($totalClients > 0) ? ($counts['Internal'] / $totalClients) * 100 : 0;
+                        $totalClientsPercentage = ($grandTotalClients > 0) ? ($totalClients / $grandTotalClients) * 100 : 0;
+                    @endphp
 
-                <!-- Female Row -->
-                <tr>
-                    <td>Female</td>
-                    <td>{{ number_format($aprilToJuneData['femaleExternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($aprilToJuneData['femaleInternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($aprilToJuneData['femaleOverallPercentage'], 2) }}%</td>
-                </tr>
-                @php
-                    $totalExternalPercentage += $aprilToJuneData['femaleExternalPercentage'];
-                    $totalInternalPercentage += $aprilToJuneData['femaleInternalPercentage'];
-                    $totalOverallPercentage  += $aprilToJuneData['femaleOverallPercentage'];
-                @endphp
-
-                <!-- Prefer Not to Say Row -->
-                <tr>
-                    <td>Prefer Not to Say</td>
-                    <td>{{ number_format($aprilToJuneData['preferNotToSayExternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($aprilToJuneData['preferNotToSayInternalPercentage'], 2) }}%</td>
-                    <td>{{ number_format($aprilToJuneData['preferNotToSayOverallPercentage'], 2) }}%</td>
-                </tr>
-                @php
-                    $totalExternalPercentage += $aprilToJuneData['preferNotToSayExternalPercentage'];
-                    $totalInternalPercentage += $aprilToJuneData['preferNotToSayInternalPercentage'];
-                    $totalOverallPercentage +=  $aprilToJuneData['preferNotToSayOverallPercentage'];
-                @endphp
+                    <tr>
+                        <td>{{ ucfirst($sex) }}</td>
+                        <td>{{ $counts['External'] }} ({{ number_format($externalPercentage, 2) }}%)</td>
+                        <td>{{ $counts['Internal'] }} ({{ number_format($internalPercentage, 2) }}%)</td>
+                        <td>{{ $totalClients }} ({{ number_format($totalClientsPercentage, 2) }}%)</td>
+                    </tr>
+                @endforeach
 
                 <!-- Totals Row -->
                 <tr>
                     <td><strong>Total</strong></td>
-                    <td><strong>{{ number_format($totalExternalPercentage, 2) }}%</strong></td>
-                    <td><strong>{{ number_format($totalInternalPercentage, 2) }}%</strong></td>
-                    <td><strong>{{ number_format($totalOverallPercentage, 2) }}%</strong></td>
+                    <td>
+                        <strong>
+                            {{ $totalExternalCount }} 
+                            ({{ number_format(($grandTotalClients > 0) ? ($totalExternalCount / $grandTotalClients) * 100 : 0, 2) }}%)
+                        </strong>
+                    </td>
+                    <td>
+                        <strong>
+                            {{ $totalInternalCount }} 
+                            ({{ number_format(($grandTotalClients > 0) ? ($totalInternalCount / $grandTotalClients) * 100 : 0, 2) }}%)
+                        </strong>
+                    </td>
+                    <td>
+                        <strong>
+                            {{ $grandTotalClients }} 
+                            ({{ $grandTotalClients > 0 ? '100.00' : '0.00' }}%)
+                        </strong>
+                    </td>
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
 
-    <!-- Card Start for Municipality -->
-<div class="card" style="margin-top: 20px; margin-left: 20px;">
+
+<!-- Table 3: Municipality of Residence Breakdown -->
+<div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
     <div class="card-header">
-        <h4>Table 3. Municipality of Residence</h4>
+        <h4>Table 3: Municipality of Residence Breakdown</h4>
     </div>
     <div class="card-body">
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Municipality</th>
-                    <th>External</th>
-                    <th>Internal</th>
-                    <th>Overall</th>
+                    <th>Municipality of Residence</th>
+                    <th>External (Count & Percentage)</th>
+                    <th>Internal (Count & Percentage)</th>
+                    <th>Overall (Count & Percentage)</th>
                 </tr>
             </thead>
             <tbody>
                 @php
-                    // Initialize counters
-                    $totalExternalCount = 0;
-                    $totalInternalCount = 0;
-                    $totalOverallCount = 0;
+                    $totalExternal = 0;
+                    $totalInternal = 0;
+                    $totalOverall = 0;
                 @endphp
 
-                @foreach ($aprilToJuneData['municipalityData'] as $municipality => $data)
+                @foreach ($q2MunicipalityBreakdown as $municipality => $counts)
+                    @php
+                        $totalExternal += $counts['external']['count'];
+                        $totalInternal += $counts['internal']['count'];
+                        $totalOverall += $counts['total']['count'];
+                    @endphp
                     <tr>
                         <td>{{ $municipality }}</td>
-                        <td>{{ $data['external']['count'] }} ({{ number_format($data['external']['percentage'], 2) }}%)</td>
-                        <td>{{ $data['internal']['count'] }} ({{ number_format($data['internal']['percentage'], 2) }}%)</td>
-                        <td>{{ $data['total']['count'] }} ({{ number_format($data['total']['percentage'], 2) }}%)</td>
+                        <td>{{ $counts['external']['count'] }} ({{ number_format($counts['external']['percentage'], 2) }}%)</td>
+                        <td>{{ $counts['internal']['count'] }} ({{ number_format($counts['internal']['percentage'], 2) }}%)</td>
+                        <td>{{ $counts['total']['count'] }} ({{ number_format($counts['total']['percentage'], 2) }}%)</td>
                     </tr>
-                    
-                    @php
-                        // Add to totals
-                        $totalExternalCount += $data['external']['count'];
-                        $totalInternalCount += $data['internal']['count'];
-                        $totalOverallCount += $data['total']['count'];
-                    @endphp
                 @endforeach
-
-                @php
-                    // Calculate total percentages based on total forms
-                    $totalForms = $aprilToJuneData['totalForms'];
-                    $totalExternalPercentage = ($totalForms > 0) ? ($totalExternalCount / $totalForms) * 100 : 0;
-                    $totalInternalPercentage = ($totalForms > 0) ? ($totalInternalCount / $totalForms) * 100 : 0;
-                    $totalOverallPercentage = ($totalForms > 0) ? ($totalOverallCount / $totalForms) * 100 : 0;
-                @endphp
 
                 <!-- Totals Row -->
                 <tr>
                     <td><strong>Total</strong></td>
-                    <td><strong>{{ $totalExternalCount }} ({{ number_format($totalExternalPercentage, 2) }}%)</strong></td>
-                    <td><strong>{{ $totalInternalCount }} ({{ number_format($totalInternalPercentage, 2) }}%)</strong></td>
-                    <td><strong>{{ $totalOverallCount }} ({{ number_format($totalOverallPercentage, 2) }}%)</strong></td>
+                    <td>
+                        <strong>{{ $totalExternal }} ({{ number_format(($totalForms > 0) ? ($totalExternal / $totalForms) * 100 : 0, 2) }}%)</strong>
+                    </td>
+                    <td>
+                        <strong>{{ $totalInternal }} ({{ number_format(($totalForms > 0) ? ($totalInternal / $totalForms) * 100 : 0, 2) }}%)</strong>
+                    </td>
+                    <td>
+                        <strong>{{ $totalOverall }} ({{ number_format(($totalForms > 0) ? ($totalOverall / $totalForms) * 100 : 0, 2) }}%)</strong>
+                    </td>
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
 
-
-    <!-- Card Start for Client Category -->
-<div class="card" style="margin-top: 20px; margin-left: 20px;">
+<!-- Table 4: Client Category Breakdown -->
+<div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
     <div class="card-header">
-        <h4>Table 4. Client Category</h4>
+        <h4>Table 4: Client Category Breakdown</h4>
     </div>
     <div class="card-body">
         <table class="table table-bordered">
             <thead>
                 <tr>
+                    <th>Customer Type</th>
                     <th>Client Category</th>
-                    <th>External</th>
-                    <th>Internal</th>
-                    <th>Total</th>
+                    <th>External (Count & Percentage)</th>
+                    <th>Internal (Count & Percentage)</th>
+                    <th>Total (Count & Percentage)</th>
                 </tr>
             </thead>
             <tbody>
                 @php
-                    // Initialize counters for total counts
-                    $totalExternalCount = 0;
-                    $totalInternalCount = 0;
-                    $grandTotalCount = 0;
+                    $internalCategories = ['Faculty', 'Non-teaching staff'];
+                    $totalExternal = 0;
+                    $totalInternal = 0;
+                    $totalOverall = 0;
                 @endphp
 
-                @foreach ($aprilToJuneData['clientCategories'] as $category => $data)
-                    <tr>
-                        <td>{{ $category }}</td>
-                        <td>{{ $data['external']['count'] }} ({{ number_format($data['external']['percentage'], 2) }}%)</td>
-                        <td>{{ $data['internal']['count'] }} ({{ number_format($data['internal']['percentage'], 2) }}%)</td>
-                        <td>{{ $data['total']['count'] }} ({{ number_format($data['total']['percentage'], 2) }}%)</td>
-                    </tr>
-                    
+                @foreach ($q2CategoryBreakdown as $category => $counts)
                     @php
-                        // Accumulate totals for each type
-                        $totalExternalCount += $data['external']['count'];
-                        $totalInternalCount += $data['internal']['count'];
-                        $grandTotalCount += $data['total']['count'];
+                        $customerType = in_array($category, $internalCategories) ? 'Internal' : 'External';
+                        $totalExternal += $counts['external']['count'];
+                        $totalInternal += $counts['internal']['count'];
+                        $totalOverall += $counts['total']['count'];
                     @endphp
+                    <tr>
+                        <td>{{ $customerType }}</td>
+                        <td>{{ $category }}</td>
+                        <td>{{ $counts['external']['count'] }} ({{ number_format($counts['external']['percentage'], 2) }}%)</td>
+                        <td>{{ $counts['internal']['count'] }} ({{ number_format($counts['internal']['percentage'], 2) }}%)</td>
+                        <td>{{ $counts['total']['count'] }} ({{ number_format($counts['total']['percentage'], 2) }}%)</td>
+                    </tr>
                 @endforeach
-
-                @php
-                    // Calculate total percentages based on the grand total count
-                    $overallCount = $totalExternalCount + $totalInternalCount; // Sum of all entries
-                    $totalExternalPercentage = ($overallCount > 0) ? ($totalExternalCount / $overallCount) * 100 : 0;
-                    $totalInternalPercentage = ($overallCount > 0) ? ($totalInternalCount / $overallCount) * 100 : 0;
-                    $grandTotalPercentage = ($overallCount > 0) ? ($grandTotalCount / $overallCount) * 100 : 0;
-                @endphp
 
                 <!-- Totals Row -->
                 <tr>
                     <td><strong>Total</strong></td>
-                    <td><strong>{{ $totalExternalCount }} ({{ number_format($totalExternalPercentage, 2) }}%)</strong></td>
-                    <td><strong>{{ $totalInternalCount }} ({{ number_format($totalInternalPercentage, 2) }}%)</strong></td>
-                    <td><strong>{{ $grandTotalCount }} ({{ number_format($grandTotalPercentage, 2) }}%)</strong></td>
+                    <td><strong>-</strong></td>
+                    <td>
+                        <strong>{{ $totalExternal }} ({{ number_format(($totalForms > 0) ? ($totalExternal / $totalForms) * 100 : 0, 2) }}%)</strong>
+                    </td>
+                    <td>
+                        <strong>{{ $totalInternal }} ({{ number_format(($totalForms > 0) ? ($totalInternal / $totalForms) * 100 : 0, 2) }}%)</strong>
+                    </td>
+                    <td>
+                        <strong>{{ $totalOverall }} ({{ number_format(($totalForms > 0) ? ($totalOverall / $totalForms) * 100 : 0, 2) }}%)</strong>
+                    </td>
                 </tr>
             </tbody>
         </table>
     </div>
-</div>
+</div>  
 
 
    <!-- Card for Citizen's Charter Awareness - April to June -->

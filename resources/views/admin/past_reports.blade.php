@@ -68,123 +68,91 @@
 </div>
 
 
-
-
-                <!-- Table 1: Age -->
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h4>Table 1: Age</h4>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Age Range</th>
-                                    <th>External</th>
-                                    <th>Internal</th>
-                                    <th>Overall</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($data['ageRanges'] as $range => $values)
-                                    <tr>
-                                        <td>{{ $range }}</td>
-                                        <td>{{ $values['external']['count'] }} ({{ number_format($values['external']['percentage'], 2) }}%)</td>
-                                        <td>{{ $values['internal']['count'] }} ({{ number_format($values['internal']['percentage'], 2) }}%)</td>
-                                        <td>{{ $values['total']['count'] }} ({{ number_format($values['total']['percentage'], 2) }}%)</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Table 2: Sex -->
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h4>Table 2: Sex</h4>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Sex</th>
-                                    <th>External (%)</th>
-                                    <th>Internal (%)</th>
-                                    <th>Overall (%)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Male</td>
-                                    <td>{{ number_format($data['maleExternalPercentage'], 2) }}%</td>
-                                    <td>{{ number_format($data['maleInternalPercentage'], 2) }}%</td>
-                                    <td>{{ number_format($data['maleOverallPercentage'], 2) }}%</td>
-                                </tr>
-                                <tr>
-                                    <td>Female</td>
-                                    <td>{{ number_format($data['femaleExternalPercentage'], 2) }}%</td>
-                                    <td>{{ number_format($data['femaleInternalPercentage'], 2) }}%</td>
-                                    <td>{{ number_format($data['femaleOverallPercentage'], 2) }}%</td>
-                                </tr>
-                                <tr>
-                                    <td>Prefer Not to Say</td>
-                                    <td>{{ number_format($data['preferNotToSayExternalPercentage'], 2) }}%</td>
-                                    <td>{{ number_format($data['preferNotToSayInternalPercentage'], 2) }}%</td>
-                                    <td>{{ number_format($data['preferNotToSayOverallPercentage'], 2) }}%</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="card mt-4">
+<div class="card mt-4">
     <div class="card-header">
-        <h4>Table 3. Municipality of Residence</h4>
+        <h4>Table 1: Age Breakdown</h4>
     </div>
     <div class="card-body">
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Municipality</th>
-                    <th>External</th>
-                    <th>Internal</th>
-                    <th>Overall</th>
+                    <th>Age</th>
+                    <th>External (Count & Percentage)</th>
+                    <th>Internal (Count & Percentage)</th>
+                    <th>Total (Count & Percentage)</th>
                 </tr>
             </thead>
             <tbody>
                 @php
-                    $totalExternalCount = 0;
-                    $totalInternalCount = 0;
-                    $totalOverallCount = 0;
+                    $totalAgeExternal = 0;
+                    $totalAgeInternal = 0;
+                    $totalAgeOverall = 0;
                 @endphp
 
-                @foreach ($data['municipalityData'] as $municipality => $info)
-                    <tr>
-                        <td>{{ $municipality }}</td>
-                        <td>{{ $info['external']['count'] }} ({{ number_format($info['external']['percentage'], 2) }}%)</td>
-                        <td>{{ $info['internal']['count'] }} ({{ number_format($info['internal']['percentage'], 2) }}%)</td>
-                        <td>{{ $info['total']['count'] }} ({{ number_format($info['total']['percentage'], 2) }}%)</td>
-                    </tr>
+                @foreach ($ageBreakdown as $ageRange => $data)
                     @php
-                        $totalExternalCount += $info['external']['count'];
-                        $totalInternalCount += $info['internal']['count'];
-                        $totalOverallCount += $info['total']['count'];
+                        $totalAgeExternal += $data['external']['count'];
+                        $totalAgeInternal += $data['internal']['count'];
+                        $totalAgeOverall += $data['total']['count'];
                     @endphp
+                    <tr>
+                        <td>{{ $ageRange }}</td>
+                        <td>{{ $data['external']['count'] }} ({{ number_format($data['external']['percentage'], 2) }}%)</td>
+                        <td>{{ $data['internal']['count'] }} ({{ number_format($data['internal']['percentage'], 2) }}%)</td>
+                        <td>{{ $data['total']['count'] }} ({{ number_format($data['total']['percentage'], 2) }}%)</td>
+                    </tr>
                 @endforeach
-
-                @php
-                    $totalForms = $data['totalForms'] ?? 1; // Prevent division by zero
-                    $totalExternalPercentage = ($totalForms > 0) ? ($totalExternalCount / $totalForms) * 100 : 0;
-                    $totalInternalPercentage = ($totalForms > 0) ? ($totalInternalCount / $totalForms) * 100 : 0;
-                    $totalOverallPercentage = ($totalForms > 0) ? ($totalOverallCount / $totalForms) * 100 : 0;
-                @endphp
-
                 <tr>
                     <td><strong>Total</strong></td>
-                    <td><strong>{{ $totalExternalCount }} ({{ number_format($totalExternalPercentage, 2) }}%)</strong></td>
-                    <td><strong>{{ $totalInternalCount }} ({{ number_format($totalInternalPercentage, 2) }}%)</strong></td>
-                    <td><strong>{{ $totalOverallCount }} ({{ number_format($totalOverallPercentage, 2) }}%)</strong></td>
+                    <td><strong>{{ $totalAgeExternal }} ({{ number_format(($totalAgeExternal / $totalAgeOverall) * 100, 2) }}%)</strong></td>
+                    <td><strong>{{ $totalAgeInternal }} ({{ number_format(($totalAgeInternal / $totalAgeOverall) * 100, 2) }}%)</strong></td>
+                    <td><strong>{{ $totalAgeOverall }} (100.00%)</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h4>Table 2: Breakdown by Sex and Client Type</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Sex</th>
+                    <th>External (Count & Percentage)</th>
+                    <th>Internal (Count & Percentage)</th>
+                    <th>Total (Count & Percentage)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                    $totalSexExternal = 0;
+                    $totalSexInternal = 0;
+                    $totalSexOverall = 0;
+                @endphp
+
+                @foreach ($sexBreakdown as $sex => $counts)
+                    @php
+                        $totalSexExternal += $counts['External'];
+                        $totalSexInternal += $counts['Internal'];
+                        $totalSexOverall += $counts['Internal'] + $counts['External'];
+                    @endphp
+                    <tr>
+                        <td>{{ ucfirst($sex) }}</td>
+                        <td>{{ $counts['External'] }} ({{ number_format($counts['ExternalPercentage'], 2) }}%)</td>
+                        <td>{{ $counts['Internal'] }} ({{ number_format($counts['InternalPercentage'], 2) }}%)</td>
+                        <td>{{ $counts['Internal'] + $counts['External'] }} ({{ number_format($counts['InternalPercentage'] + $counts['ExternalPercentage'], 2) }}%)</td>
+                    </tr>
+                @endforeach
+                <tr>
+                    <td><strong>Total</strong></td>
+                    <td><strong>{{ $totalSexExternal }} ({{ number_format(($totalSexExternal / $totalSexOverall) * 100, 2) }}%)</strong></td>
+                    <td><strong>{{ $totalSexInternal }} ({{ number_format(($totalSexInternal / $totalSexOverall) * 100, 2) }}%)</strong></td>
+                    <td><strong>{{ $totalSexOverall }} (100.00%)</strong></td>
                 </tr>
             </tbody>
         </table>
@@ -195,56 +163,99 @@
 
 <div class="card mt-4">
     <div class="card-header">
-        <h4>Table 4. Client Category</h4>
+        <h4>Table 3: Breakdown by Municipality of Residence</h4>
     </div>
     <div class="card-body">
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Client Category</th>
-                    <th>External</th>
-                    <th>Internal</th>
-                    <th>Total</th>
+                    <th>Municipality</th>
+                    <th>External (Count & Percentage)</th>
+                    <th>Internal (Count & Percentage)</th>
+                    <th>Total (Count & Percentage)</th>
                 </tr>
             </thead>
             <tbody>
                 @php
-                    $totalExternalCount = 0;
-                    $totalInternalCount = 0;
-                    $totalOverallCount = 0;
+                    $totalMunicipalityExternal = 0;
+                    $totalMunicipalityInternal = 0;
+                    $totalMunicipalityOverall = 0;
                 @endphp
 
-                @foreach ($data['clientCategories'] as $category => $info)
-                    <tr>
-                        <td>{{ $category }}</td>
-                        <td>{{ $info['external']['count'] }} ({{ number_format($info['external']['percentage'], 2) }}%)</td>
-                        <td>{{ $info['internal']['count'] }} ({{ number_format($info['internal']['percentage'], 2) }}%)</td>
-                        <td>{{ $info['total']['count'] }} ({{ number_format($info['total']['percentage'], 2) }}%)</td>
-                    </tr>
+                @foreach ($municipalityBreakdown as $municipality => $counts)
                     @php
-                        $totalExternalCount += $info['external']['count'];
-                        $totalInternalCount += $info['internal']['count'];
-                        $totalOverallCount += $info['total']['count'];
+                        $totalMunicipalityExternal += $counts['external']['count'];
+                        $totalMunicipalityInternal += $counts['internal']['count'];
+                        $totalMunicipalityOverall += $counts['total']['count'];
                     @endphp
+                    <tr>
+                        <td>{{ $municipality }}</td>
+                        <td>{{ $counts['external']['count'] }} ({{ number_format($counts['external']['percentage'], 2) }}%)</td>
+                        <td>{{ $counts['internal']['count'] }} ({{ number_format($counts['internal']['percentage'], 2) }}%)</td>
+                        <td>{{ $counts['total']['count'] }} ({{ number_format($counts['total']['percentage'], 2) }}%)</td>
+                    </tr>
                 @endforeach
-
-                @php
-                    $overallCount = $totalExternalCount + $totalInternalCount;
-                    $totalExternalPercentage = ($overallCount > 0) ? ($totalExternalCount / $overallCount) * 100 : 0;
-                    $totalInternalPercentage = ($overallCount > 0) ? ($totalInternalCount / $overallCount) * 100 : 0;
-                    $grandTotalPercentage = ($overallCount > 0) ? ($totalOverallCount / $overallCount) * 100 : 0;
-                @endphp
-
                 <tr>
                     <td><strong>Total</strong></td>
-                    <td><strong>{{ $totalExternalCount }} ({{ number_format($totalExternalPercentage, 2) }}%)</strong></td>
-                    <td><strong>{{ $totalInternalCount }} ({{ number_format($totalInternalPercentage, 2) }}%)</strong></td>
-                    <td><strong>{{ $totalOverallCount }} ({{ number_format($grandTotalPercentage, 2) }}%)</strong></td>
+                    <td><strong>{{ $totalMunicipalityExternal }} ({{ number_format(($totalMunicipalityExternal / $totalMunicipalityOverall) * 100, 2) }}%)</strong></td>
+                    <td><strong>{{ $totalMunicipalityInternal }} ({{ number_format(($totalMunicipalityInternal / $totalMunicipalityOverall) * 100, 2) }}%)</strong></td>
+                    <td><strong>{{ $totalMunicipalityOverall }} (100.00%)</strong></td>
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h4>Table 4: Client Category Breakdown</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Customer Type</th>
+                    <th>Client Category</th>
+                    <th>External (Count & Percentage)</th>
+                    <th>Internal (Count & Percentage)</th>
+                    <th>Total (Count & Percentage)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                    $totalCategoryExternal = 0;
+                    $totalCategoryInternal = 0;
+                    $totalCategoryOverall = 0;
+                @endphp
+
+                @foreach ($clientCategoryBreakdown as $category => $counts)
+                    @php
+                        $totalCategoryExternal += $counts['external']['count'];
+                        $totalCategoryInternal += $counts['internal']['count'];
+                        $totalCategoryOverall += $counts['total']['count'];
+                    @endphp
+                    <tr>
+                        <td>{{ in_array($category, ['Faculty', 'Non-teaching staff']) ? 'Internal' : 'External' }}</td>
+                        <td>{{ $category }}</td>
+                        <td>{{ $counts['external']['count'] }} ({{ number_format($counts['external']['percentage'], 2) }}%)</td>
+                        <td>{{ $counts['internal']['count'] }} ({{ number_format($counts['internal']['percentage'], 2) }}%)</td>
+                        <td>{{ $counts['total']['count'] }} ({{ number_format($counts['total']['percentage'], 2) }}%)</td>
+                    </tr>
+                @endforeach
+                <tr>
+                    <td colspan="2"><strong>Total</strong></td>
+                    <td><strong>{{ $totalCategoryExternal }} ({{ number_format(($totalCategoryExternal / $totalCategoryOverall) * 100, 2) }}%)</strong></td>
+                    <td><strong>{{ $totalCategoryInternal }} ({{ number_format(($totalCategoryInternal / $totalCategoryOverall) * 100, 2) }}%)</strong></td>
+                    <td><strong>{{ $totalCategoryOverall }} (100.00%)</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+                
 
 
 <div class="card mt-4">

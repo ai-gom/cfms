@@ -23,6 +23,7 @@ class AdminController extends Controller
         // Fetch data for the entire year (January to December)
         $annualData = $this->fetchDataByPeriod(1, 12, $currentYear);
         $annualResponses = $this->computeCcResponses(1, 12, $currentYear, $annualData['totalForms']);
+        
     
         $expectationsFields = [
             'expectations_0', 'expectations_1', 'expectations_2',
@@ -104,6 +105,16 @@ class AdminController extends Controller
                 '4' => 'N/A'
             ]
         ];
+
+       // Add the client classification breakdown with required parameters
+    $clientSexBreakdown = $this->getClientSexBreakdown(1, 12, $currentYear);
+        //age
+    $clientAgeBreakdown = $this->getClientAgeBreakdown(1, 12, $currentYear);
+
+    // Add municipality breakdown
+    $municipalityBreakdown = $this->getClientMunicipalityBreakdown(1, 12, $currentYear);
+
+    $categoryBreakdown = $this->getClientCategoryBreakdown(1, 12, $currentYear);
     
         // Return the view with annual data
         return view('admin.reports', compact(
@@ -113,7 +124,11 @@ class AdminController extends Controller
             'expectationsBreakdown',
             'fieldLabels',
             'totals',
-            'serviceAveragesAnnual' // Include annual averages in the view
+            'clientSexBreakdown',
+            'serviceAveragesAnnual', // Include annual averages in the view
+            'clientAgeBreakdown',
+            'municipalityBreakdown',
+            'categoryBreakdown'
         ));
     }
 private function getAgeRange($range)
@@ -287,9 +302,19 @@ private function getAgeRange($range)
         'july-december' => $this->getGenderDataByPeriod(7, 12, $currentYear),
     ];
 
+
+    // Fetch data for clients' age breakdown
+    $ageBreakdown = $this->getClientAgeBreakdown(1, 12, $currentYear);
+
+     // Fetch data for client municipalities
+     $municipalityBreakdown = $this->getClientMunicipalityBreakdown(1, 12, $currentYear);
+
+       // Category breakdown for card 3
+    $categoryBreakdown = $this->getClientCategoryBreakdown(1, 12, $currentYear);
+
     
 
-    return view('admin.index', compact('data', 'monthlySubmissions', 'quarterlySubmissions', 'biAnnualSubmissions', 'annualSubmissions','genderResponses'));
+    return view('admin.index', compact('data', 'monthlySubmissions', 'quarterlySubmissions', 'biAnnualSubmissions', 'annualSubmissions','genderResponses','ageBreakdown','municipalityBreakdown','categoryBreakdown'));
 
     }
 
@@ -360,6 +385,11 @@ private function getAgeRange($range)
         $januaryToJuneData = $this->fetchDataByPeriod(1, 6, $currentYear);
         $julyToDecember = $this->fetchDataByPeriod(7, 12, $currentYear);
 
+
+    // Compute client sex breakdown for both periods using month ranges
+    $clientSexBreakdownJanToJune = $this->getClientSexBreakdown(1, 6, $currentYear);
+    $clientSexBreakdownJulToDec = $this->getClientSexBreakdown(7, 12, $currentYear);
+
         $januaryToJuneResponses = $this->computeCcResponses(1, 4, $currentYear, $januaryToJuneData['totalForms']);
         $julyToDecemberResponses = $this->computeCcResponses(9, 12, $currentYear, $julyToDecember['totalForms']);
 
@@ -382,6 +412,8 @@ private function getAgeRange($range)
         7,
         12
     );
+
+
 
     // Function to calculate totals for a breakdown
     $calculateTotals = function ($breakdown) {
@@ -461,6 +493,17 @@ private function getAgeRange($range)
         ]
     ];
 
+    // H1: January to June
+    $h1AgeBreakdown = $this->getClientAgeBreakdown(1, 6, $currentYear);
+    $h1MunicipalityBreakdown = $this->getClientMunicipalityBreakdown(1, 6, $currentYear);
+    $h1CategoryBreakdown = $this->getClientCategoryBreakdown(1, 6, $currentYear);
+
+    // H2: July to December
+    $h2AgeBreakdown = $this->getClientAgeBreakdown(7, 12, $currentYear);
+    $h2MunicipalityBreakdown = $this->getClientMunicipalityBreakdown(7, 12, $currentYear);
+    $h2CategoryBreakdown = $this->getClientCategoryBreakdown(7, 12, $currentYear);
+
+
     
         return view('admin.reports_bi_quarterly', compact(
             'januaryToJuneData',
@@ -474,7 +517,16 @@ private function getAgeRange($range)
             'fieldLabels',
             'serviceAveragesJanToJune',
             'serviceAveragesJulToDec',  
-            'yourOptions'
+            'yourOptions',
+            'clientSexBreakdownJanToJune',
+        'clientSexBreakdownJulToDec',
+        'h1AgeBreakdown',
+        'h1MunicipalityBreakdown',
+        'h1CategoryBreakdown',
+        'h2AgeBreakdown',
+        'h2MunicipalityBreakdown',
+        'h2CategoryBreakdown'
+            
         ));
 
         
@@ -672,6 +724,12 @@ public function reports_quarterly()
 {
     $currentYear = Carbon::now()->year;
 
+    // Compute client sex breakdown for both periods using month ranges
+    $clientSexBreakdownJanuaryToMarch = $this->getClientSexBreakdown(1, 3, $currentYear);
+    $clientSexBreakdownAprilToJune = $this->getClientSexBreakdown(4, 6, $currentYear);
+    $clientSexBreakdownJulyToSeptember = $this->getClientSexBreakdown(7, 10, $currentYear);
+    $clientSexBreakdownOctoberToDecember = $this->getClientSexBreakdown(11, 12, $currentYear);
+
     // Fetch data for each quarter
     $januaryToMarchData = $this->fetchDataByPeriod(1, 3, $currentYear);
     $aprilToJuneData = $this->fetchDataByPeriod(4, 6, $currentYear);
@@ -796,6 +854,26 @@ public function reports_quarterly()
         ]
     ];
 
+    // Q1: January to March
+    $q1AgeBreakdown = $this->getClientAgeBreakdown(1, 3, $currentYear);
+    $q1MunicipalityBreakdown = $this->getClientMunicipalityBreakdown(1, 3, $currentYear);
+    $q1CategoryBreakdown = $this->getClientCategoryBreakdown(1, 3, $currentYear);
+
+    // Q2: April to June
+    $q2AgeBreakdown = $this->getClientAgeBreakdown(4, 6, $currentYear);
+    $q2MunicipalityBreakdown = $this->getClientMunicipalityBreakdown(4, 6, $currentYear);
+    $q2CategoryBreakdown = $this->getClientCategoryBreakdown(4, 6, $currentYear);
+
+    // Q3: July to September
+    $q3AgeBreakdown = $this->getClientAgeBreakdown(7, 9, $currentYear);
+    $q3MunicipalityBreakdown = $this->getClientMunicipalityBreakdown(7, 9, $currentYear);
+    $q3CategoryBreakdown = $this->getClientCategoryBreakdown(7, 9, $currentYear);
+
+    // Q4: October to December
+    $q4AgeBreakdown = $this->getClientAgeBreakdown(10, 12, $currentYear);
+    $q4MunicipalityBreakdown = $this->getClientMunicipalityBreakdown(10, 12, $currentYear);
+    $q4CategoryBreakdown = $this->getClientCategoryBreakdown(10, 12, $currentYear);
+
     // Return the view with data for each quarter and their totals
     return view('admin.reports_quarterly', compact(
         'januaryToMarchData',
@@ -819,7 +897,23 @@ public function reports_quarterly()
         'serviceAveragesQ2',
         'serviceAveragesQ3',
         'serviceAveragesQ4',
-        'yourOptions'
+        'yourOptions',
+        'clientSexBreakdownJanuaryToMarch',
+        'clientSexBreakdownAprilToJune',
+        'clientSexBreakdownJulyToSeptember',
+        'clientSexBreakdownOctoberToDecember',
+        'q1AgeBreakdown',
+        'q1MunicipalityBreakdown',
+        'q1CategoryBreakdown',
+        'q2AgeBreakdown',
+        'q2MunicipalityBreakdown',
+        'q2CategoryBreakdown',
+        'q3AgeBreakdown',
+        'q3MunicipalityBreakdown',
+        'q3CategoryBreakdown',
+        'q4AgeBreakdown',
+        'q4MunicipalityBreakdown',
+        'q4CategoryBreakdown'
     ));
 }
 
@@ -995,129 +1089,131 @@ private function aggregateExpectations($expectationsFields, $year, $startMonth, 
 
     
     public function printQuarterReport($quarter)
-{
-    $currentYear = Carbon::now()->year;
-
-    // Define the month ranges for each quarter, including additional quarters
-    $quarters = [
-        'Q1' => [1, 3],
-        'Q2' => [4, 6],
-        'Q3' => [7, 9],
-        'Q4' => [10, 12],
-        'H1' => [1, 6],
-        'H2' => [7, 12],
-        'Annually' => [1, 12],
-    ];
-
-    if (!isset($quarters[$quarter])) {
-        abort(404, "Invalid quarter specified.");
+    {
+        $currentYear = Carbon::now()->year;
+    
+        // Define the month ranges for each quarter, including additional quarters
+        $quarters = [
+            'Q1' => [1, 3],
+            'Q2' => [4, 6],
+            'Q3' => [7, 9],
+            'Q4' => [10, 12],
+            'H1' => [1, 6],
+            'H2' => [7, 12],
+            'Annually' => [1, 12],
+        ];
+    
+        if (!isset($quarters[$quarter])) {
+            abort(404, "Invalid quarter specified.");
+        }
+    
+        [$startMonth, $endMonth] = $quarters[$quarter];
+    
+        // Fetch data for the specified quarter
+        $quarterData = $this->fetchDataByPeriod($startMonth, $endMonth, $currentYear);
+    
+        // Calculate total forms for the given period
+        $totalForms = Form::whereYear('date', $currentYear)
+            ->whereMonth('date', '>=', $startMonth)
+            ->whereMonth('date', '<=', $endMonth)
+            ->count();
+    
+        if ($totalForms === 0) {
+            // If no data, return a view with "No Data Available"
+            return view('admin.no_data', ['message' => 'Try Again if there is Data Available.']);
+        }
+    
+        // Compute additional breakdowns
+        $ageBreakdown = $this->getClientAgeBreakdown($startMonth, $endMonth, $currentYear);
+        $municipalityBreakdown = $this->getClientMunicipalityBreakdown($startMonth, $endMonth, $currentYear);
+        $clientCategoryBreakdown = $this->getClientCategoryBreakdown($startMonth, $endMonth, $currentYear);
+        $sexBreakdown = $this->getClientSexBreakdown($startMonth, $endMonth, $currentYear);
+    
+        $responses = $this->computeCcResponses($startMonth, $endMonth, $currentYear, $totalForms);
+        $quarterData['cc1'] = $responses['cc1'];
+        $quarterData['cc2'] = $responses['cc2'];
+        $quarterData['cc3'] = $responses['cc3'];
+    
+        $quarterExpectations = $this->aggregateExpectations(
+            [
+                'expectations_0', 'expectations_1', 'expectations_2',
+                'expectations_3', 'expectations_4', 'expectations_5',
+                'expectations_6', 'expectations_7', 'expectations_8'
+            ],
+            $currentYear,
+            $startMonth,
+            $endMonth
+        );
+    
+        // Calculate totals for Client Overall Satisfaction
+        $quarterTotals = [
+            'strongly_agree' => 0,
+            'agree' => 0,
+            'neither' => 0,
+            'disagree' => 0,
+            'strongly_disagree' => 0,
+            'na' => 0,
+            'total_responses' => 0,
+            'average_overall_score' => 0,
+        ];
+    
+        foreach ($quarterExpectations as $fieldBreakdown) {
+            $quarterTotals['strongly_agree'] += $fieldBreakdown['strongly-agree']['count'];
+            $quarterTotals['agree'] += $fieldBreakdown['agree']['count'];
+            $quarterTotals['neither'] += $fieldBreakdown['neither']['count'];
+            $quarterTotals['disagree'] += $fieldBreakdown['disagree']['count'];
+            $quarterTotals['strongly_disagree'] += $fieldBreakdown['strongly-disagree']['count'];
+            $quarterTotals['na'] += $fieldBreakdown['na']['count'];
+            $quarterTotals['total_responses'] += $fieldBreakdown['total_responses'];
+        }
+    
+        $quarterTotals['average_overall_score'] = $quarterTotals['total_responses'] > 0
+            ? (($quarterTotals['strongly_agree'] + $quarterTotals['agree']) / ($quarterTotals['total_responses'] - $quarterTotals['na'])) * 100
+            : 0;
+    
+        // Fetch service averages for this quarter
+        $serviceAverages = $this->computeServiceAverages($startMonth, $endMonth, $currentYear);
+    
+        // Separate external and internal services
+        $externalServices = array_filter($serviceAverages, fn($service) => $service['service_type'] === 'external');
+        $internalServices = array_filter($serviceAverages, fn($service) => $service['service_type'] === 'internal');
+    
+        // Prepare field labels for expectations
+        $fieldLabels = [
+            'expectations_0' => 'Responsiveness',
+            'expectations_1' => 'Reliability',
+            'expectations_2' => 'Access and Facilities',
+            'expectations_3' => 'Communication',
+            'expectations_4' => 'Costs',
+            'expectations_5' => 'Integrity',
+            'expectations_6' => 'Assurance',
+            'expectations_7' => 'Outcome',
+            'expectations_8' => 'Overall',
+        ];
+    
+        // Generate PDF with the collected data
+        $pdf = Pdf::loadView('admin.report_template', [
+            'quarter' => $quarter,
+            'quarterData' => $quarterData,
+            'responses' => $responses,
+            'quarterExpectations' => $quarterExpectations,
+            'quarterTotals' => $quarterTotals,
+            'ageBreakdown' => $ageBreakdown,
+            'municipalityBreakdown' => $municipalityBreakdown,
+            'clientCategoryBreakdown' => $clientCategoryBreakdown,
+            'sexBreakdown' => $sexBreakdown,
+            'fieldLabels' => $fieldLabels,
+            'serviceAverages' => $serviceAverages,
+            'externalServices' => $externalServices,
+            'internalServices' => $internalServices,
+            'totalForms' => $totalForms,
+        ]);
+    
+        // Stream or download the PDF
+        return $pdf->stream("{$quarter}_Report.pdf");
     }
+    
 
-    [$startMonth, $endMonth] = $quarters[$quarter];
-
-    // Fetch data for the specified quarter
-    $quarterData = $this->fetchDataByPeriod($startMonth, $endMonth, $currentYear);
-
-    if ($quarterData['totalForms'] === 0) {
-        // If no data, return a view with "No Data Available"
-        return view('admin.no_data', ['message' => 'Try Again if there is a Data Available.']);
-    }
-
-
-    $responses = $this->computeCcResponses($startMonth, $endMonth, $currentYear, $quarterData['totalForms']);
-    $quarterData['cc1'] = $responses['cc1'];
-    $quarterData['cc2'] = $responses['cc2'];
-    $quarterData['cc3'] = $responses['cc3'];
-
-    $quarterExpectations = $this->aggregateExpectations(
-        [
-            'expectations_0', 'expectations_1', 'expectations_2',
-            'expectations_3', 'expectations_4', 'expectations_5',
-            'expectations_6', 'expectations_7', 'expectations_8'
-        ],
-        $currentYear,
-        $startMonth,
-        $endMonth
-    );
-
-    // Calculate totals for Client Overall Satisfaction
-    $quarterTotals = [
-        'strongly_agree' => 0,
-        'agree' => 0,
-        'neither' => 0,
-        'disagree' => 0,
-        'strongly_disagree' => 0,
-        'na' => 0,
-        'total_responses' => 0,
-        'average_overall_score' => 0,
-    ];
-
-    foreach ($quarterExpectations as $fieldBreakdown) {
-        $quarterTotals['strongly_agree'] += $fieldBreakdown['strongly-agree']['count'];
-        $quarterTotals['agree'] += $fieldBreakdown['agree']['count'];
-        $quarterTotals['neither'] += $fieldBreakdown['neither']['count'];
-        $quarterTotals['disagree'] += $fieldBreakdown['disagree']['count'];
-        $quarterTotals['strongly_disagree'] += $fieldBreakdown['strongly-disagree']['count'];
-        $quarterTotals['na'] += $fieldBreakdown['na']['count'];
-        $quarterTotals['total_responses'] += $fieldBreakdown['total_responses'];
-    }
-
-    $quarterTotals['average_overall_score'] = $quarterTotals['total_responses'] > 0
-        ? (($quarterTotals['strongly_agree'] + $quarterTotals['agree']) /
-            ($quarterTotals['total_responses'] - $quarterTotals['na'])) * 100
-        : 0;
-
-    // Calculate totals for Sex
-    $sexTotals = [
-        'male' => $quarterData['maleExternalPercentage'] + $quarterData['maleInternalPercentage'],
-        'female' => $quarterData['femaleExternalPercentage'] + $quarterData['femaleInternalPercentage'],
-        'prefer_not_to_say' => $quarterData['preferNotToSayExternalPercentage'] + $quarterData['preferNotToSayInternalPercentage'],
-    ];
-
-    // Calculate totals for Age, Municipality, and Client Categories
-    $ageTotals = $this->calculateTotals($quarterData['ageRanges']);
-    $municipalityTotals = $this->calculateTotals($quarterData['municipalityData']);
-    $clientCategoryTotals = $this->calculateTotals($quarterData['clientCategories']);
-
-    $fieldLabels = [
-        'expectations_0' => 'Responsiveness',
-        'expectations_1' => 'Reliability',
-        'expectations_2' => 'Access and Facilities',
-        'expectations_3' => 'Communication',
-        'expectations_4' => 'Costs',
-        'expectations_5' => 'Integrity',
-        'expectations_6' => 'Assurance',
-        'expectations_7' => 'Outcome',
-        'expectations_8' => 'Overall'
-    ];
-
-    // Fetch service averages for this quarter
-    $serviceAverages = $this->computeServiceAverages($startMonth, $endMonth, $currentYear);
-
-    // Separate external and internal services
-    $externalServices = array_filter($serviceAverages, fn($service) => $service['service_type'] === 'external');
-    $internalServices = array_filter($serviceAverages, fn($service) => $service['service_type'] === 'internal');
-
-    // Generate PDF with the collected data
-    $pdf = Pdf::loadView('admin.report_template', [
-        'quarter' => $quarter,
-        'quarterData' => $quarterData,
-        'responses' => $responses,
-        'quarterExpectations' => $quarterExpectations,
-        'quarterTotals' => $quarterTotals,
-        'sexTotals' => $sexTotals,
-        'ageTotals' => $ageTotals,
-        'municipalityTotals' => $municipalityTotals,
-        'clientCategoryTotals' => $clientCategoryTotals,
-        'fieldLabels' => $fieldLabels,
-        'serviceAverages' => $serviceAverages,
-        'externalServices' => $externalServices,
-        'internalServices' => $internalServices,
-    ]);
-
-    // Stream or download the PDF
-    return $pdf->stream("{$quarter}_Report.pdf");
-}
 
 /**
  * Helper function to calculate totals for external, internal, and overall counts.
@@ -1172,6 +1268,12 @@ public function pastReports(Request $request)
     // Citizen's Charter Responses
     $annualResponses = $this->computeCcResponses($startMonth, $endMonth, $selectedYear, $data['totalForms']);
 
+    // Compute breakdowns
+    $ageBreakdown = $this->getClientAgeBreakdown($startMonth, $endMonth, $selectedYear);
+    $municipalityBreakdown = $this->getClientMunicipalityBreakdown($startMonth, $endMonth, $selectedYear);
+    $clientCategoryBreakdown = $this->getClientCategoryBreakdown($startMonth, $endMonth, $selectedYear);
+    $sexBreakdown = $this->getClientSexBreakdown($startMonth, $endMonth, $selectedYear);
+
     // Compute breakdown for expectations (replace 'expectations' fields with actual fields)
     $expectationsFields = [
         'expectations_0', 'expectations_1', 'expectations_2',
@@ -1192,16 +1294,18 @@ public function pastReports(Request $request)
         'average_overall_score' => 0,
     ];
 
-    foreach (['cc1', 'cc2', 'cc3'] as $ccKey) {
-        foreach ($annualResponses[$ccKey] as $option => $response) {
-            $totals['total_responses'] += $response['count'];
-            if (in_array($option, ['1', '2'])) { // Adjust as needed for strongly agree/agree options
-                $totals['strongly_agree'] += $response['count'];
-            }
-        }
+    foreach ($breakdown as $fieldBreakdown) {
+        $totals['strongly_agree'] += $fieldBreakdown['strongly-agree']['count'];
+        $totals['agree'] += $fieldBreakdown['agree']['count'];
+        $totals['neither'] += $fieldBreakdown['neither']['count'];
+        $totals['disagree'] += $fieldBreakdown['disagree']['count'];
+        $totals['strongly_disagree'] += $fieldBreakdown['strongly-disagree']['count'];
+        $totals['na'] += $fieldBreakdown['na']['count'];
+        $totals['total_responses'] += $fieldBreakdown['total_responses'];
     }
+
     $totals['average_overall_score'] = $totals['total_responses'] > 0
-        ? ($totals['strongly_agree'] / $totals['total_responses']) * 100
+        ? (($totals['strongly_agree'] + $totals['agree']) / $totals['total_responses']) * 100
         : 0;
 
     // Service Averages
@@ -1230,7 +1334,6 @@ public function pastReports(Request $request)
         ]
     ];
 
-
     $fieldLabels = [
         'expectations_0' => 'Responsiveness',
         'expectations_1' => 'Reliability',
@@ -1242,8 +1345,7 @@ public function pastReports(Request $request)
         'expectations_7' => 'Outcome',
         'expectations_8' => 'Overall'
     ];
-    // Age Ranges
-    $data['ageRanges'] = $this->computeAgeRanges($startMonth, $endMonth, $selectedYear, $data['totalForms'] ?? 0);
+    
 
     // Return the view with data
     return view('admin.past_reports', compact(
@@ -1255,10 +1357,14 @@ public function pastReports(Request $request)
         'services',
         'yourOptions',
         'breakdown',
-        'fieldLabels'
-
+        'fieldLabels',
+        'ageBreakdown',
+        'municipalityBreakdown',
+        'clientCategoryBreakdown',
+        'sexBreakdown'
     ));
 }
+
 public function determineCustomerType($category)
 {
     // Define internal and external categories
@@ -1278,6 +1384,260 @@ public function determineCustomerType($category)
     // Default return if category is unknown
     return 'Unknown Customer Type';
 }
+
+public function getClientSexBreakdown($startMonth, $endMonth, $year)
+{
+    // Fetch forms within the given month range
+    $forms = Form::whereYear('date', $year)
+        ->whereMonth('date', '>=', $startMonth)
+        ->whereMonth('date', '<=', $endMonth)
+        ->get();
+
+    $sexBreakdown = [
+        'Male' => ['Internal' => 0, 'External' => 0],
+        'Female' => ['Internal' => 0, 'External' => 0],
+        'Other' => ['Internal' => 0, 'External' => 0],
+    ];
+
+    // Match the enum values exactly
+    $internalCategories = ['faculty', 'Non-teaching staff']; // Internal categories
+    $externalCategories = [
+        'Student',
+        'Alumni',
+        'parents',
+        'Community_member',
+        'industry_partner',
+        'supplier',
+        'Regulatory',
+        'Others'
+    ]; // External categories
+
+    foreach ($forms as $form) {
+        if (!isset($form->sex) || !isset($form->client_category)) {
+            continue; // Skip rows without these fields
+        }
+
+        // Normalize and trim values
+        $sex = ucfirst(strtolower(trim($form->sex)));
+        $clientCategory = trim($form->client_category);
+
+        // Classify the client into Internal or External
+        $clientType = in_array($clientCategory, $internalCategories) ? 'Internal' : (in_array($clientCategory, $externalCategories) ? 'External' : null);
+
+        if (!$clientType || !isset($sexBreakdown[$sex])) {
+            continue; // Skip if client type or sex is invalid
+        }
+
+        // Increment the appropriate counter
+        $sexBreakdown[$sex][$clientType]++;
+    }
+
+    foreach ($sexBreakdown as $sex => &$counts) {
+        $totalClients = $counts['Internal'] + $counts['External'];
+        $counts['InternalPercentage'] = $totalClients > 0 ? ($counts['Internal'] / $totalClients) * 100 : 0;
+        $counts['ExternalPercentage'] = $totalClients > 0 ? ($counts['External'] / $totalClients) * 100 : 0;
+    }
+
+    return $sexBreakdown;
+}
+
+
+public function getClientAgeBreakdown($startMonth, $endMonth, $year)
+{
+    // Define age ranges
+    $ageRanges = [
+        '19 or lower' => [0, 19],
+        '20-34' => [20, 34],
+        '35-49' => [35, 49],
+        '50-64' => [50, 64],
+        '65 or higher' => [65, 150],
+    ];
+
+    // Define internal and external categories
+    $internalCategories = ['faculty', 'Non-teaching staff']; // Internal categories
+    $externalCategories = [
+        'Student',
+        'Alumni',
+        'parents',
+        'Community_member',
+        'industry_partner',
+        'supplier',
+        'Regulatory',
+        'Others'
+    ]; // External categories
+
+    $ageBreakdown = [];
+
+    foreach ($ageRanges as $range => [$min, $max]) {
+        // Count external clients in this age range
+        $externalCount = Form::whereBetween('age', [$min, $max])
+            ->whereYear('date', $year)
+            ->whereMonth('date', '>=', $startMonth)
+            ->whereMonth('date', '<=', $endMonth)
+            ->whereIn('client_category', $externalCategories) // Directly use whereIn
+            ->count();
+
+        // Count internal clients in this age range
+        $internalCount = Form::whereBetween('age', [$min, $max])
+            ->whereYear('date', $year)
+            ->whereMonth('date', '>=', $startMonth)
+            ->whereMonth('date', '<=', $endMonth)
+            ->whereIn('client_category', $internalCategories) // Directly use whereIn
+            ->count();
+
+        // Total for this age range
+        $totalCount = $externalCount + $internalCount;
+
+        // Calculate percentages
+        $totalForms = Form::whereYear('date', $year)
+            ->whereMonth('date', '>=', $startMonth)
+            ->whereMonth('date', '<=', $endMonth)
+            ->count();
+
+        $ageBreakdown[$range] = [
+            'external' => [
+                'count' => $externalCount,
+                'percentage' => ($totalForms > 0) ? ($externalCount / $totalForms) * 100 : 0,
+            ],
+            'internal' => [
+                'count' => $internalCount,
+                'percentage' => ($totalForms > 0) ? ($internalCount / $totalForms) * 100 : 0,
+            ],
+            'total' => [
+                'count' => $totalCount,
+                'percentage' => ($totalForms > 0) ? ($totalCount / $totalForms) * 100 : 0,
+            ],
+        ];
+    }
+
+    return $ageBreakdown;
+}
+
+public function getClientMunicipalityBreakdown($startMonth, $endMonth, $year)
+{
+    // Define municipalities
+    $municipalities = [
+        'Agno', 'Aguilar', 'Alaminos', 'Alcala', 'Anda', 'Bani', 'Binmaley', 'Bolinao',
+        'Burgos', 'Dagupan', 'Dasol', 'Infanta', 'Lingayen', 'Mabini', 'Mangaldan',
+        'Mangatarem', 'Rosales', 'Sta. Barbara', 'Sta. Maria', 'Sual', 'Others'
+    ];
+
+    // Define internal and external categories
+    $internalCategories = ['faculty', 'Non-teaching staff']; // Internal categories
+    $externalCategories = [
+        'Student', 'Alumni', 'parents', 'Community_member', 'industry_partner',
+        'supplier', 'Regulatory', 'Others'
+    ]; // External categories
+
+    $municipalityBreakdown = [];
+
+    foreach ($municipalities as $municipality) {
+        // Count external clients from this municipality
+        $externalCount = Form::where('Municipality', $municipality)
+            ->whereYear('date', $year)
+            ->whereMonth('date', '>=', $startMonth)
+            ->whereMonth('date', '<=', $endMonth)
+            ->whereIn('client_category', $externalCategories)
+            ->count();
+
+        // Count internal clients from this municipality
+        $internalCount = Form::where('Municipality', $municipality)
+            ->whereYear('date', $year)
+            ->whereMonth('date', '>=', $startMonth)
+            ->whereMonth('date', '<=', $endMonth)
+            ->whereIn('client_category', $internalCategories)
+            ->count();
+
+        // Total for this municipality
+        $totalCount = $externalCount + $internalCount;
+
+        // Calculate percentages
+        $totalForms = Form::whereYear('date', $year)
+            ->whereMonth('date', '>=', $startMonth)
+            ->whereMonth('date', '<=', $endMonth)
+            ->count();
+
+        $municipalityBreakdown[$municipality] = [
+            'external' => [
+                'count' => $externalCount,
+                'percentage' => ($totalForms > 0) ? ($externalCount / $totalForms) * 100 : 0,
+            ],
+            'internal' => [
+                'count' => $internalCount,
+                'percentage' => ($totalForms > 0) ? ($internalCount / $totalForms) * 100 : 0,
+            ],
+            'total' => [
+                'count' => $totalCount,
+                'percentage' => ($totalForms > 0) ? ($totalCount / $totalForms) * 100 : 0,
+            ],
+        ];
+    }
+
+    return $municipalityBreakdown;
+}
+
+public function getClientCategoryBreakdown($startMonth, $endMonth, $year)
+{
+    // Define client categories
+    $clientCategories = [
+        'Student', 'Faculty', 'Non-teaching staff', 'Alumni', 'Parents',
+        'Community_member', 'Industry_partner', 'Supplier', 'Regulatory', 'Others'
+    ];
+
+    // Define internal and external categories
+    $internalCategories = ['faculty', 'Non-teaching staff']; // Internal categories
+    $externalCategories = [
+        'Student', 'Alumni', 'parents', 'Community_member', 'industry_partner',
+        'supplier', 'Regulatory', 'Others'
+    ]; // External categories
+
+    $categoryBreakdown = [];
+
+    foreach ($clientCategories as $category) {
+        // Count external clients in this category
+        $externalCount = Form::where('client_category', $category)
+            ->whereYear('date', $year)
+            ->whereMonth('date', '>=', $startMonth)
+            ->whereMonth('date', '<=', $endMonth)
+            ->whereIn('client_category', $externalCategories)
+            ->count();
+
+        // Count internal clients in this category
+        $internalCount = Form::where('client_category', $category)
+            ->whereYear('date', $year)
+            ->whereMonth('date', '>=', $startMonth)
+            ->whereMonth('date', '<=', $endMonth)
+            ->whereIn('client_category', $internalCategories)
+            ->count();
+
+        // Total for this category
+        $totalCount = $externalCount + $internalCount;
+
+        // Calculate percentages
+        $totalForms = Form::whereYear('date', $year)
+            ->whereMonth('date', '>=', $startMonth)
+            ->whereMonth('date', '<=', $endMonth)
+            ->count();
+
+        $categoryBreakdown[$category] = [
+            'external' => [
+                'count' => $externalCount,
+                'percentage' => ($totalForms > 0) ? ($externalCount / $totalForms) * 100 : 0,
+            ],
+            'internal' => [
+                'count' => $internalCount,
+                'percentage' => ($totalForms > 0) ? ($internalCount / $totalForms) * 100 : 0,
+            ],
+            'total' => [
+                'count' => $totalCount,
+                'percentage' => ($totalForms > 0) ? ($totalCount / $totalForms) * 100 : 0,
+            ],
+        ];
+    }
+
+    return $categoryBreakdown;
+}
+
 
 }
 
