@@ -85,47 +85,65 @@
                 @php
                     $totalInternalCount = 0;
                     $totalExternalCount = 0;
+
+                    // Calculate totals for external and internal counts
                     foreach ($clientSexBreakdownOctoberToDecember as $counts) {
                         $totalInternalCount += $counts['Internal'];
                         $totalExternalCount += $counts['External'];
                     }
+
                     $grandTotalClients = $totalInternalCount + $totalExternalCount;
                 @endphp
 
-                @foreach ($clientSexBreakdownOctoberToDecember as $sex => $counts)
-                    @php
-                        $totalClients = $counts['Internal'] + $counts['External'];
-                        $externalPercentage = ($totalClients > 0) ? ($counts['External'] / $totalClients) * 100 : 0;
-                        $internalPercentage = ($totalClients > 0) ? ($counts['Internal'] / $totalClients) * 100 : 0;
-                        $totalClientsPercentage = ($grandTotalClients > 0) ? ($totalClients / $grandTotalClients) * 100 : 0;
-                    @endphp
+                @if ($grandTotalClients > 0)
+                    @foreach ($clientSexBreakdownOctoberToDecember as $sex => $counts)
+                        @php
+                            // Calculate total clients for each sex
+                            $totalClients = $counts['Internal'] + $counts['External'];
 
-                    <tr>
-                        <td>{{ ucfirst($sex) }}</td>
-                        <td>{{ $counts['External'] }} ({{ number_format($externalPercentage, 2) }}%)</td>
-                        <td>{{ $counts['Internal'] }} ({{ number_format($internalPercentage, 2) }}%)</td>
-                        <td>{{ $totalClients }} ({{ number_format($totalClientsPercentage, 2) }}%)</td>
-                    </tr>
-                @endforeach
+                            // Calculate percentages based on grand totals
+                            $externalPercentage = ($counts['External'] / $grandTotalClients) * 100;
+                            $internalPercentage = ($counts['Internal'] / $grandTotalClients) * 100;
+                            $totalClientsPercentage = ($totalClients / $grandTotalClients) * 100;
+                        @endphp
+
+                        <tr>
+                            <td>{{ ucfirst($sex) }}</td>
+                            <td>{{ $counts['External'] }} ({{ number_format($externalPercentage, 2) }}%)</td>
+                            <td>{{ $counts['Internal'] }} ({{ number_format($internalPercentage, 2) }}%)</td>
+                            <td>{{ $totalClients }} ({{ number_format($totalClientsPercentage, 2) }}%)</td>
+                        </tr>
+                    @endforeach
+                @else
+                    <!-- If no data, display rows with 0 -->
+                    @foreach (['Male', 'Female', 'Other'] as $sex)
+                        <tr>
+                            <td>{{ $sex }}</td>
+                            <td>0 (0.00%)</td>
+                            <td>0 (0.00%)</td>
+                            <td>0 (0.00%)</td>
+                        </tr>
+                    @endforeach
+                @endif
 
                 <!-- Totals Row -->
                 <tr>
                     <td><strong>Total</strong></td>
                     <td>
                         <strong>
-                            {{ $totalExternalCount }} 
+                            {{ $totalExternalCount ?? 0 }} 
                             ({{ number_format(($grandTotalClients > 0) ? ($totalExternalCount / $grandTotalClients) * 100 : 0, 2) }}%)
                         </strong>
                     </td>
                     <td>
                         <strong>
-                            {{ $totalInternalCount }} 
+                            {{ $totalInternalCount ?? 0 }} 
                             ({{ number_format(($grandTotalClients > 0) ? ($totalInternalCount / $grandTotalClients) * 100 : 0, 2) }}%)
                         </strong>
                     </td>
                     <td>
-                        <strong>
-                            {{ $grandTotalClients }} 
+                    <strong>
+                            {{ $grandTotalClients ?? 0 }} 
                             ({{ $grandTotalClients > 0 ? '100.00' : '0.00' }}%)
                         </strong>
                     </td>

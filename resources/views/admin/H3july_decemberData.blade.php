@@ -5,10 +5,10 @@
     // Dynamically calculate totalForms based on available data
     if (isset($h2AgeBreakdown)) {
         $totalForms = array_sum(array_column(array_column($h2AgeBreakdown, 'total'), 'count'));
-    } elseif (isset($clientSexBreakdownJulToDec)) {
+    } elseif (isset($clientSexBreakdownJulToDecJulToDec)) {
         $totalForms = array_sum(array_map(function ($counts) {
             return $counts['Internal'] + $counts['External'];
-        }, $clientSexBreakdownJulToDec));
+        }, $clientSexBreakdownJulToDecJulToDec));
     } elseif (isset($h2MunicipalityBreakdown)) {
         $totalForms = array_sum(array_column(array_column($h2MunicipalityBreakdown, 'total'), 'count'));
     } elseif (isset($h2CategoryBreakdown)) {
@@ -85,18 +85,24 @@
                 @php
                     $totalInternalCount = 0;
                     $totalExternalCount = 0;
+
+                    // Calculate totals for external and internal counts
                     foreach ($clientSexBreakdownJulToDec as $counts) {
                         $totalInternalCount += $counts['Internal'];
                         $totalExternalCount += $counts['External'];
                     }
+
                     $grandTotalClients = $totalInternalCount + $totalExternalCount;
                 @endphp
 
                 @foreach ($clientSexBreakdownJulToDec as $sex => $counts)
                     @php
+                        // Calculate total clients for each sex
                         $totalClients = $counts['Internal'] + $counts['External'];
-                        $externalPercentage = ($totalClients > 0) ? ($counts['External'] / $totalClients) * 100 : 0;
-                        $internalPercentage = ($totalClients > 0) ? ($counts['Internal'] / $totalClients) * 100 : 0;
+
+                        // Calculate percentages based on grand totals
+                        $externalPercentage = ($grandTotalClients > 0) ? ($counts['External'] / $grandTotalClients) * 100 : 0;
+                        $internalPercentage = ($grandTotalClients > 0) ? ($counts['Internal'] / $grandTotalClients) * 100 : 0;
                         $totalClientsPercentage = ($grandTotalClients > 0) ? ($totalClients / $grandTotalClients) * 100 : 0;
                     @endphp
 
@@ -124,8 +130,8 @@
                         </strong>
                     </td>
                     <td>
-                        <strong>
-                            {{ $grandTotalClients }} 
+                    <strong>
+                            {{ $grandTotalClients ?? 0 }} 
                             ({{ $grandTotalClients > 0 ? '100.00' : '0.00' }}%)
                         </strong>
                     </td>
@@ -134,6 +140,7 @@
         </table>
     </div>
 </div>
+
 
 
 <!-- Table 3: Municipality of Residence Breakdown -->

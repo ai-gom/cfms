@@ -5,114 +5,135 @@
     @include('admin.css')
     <style>
         body {
-            background-color: #f3f6f9;
-            color: #333;
-            font-family: 'Roboto', sans-serif;
-        }
+    background-color: #f3f6f9;
+    color: #333;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+}
 
-        h3 {
-            color: #007bff;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
+h3 {
+    color: #007bff;
+    font-weight: 700;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
 
-        .container-fluid {
-            max-width: 1200px;
-            margin: auto;
-        }
+.container-fluid {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
 
-        .section-card {
-            background-color: #ffffff;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 10px;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
+.section-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
 
-        .flex-container {
-            display: flex;
-            gap: 15px;
-            align-items: stretch;
-            justify-content: space-between;
-        }
+.section-card:hover {
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
 
-        .table-container,
-        .chart-container {
-            flex: 1;
-            min-width: 300px;
-        }
+.flex-container {
+    display: flex;
+    gap: 15px;
+    align-items: stretch;
+    justify-content: space-between;
+}
 
-        .form-control {
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 5px 10px;
-        }
+.form-control {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+}
 
-        .form-label {
-            font-weight: 500;
-        }
+.form-label {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
 
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-            padding: 8px 15px;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
-        }
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
+.btn-primary:hover {
+    background-color: #0056b3;
+}
 
-        .table {
-            margin: 0;
-            background-color: #ffffff;
-            border: 1px solid #ddd;
-            font-size: 0.85rem;
-        }
+.table {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    font-size: 0.9rem;
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
 
-        .table th,
-        .table td {
-            padding: 8px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
+.table th,
+.table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
 
-        .table thead th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-        }
+.table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
 
-        .table tbody tr:hover {
-            background-color: #f1f1f1;
-        }
+.table tbody tr:hover {
+    background-color: #f1f1f1;
+}
 
-        .text-center {
-            color: #888;
-            font-style: italic;
-        }
+.text-center {
+    color: #888;
+    font-style: italic;
+}
 
-        canvas {
-            width: 100% !important;
-            height: 300px !important;
-        }
+canvas {
+    width: 100% !important;
+    height: 300px !important;
+}
 
-        .toggle-buttons {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
+.toggle-buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+    gap: 15px;
+}
 
-        .toggle-buttons button {
-            margin: 0 10px;
-        }
+.toggle-buttons button {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
 
-        .hidden {
-            display: none !important;
-        }
+.toggle-buttons button:hover {
+    background-color: #0056b3;
+    color: #fff;
+}
+
+.hidden {
+    display: none !important;
+}
+
     </style>
 </head>
 

@@ -30,156 +30,93 @@
     <div class="container" style="margin-top: 20px;">
     <!-- Table 1: Age Breakdown -->
     <div class="card" style="margin-bottom: 20px;">
-    <div class="card-header">
-        <h4>Table 1: Age Breakdown</h4>
-    </div>
-    <div class="card-body">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Age</th>
-                    <th>External (Count & Percentage)</th>
-                    <th>Internal (Count & Percentage)</th>
-                    <th>Total (Count & Percentage)</th>
-                </tr>
-            </thead>
-            <tbody>
-                @php
-                    // Initialize variables
-                    $totalExternalAge = 0;
-                    $totalInternalAge = 0;
-                    $totalOverallAge = 0;
-                    $highestAgeRange = '';
-                    $highestTotalPercentage = 0;
-                    $highestExternalPercentage = 0;
-                    $highestInternalPercentage = 0;
-                @endphp
-                @foreach ($ageBreakdown as $ageRange => $data)
+        <div class="card-header">
+            <h4>Table 1: Age Breakdown</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
                     <tr>
-                        <td>{{ $ageRange }}</td>
-                        <td>{{ $data['external']['count'] }} ({{ number_format($data['external']['percentage'], 2) }}%)</td>
-                        <td>{{ $data['internal']['count'] }} ({{ number_format($data['internal']['percentage'], 2) }}%)</td>
-                        <td>{{ $data['total']['count'] }} ({{ number_format($data['total']['percentage'], 2) }}%)</td>
+                        <th>Age</th>
+                        <th>External (Count & Percentage)</th>
+                        <th>Internal (Count & Percentage)</th>
+                        <th>Total (Count & Percentage)</th>
                     </tr>
+                </thead>
+                <tbody>
                     @php
-                        // Accumulate totals
-                        $totalExternalAge += $data['external']['count'];
-                        $totalInternalAge += $data['internal']['count'];
-                        $totalOverallAge += $data['total']['count'];
-
-                        // Determine the highest age range
-                        if ($data['total']['percentage'] > $highestTotalPercentage) {
-                            $highestAgeRange = $ageRange;
-                            $highestTotalPercentage = $data['total']['percentage'];
-                            $highestExternalPercentage = $data['external']['percentage'];
-                            $highestInternalPercentage = $data['internal']['percentage'];
-                        }
+                        $totalExternalAge = 0;
+                        $totalInternalAge = 0;
+                        $totalOverallAge = 0;
                     @endphp
-                @endforeach
-                <tr>
-                    <td><strong>Total</strong></td>
-                    <td><strong>{{ $totalExternalAge }} ({{ number_format(($totalForms > 0) ? ($totalExternalAge / $totalForms) * 100 : 0, 2) }}%)</strong></td>
-                    <td><strong>{{ $totalInternalAge }} ({{ number_format(($totalForms > 0) ? ($totalInternalAge / $totalForms) * 100 : 0, 2) }}%)</strong></td>
-                    <td><strong>{{ $totalOverallAge }} ({{ number_format(($totalForms > 0) ? ($totalOverallAge / $totalForms) * 100 : 0, 2) }}%)</strong></td>
-                </tr>
-            </tbody>
-        </table>
-        <!-- Analysis Text -->
-        <p>
-            Table 1 presents the demographic breakdown of clients by age and customer type. It reveals that most clients are classified as 
-            <strong>External</strong>, comprising <strong>{{ number_format(($totalExternalAge / $totalForms) * 100, 2) }}%</strong> 
-            ({{ $totalExternalAge }} clients) of the total, while Internal clients make up 
-            <strong>{{ number_format(($totalInternalAge / $totalForms) * 100, 2) }}%</strong> ({{ $totalInternalAge }} clients). 
-            Additionally, the data indicates that most clients fall within the age range of <strong>{{ $highestAgeRange }}</strong>, 
-            accounting for <strong>{{ number_format($highestTotalPercentage, 2) }}%</strong> of the total, with 
-            <strong>{{ number_format($highestExternalPercentage, 2) }}%</strong> categorized as External 
-            and <strong>{{ number_format($highestInternalPercentage, 2) }}%</strong> as Internal.
-        </p>
+                    @foreach ($ageBreakdown as $ageRange => $data)
+                        <tr>
+                            <td>{{ $ageRange }}</td>
+                            <td>{{ $data['external']['count'] }} ({{ number_format($data['external']['percentage'], 2) }}%)</td>
+                            <td>{{ $data['internal']['count'] }} ({{ number_format($data['internal']['percentage'], 2) }}%)</td>
+                            <td>{{ $data['total']['count'] }} ({{ number_format($data['total']['percentage'], 2) }}%)</td>
+                        </tr>
+                        @php
+                            $totalExternalAge += $data['external']['count'];
+                            $totalInternalAge += $data['internal']['count'];
+                            $totalOverallAge += $data['total']['count'];
+                        @endphp
+                    @endforeach
+                    <tr>
+                        <td><strong>Total</strong></td>
+                        <td><strong>{{ $totalExternalAge }} ({{ number_format(($totalForms > 0) ? ($totalExternalAge / $totalForms) * 100 : 0, 2) }}%)</strong></td>
+                        <td><strong>{{ $totalInternalAge }} ({{ number_format(($totalForms > 0) ? ($totalInternalAge / $totalForms) * 100 : 0, 2) }}%)</strong></td>
+                        <td><strong>{{ $totalOverallAge }} ({{ number_format(($totalForms > 0) ? ($totalOverallAge / $totalForms) * 100 : 0, 2) }}%)</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
-
 
     <!-- Table 2: Sex Breakdown -->
     <div class="card" style="margin-bottom: 20px;">
-    <div class="card-header">
-        <h4>Table 2: Breakdown by Sex and Client Type</h4>
+        <div class="card-header">
+            <h4>Table 2: Breakdown by Sex and Client Type</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Sex</th>
+                        <th>External (Count & Percentage)</th>
+                        <th>Internal (Count & Percentage)</th>
+                        <th>Total (Count & Percentage)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php
+                        $totalExternalSex = 0;
+                        $totalInternalSex = 0;
+                        $totalOverallSex = 0;
+                    @endphp
+                    @foreach ($sexBreakdown as $sex => $counts)
+                        <tr>
+                            <td>{{ ucfirst($sex) }}</td>
+                            <td>{{ $counts['External'] }} ({{ number_format($counts['ExternalPercentage'], 2) }}%)</td>
+                            <td>{{ $counts['Internal'] }} ({{ number_format($counts['InternalPercentage'], 2) }}%)</td>
+                            <td>{{ $counts['Internal'] + $counts['External'] }} ({{ number_format($counts['InternalPercentage'] + $counts['ExternalPercentage'], 2) }}%)</td>
+                        </tr>
+                        @php
+                            $totalExternalSex += $counts['External'];
+                            $totalInternalSex += $counts['Internal'];
+                            $totalOverallSex += $counts['Internal'] + $counts['External'];
+                        @endphp
+                    @endforeach
+                    <tr>
+                        <td><strong>Total</strong></td>
+                        <td><strong>{{ $totalExternalSex }} ({{ number_format(($totalForms > 0) ? ($totalExternalSex / $totalForms) * 100 : 0, 2) }}%)</strong></td>
+                        <td><strong>{{ $totalInternalSex }} ({{ number_format(($totalForms > 0) ? ($totalInternalSex / $totalForms) * 100 : 0, 2) }}%)</strong></td>
+                        <td><strong>{{ $totalOverallSex }} ({{ number_format(($totalForms > 0) ? ($totalOverallSex / $totalForms) * 100 : 0, 2) }}%)</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div class="card-body">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Sex</th>
-                    <th>External (Count & Percentage)</th>
-                    <th>Internal (Count & Percentage)</th>
-                    <th>Total (Count & Percentage)</th>
-                </tr>
-            </thead>
-            <tbody>
-                @php
-                    $femaleInternal = $sexBreakdown['Female']['Internal'] ?? 0;
-                    $femaleExternal = $sexBreakdown['Female']['External'] ?? 0;
-                    $maleInternal = $sexBreakdown['Male']['Internal'] ?? 0;
-                    $maleExternal = $sexBreakdown['Male']['External'] ?? 0;
-
-                    // Total counts
-                    $totalForms = $femaleInternal + $femaleExternal + $maleInternal + $maleExternal;
-                    $totalFemale = $femaleInternal + $femaleExternal;
-                    $totalMale = $maleInternal + $maleExternal;
-
-                    // Percentages
-                    $femaleInternalPercentage = ($totalForms > 0) ? ($femaleInternal / $totalForms) * 100 : 0;
-                    $femaleExternalPercentage = ($totalForms > 0) ? ($femaleExternal / $totalForms) * 100 : 0;
-                    $femaleTotalPercentage = ($totalForms > 0) ? ($totalFemale / $totalForms) * 100 : 0;
-
-                    $maleInternalPercentage = ($totalForms > 0) ? ($maleInternal / $totalForms) * 100 : 0;
-                    $maleExternalPercentage = ($totalForms > 0) ? ($maleExternal / $totalForms) * 100 : 0;
-                    $maleTotalPercentage = ($totalForms > 0) ? ($totalMale / $totalForms) * 100 : 0;
-
-                    // Determine highest sex category
-                    $highestSex = $femaleTotalPercentage > $maleTotalPercentage ? 'Female' : 'Male';
-                    $highestExternalPercentage = $highestSex === 'Female' ? $femaleExternalPercentage : $maleExternalPercentage;
-                    $highestInternalPercentage = $highestSex === 'Female' ? $femaleInternalPercentage : $maleInternalPercentage;
-                    $highestTotalPercentage = $highestSex === 'Female' ? $femaleTotalPercentage : $maleTotalPercentage;
-
-                    $lowestSex = $highestSex === 'Female' ? 'Male' : 'Female';
-                    $lowestExternalPercentage = $lowestSex === 'Female' ? $femaleExternalPercentage : $maleExternalPercentage;
-                    $lowestInternalPercentage = $lowestSex === 'Female' ? $femaleInternalPercentage : $maleInternalPercentage;
-                    $lowestTotalPercentage = $lowestSex === 'Female' ? $femaleTotalPercentage : $maleTotalPercentage;
-                @endphp
-                <tr>
-                    <td>Female</td>
-                    <td>{{ $femaleExternal }} ({{ number_format($femaleExternalPercentage, 2) }}%)</td>
-                    <td>{{ $femaleInternal }} ({{ number_format($femaleInternalPercentage, 2) }}%)</td>
-                    <td>{{ $totalFemale }} ({{ number_format($femaleTotalPercentage, 2) }}%)</td>
-                </tr>
-                <tr>
-                    <td>Male</td>
-                    <td>{{ $maleExternal }} ({{ number_format($maleExternalPercentage, 2) }}%)</td>
-                    <td>{{ $maleInternal }} ({{ number_format($maleInternalPercentage, 2) }}%)</td>
-                    <td>{{ $totalMale }} ({{ number_format($maleTotalPercentage, 2) }}%)</td>
-                </tr>
-                <tr>
-                    <td><strong>Total</strong></td>
-                    <td><strong>{{ $femaleExternal + $maleExternal }} ({{ number_format($femaleExternalPercentage + $maleExternalPercentage, 2) }}%)</strong></td>
-                    <td><strong>{{ $femaleInternal + $maleInternal }} ({{ number_format($femaleInternalPercentage + $maleInternalPercentage, 2) }}%)</strong></td>
-                    <td><strong>{{ $totalForms }} (100.00%)</strong></td>
-                </tr>
-            </tbody>
-        </table>
-        <p>
-            Table II presents the breakdown of clients by sex and customer type. Of the total clients, 
-            <strong>{{ number_format($highestTotalPercentage, 2) }}%</strong> were <strong>{{ $highestSex }}</strong>, with 
-            <strong>{{ number_format($highestExternalPercentage, 2) }}%</strong> being external clients and 
-            <strong>{{ number_format($highestInternalPercentage, 2) }}%</strong> internal clients. In contrast, 
-            <strong>{{ number_format($lowestTotalPercentage, 2) }}%</strong> of the clients were <strong>{{ $lowestSex }}</strong>, with 
-            <strong>{{ number_format($lowestExternalPercentage, 2) }}%</strong> being external and 
-            <strong>{{ number_format($lowestInternalPercentage, 2) }}%</strong> internal clients.
-        </p>
-    </div>
-</div>
-
-
-
 
     <!-- Table 3: Municipality Breakdown -->
     <div class="card" style="margin-bottom: 20px;">
@@ -521,6 +458,64 @@
         </table>
     </div>
 </div>
+
+
+ <!-- Table 2: Sex Breakdown -->
+ <div class="card" style="margin-bottom: 20px;">
+    <div class="card-header">
+        <h4>Table 2: Breakdown by Sex and Client Type</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Sex</th>
+                    <th>External (Count & Percentage)</th>
+                    <th>Internal (Count & Percentage)</th>
+                    <th>Total (Count & Percentage)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                    $totalExternalSex = 0;
+                    $totalInternalSex = 0;
+                    $totalOverallSex = 0;
+                @endphp
+                @foreach ($sexBreakdown as $sex => $counts)
+                    @php
+                        $totalSexCount = $counts['External'] + $counts['Internal'];
+                        $externalPercentage = ($totalForms > 0) ? ($counts['External'] / $totalForms) * 100 : 0;
+                        $internalPercentage = ($totalForms > 0) ? ($counts['Internal'] / $totalForms) * 100 : 0;
+                        $overallPercentage = ($totalForms > 0) ? ($totalSexCount / $totalForms) * 100 : 0;
+                    @endphp
+                    <tr>
+                        <td>{{ ucfirst($sex) }}</td>
+                        <td>{{ $counts['External'] }} ({{ number_format($externalPercentage, 2) }}%)</td>
+                        <td>{{ $counts['Internal'] }} ({{ number_format($internalPercentage, 2) }}%)</td>
+                        <td>{{ $totalSexCount }} ({{ number_format($overallPercentage, 2) }}%)</td>
+                    </tr>
+                    @php
+                        $totalExternalSex += $counts['External'];
+                        $totalInternalSex += $counts['Internal'];
+                        $totalOverallSex += $totalSexCount;
+                    @endphp
+                @endforeach
+                @php
+                    $totalExternalPercentage = ($totalForms > 0) ? ($totalExternalSex / $totalForms) * 100 : 0;
+                    $totalInternalPercentage = ($totalForms > 0) ? ($totalInternalSex / $totalForms) * 100 : 0;
+                    $totalOverallPercentage = ($totalForms > 0) ? ($totalOverallSex / $totalForms) * 100 : 0;
+                @endphp
+                <tr>
+                    <td><strong>Total</strong></td>
+                    <td><strong>{{ $totalExternalSex }} ({{ number_format($totalExternalPercentage, 2) }}%)</strong></td>
+                    <td><strong>{{ $totalInternalSex }} ({{ number_format($totalInternalPercentage, 2) }}%)</strong></td>
+                    <td><strong>{{ $totalOverallSex }} ({{ number_format($totalOverallPercentage, 2) }}%)</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 
 </body>
 </html>

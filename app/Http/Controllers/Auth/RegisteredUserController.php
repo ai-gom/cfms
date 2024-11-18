@@ -46,9 +46,13 @@ class RegisteredUserController extends Controller
 
         
         // Flash a success message to the session
-        Session::flash('success', 'Registered successfully. Please log in.');
+        toastr()->success('Account Created Succesfully.'); 
+
+
 
         // Redirect to the login page
         return redirect()->route('account');
+
+        
     }
 }

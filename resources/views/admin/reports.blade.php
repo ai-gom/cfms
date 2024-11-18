@@ -114,18 +114,24 @@
                 @php
                     $totalInternalCount = 0;
                     $totalExternalCount = 0;
+
+                    // Calculate totals for external and internal counts
                     foreach ($clientSexBreakdown as $counts) {
                         $totalInternalCount += $counts['Internal'];
                         $totalExternalCount += $counts['External'];
                     }
+
                     $grandTotalClients = $totalInternalCount + $totalExternalCount;
                 @endphp
 
                 @foreach ($clientSexBreakdown as $sex => $counts)
                     @php
+                        // Calculate total clients for each sex
                         $totalClients = $counts['Internal'] + $counts['External'];
-                        $externalPercentage = ($totalClients > 0) ? ($counts['External'] / $totalClients) * 100 : 0;
-                        $internalPercentage = ($totalClients > 0) ? ($counts['Internal'] / $totalClients) * 100 : 0;
+
+                        // Calculate percentages based on grand totals
+                        $externalPercentage = ($grandTotalClients > 0) ? ($counts['External'] / $grandTotalClients) * 100 : 0;
+                        $internalPercentage = ($grandTotalClients > 0) ? ($counts['Internal'] / $grandTotalClients) * 100 : 0;
                         $totalClientsPercentage = ($grandTotalClients > 0) ? ($totalClients / $grandTotalClients) * 100 : 0;
                     @endphp
 
@@ -155,7 +161,7 @@
                     <td>
                         <strong>
                             {{ $grandTotalClients }} 
-                            ({{ $grandTotalClients > 0 ? '100.00' : '0.00' }}%)
+                            (100.00%)
                         </strong>
                     </td>
                 </tr>
@@ -163,6 +169,7 @@
         </table>
     </div>
 </div>
+
 
 
 <!-- Table 3: Municipality of Residence Breakdown -->

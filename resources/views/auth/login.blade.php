@@ -10,16 +10,14 @@
     
     <!-- Custom CSS -->
     <style>
-        /* Root Variables */
         :root {
             --primary: black;
             --light: #f3f6f9;
             --dark: #191c24;
             --gold: gold;
-            --blue: #007bff; /* PSU Blue */
+            --blue: #007bff;
         }
-        
-        /* General Styles */
+
         body {
             background-color: var(--light);
             color: var(--dark);
@@ -39,23 +37,21 @@
             border-radius: 10px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
             text-align: center;
-            position: relative;
         }
 
         .login-container h2 {
             color: var(--primary);
-            margin-top: 1rem;
-            margin-bottom: 1.5rem;
+            margin: 1rem 0 1.5rem;
             font-weight: bold;
         }
 
         .text-blue {
-            color: var(--blue); /* PSU Blue */
+            color: var(--blue);
             font-weight: bold;
         }
 
         .text-gold {
-            color: var(--gold); /* ACC Gold */
+            color: var(--gold);
             font-weight: bold;
         }
 
@@ -81,6 +77,17 @@
             box-shadow: none;
         }
 
+        .forgot-password-link {
+            display: block;
+            margin-top: 10px;
+            color: var(--blue);
+            text-decoration: none;
+        }
+
+        .forgot-password-link:hover {
+            text-decoration: underline;
+        }
+
         .toast-message {
             position: fixed;
             top: 20px;
@@ -95,9 +102,8 @@
             transition: opacity 0.5s ease;
         }
 
-        /* Larger Logo Styling */
         .logo {
-            width: 80px; /* Increased logo size */
+            width: 80px;
             height: auto;
             margin-bottom: 1rem;
         }
@@ -110,7 +116,7 @@
         <img src="{{ asset('image/Urkl.png') }}" alt="PSU Logo" class="logo">
         <h2><span class="text-blue">PSU</span> <span class="text-gold">ACC</span> Login</h2>
         
-        <!-- Display validation errors (if any) -->
+        <!-- Display validation errors -->
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
@@ -134,9 +140,12 @@
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
+
+        <!-- Forgot Password Link -->
+        <a href="{{ route('password.request') }}" class="forgot-password-link">Forgot Password?</a>
     </div>
 
-    <!-- Toast Notification for Registration Success -->
+    <!-- Toast Notification -->
     @if(session('success'))
         <div class="toast-message" id="toastMessage">
             {{ session('success') }}
@@ -145,14 +154,13 @@
 
     <!-- JavaScript for Toast functionality -->
     <script>
-        // Remove the toast message after a few seconds
         setTimeout(() => {
             const toast = document.getElementById('toastMessage');
             if (toast) {
                 toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 500);  // Wait for transition
+                setTimeout(() => toast.remove(), 500);
             }
-        }, 3000);  // Display duration in milliseconds
+        }, 3000);
     </script>
 
     <!-- Bootstrap JS -->

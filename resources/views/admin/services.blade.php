@@ -3,6 +3,52 @@
 
 <head>
     @include('admin.css')
+    <style>
+        /* Styling for the modals */
+        .modal-header {
+            background-color: #0d6efd;
+            color: #ffffff;
+        }
+
+        .modal-title {
+            font-weight: bold;
+        }
+
+        .modal-content {
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-body label {
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        /* Styling for the Add Service button */
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .btn-primary:hover {
+            background-color: #084298;
+            border-color: #084298;
+        }
+
+        .btn-close {
+            color: #fff;
+        }
+
+        .btn-close:hover {
+            color: #ff0000;
+        }
+
+        /* Center table text */
+        table th, table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
 </head>
 
 <body>
@@ -27,42 +73,15 @@
             @include('admin.navbar')
             <!-- Navbar End -->
 
-            <!-- Form Start -->
-            <div class="container mt-5">
-                <div class="row justify-content-center">
-                    <div class="col-lg-6">
-                        <div class="card shadow border-0">
-                            <div class="card-header bg-primary text-white text-center">
-                                <h4>Add Services</h4>
-                            </div>
-                            <div class="card-body">
-                                <form action="{{ url('add_services') }}" method="post">
-                                    @csrf
-                                    <div class="mb-4">
-                                        <label for="services" class="form-label">Service Name</label>
-                                        <input type="text" id="services" name="services" class="form-control" placeholder="Enter service name" required>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="service_type" class="form-label">Service Type</label>
-                                        <select id="service_type" name="service_type" class="form-control" required>
-                                            <option value="" disabled selected>Select service type</option>
-                                            <option value="internal">Internal</option>
-                                            <option value="external">External</option>
-                                        </select>
-                                    </div>
-                                    <div class="d-grid">
-                                        <button class="btn btn-primary" type="submit">Add Service</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!-- Add Service Button -->
+            <div class="container mt-4 d-flex justify-content-end">
+                <button class="btn btn-primary btn-lg d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addServiceModal">
+                    <i class="bi bi-plus-circle me-2"></i> Add Service
+                </button>
             </div>
-            <!-- Form End -->
 
             <!-- Services Table Start -->
-            <div class="container mt-5">
+            <div class="container mt-4">
                 <div class="card shadow border-0 mb-4">
                     <div class="card-header bg-primary text-white text-center">
                         <h4>Services</h4>
@@ -81,14 +100,16 @@
                                     <tr>
                                         <td>{{ $service->services_name }}</td>
                                         <td>{{ ucfirst($service->service_type) }}</td>
-                                        <td style="display: flex; justify-content: center;">
+                                        <td>
                                             <!-- Edit Button -->
-                                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editServiceModal" 
+                                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editServiceModal" 
                                                     data-id="{{ $service->id }}" data-name="{{ $service->services_name }}" data-type="{{ $service->service_type }}">
-                                                Edit
+                                                <i class="bi bi-pencil"></i> Edit
                                             </button>
                                             <!-- Delete Button -->
-                                            <a class="btn btn-danger ms-2" href="{{ url('delete_services', $service->id) }}" onclick="confirmation(event)">Delete</a>
+                                            <a class="btn btn-danger btn-sm ms-2" href="{{ url('delete_services', $service->id) }}" onclick="confirmation(event)">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -106,25 +127,55 @@
         </a>
     </div>
 
+    <!-- Add Service Modal -->
+    <div class="modal fade" id="addServiceModal" tabindex="-1" aria-labelledby="addServiceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addServiceModalLabel">Add Service</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ url('add_services') }}" method="post">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-4">
+                            <label for="services" class="form-label">Service Name</label>
+                            <input type="text" id="services" name="services" class="form-control" placeholder="Enter service name" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="service_type" class="form-label">Service Type</label>
+                            <select id="service_type" name="service_type" class="form-control" required>
+                                <option value="" disabled selected>Select service type</option>
+                                <option value="internal">Internal</option>
+                                <option value="external">External</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add Service</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Edit Service Modal -->
     <div class="modal fade" id="editServiceModal" tabindex="-1" aria-labelledby="editServiceModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editServiceModalLabel">Edit Service</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="editServiceForm" action="{{ url('update_services') }}" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="modal-body">
-                        <!-- Service Name -->
                         <div class="mb-4">
                             <label for="edit_services_name" class="form-label">Service Name</label>
                             <input type="text" id="edit_services_name" name="services_name" class="form-control" required>
                         </div>
-
-                        <!-- Service Type -->
                         <div class="mb-4">
                             <label for="edit_service_type" class="form-label">Service Type</label>
                             <select id="edit_service_type" name="service_type" class="form-control" required>
@@ -165,14 +216,13 @@
         // Populate the modal fields with the service data
         var editServiceModal = document.getElementById('editServiceModal');
         editServiceModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget; // Button that triggered the modal
+            var button = event.relatedTarget;
             var serviceId = button.getAttribute('data-id');
             var serviceName = button.getAttribute('data-name');
             var serviceType = button.getAttribute('data-type');
 
-            // Populate the modal form with the service data
             var modalForm = editServiceModal.querySelector('#editServiceForm');
-            modalForm.action = '{{ url('update_services') }}/' + serviceId; // Set the form action URL
+            modalForm.action = '{{ url('update_services') }}/' + serviceId;
             editServiceModal.querySelector('#edit_services_name').value = serviceName;
             editServiceModal.querySelector('#edit_service_type').value = serviceType;
         });
