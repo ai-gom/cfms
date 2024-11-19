@@ -12,17 +12,21 @@ return new class extends Migration
     public function up()
     {
         Schema::table('forms', function (Blueprint $table) {
-            // Make the service_id column non-nullable
-            $table->unsignedBigInteger('service_id');
-            $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
+            // Check if the column already exists
+            if (!Schema::hasColumn('forms', 'service_id')) {
+                $table->unsignedBigInteger('service_id');
+                $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
+            }
         });
     }
 
     public function down()
     {
         Schema::table('forms', function (Blueprint $table) {
-            $table->dropForeign(['service_id']);
-            $table->dropColumn('service_id');
+            if (Schema::hasColumn('forms', 'service_id')) {
+                $table->dropForeign(['service_id']);
+                $table->dropColumn('service_id');
+            }
         });
     }
 };

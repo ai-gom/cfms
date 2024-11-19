@@ -264,17 +264,18 @@ canvas {
                     </div>
                 </div>
 
-                <!-- Weighted Rankings Section -->
-                <div class="section-card">
+                
+
+                <!-- <div class="section-card">
                     <h3 class="text-primary">Weighted Rankings Based on Usage Count ({{ $period }} - {{ $currentYear }})</h3>
 
-                    <!-- Toggle Buttons -->
+                    
                     <div class="toggle-buttons">
                         <button class="btn btn-primary" onclick="toggleSectionView('weighted', 'table')">Table View</button>
                         <button class="btn btn-primary" onclick="toggleSectionView('weighted', 'graph')">Graph View</button>
                     </div>
 
-                    <!-- Weighted Rankings Table -->
+                    
                     <div id="weighted-table" class="table-container">
                         <table class="table table-hover">
                             <thead>
@@ -302,7 +303,7 @@ canvas {
                         </table>
                     </div>
 
-                    <!-- Weighted Rankings Chart -->
+                    
                     <div id="weighted-graph" class="chart-container hidden">
                         <canvas id="weightedRankingChart"></canvas>
                     </div>
@@ -310,7 +311,7 @@ canvas {
 
             </div>
         </div>
-    </div>
+    </div> -->
 
     @include('admin.js')
 

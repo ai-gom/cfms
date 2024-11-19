@@ -91,7 +91,7 @@
                             <thead class="thead-dark">
                                 <tr>
                                     <th>Service Name</th>
-                                    <th>Service Type</th>
+                                    
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -99,17 +99,13 @@
                                 @foreach($data as $service)
                                     <tr>
                                         <td>{{ $service->services_name }}</td>
-                                        <td>{{ ucfirst($service->service_type) }}</td>
+                                       
                                         <td>
                                             <!-- Edit Button -->
                                             <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editServiceModal" 
                                                     data-id="{{ $service->id }}" data-name="{{ $service->services_name }}" data-type="{{ $service->service_type }}">
                                                 <i class="bi bi-pencil"></i> Edit
                                             </button>
-                                            <!-- Delete Button -->
-                                            <a class="btn btn-danger btn-sm ms-2" href="{{ url('delete_services', $service->id) }}" onclick="confirmation(event)">
-                                                <i class="bi bi-trash"></i> Delete
-                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -142,11 +138,11 @@
                             <label for="services" class="form-label">Service Name</label>
                             <input type="text" id="services" name="services" class="form-control" placeholder="Enter service name" required>
                         </div>
-                        <div class="mb-4">
+                        <!-- Hidden Service Type Dropdown -->
+                        <div class="mb-4" style="display: none;">
                             <label for="service_type" class="form-label">Service Type</label>
                             <select id="service_type" name="service_type" class="form-control" required>
-                                <option value="" disabled selected>Select service type</option>
-                                <option value="internal">Internal</option>
+                                <option value="internal" selected>Internal</option> <!-- Default selected value is internal -->
                                 <option value="external">External</option>
                             </select>
                         </div>
@@ -176,7 +172,8 @@
                             <label for="edit_services_name" class="form-label">Service Name</label>
                             <input type="text" id="edit_services_name" name="services_name" class="form-control" required>
                         </div>
-                        <div class="mb-4">
+                        <!-- Hidden Service Type Dropdown for Edit -->
+                        <div class="mb-4" style="display: none;">
                             <label for="edit_service_type" class="form-label">Service Type</label>
                             <select id="edit_service_type" name="service_type" class="form-control" required>
                                 <option value="internal">Internal</option>
@@ -224,6 +221,7 @@
             var modalForm = editServiceModal.querySelector('#editServiceForm');
             modalForm.action = '{{ url('update_services') }}/' + serviceId;
             editServiceModal.querySelector('#edit_services_name').value = serviceName;
+            // Setting the value for the hidden field (service type)
             editServiceModal.querySelector('#edit_service_type').value = serviceType;
         });
     </script>

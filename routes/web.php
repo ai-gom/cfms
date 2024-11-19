@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\Admin;
+
 
 route::get('/',[HomeController::class,'home']);
 
@@ -27,9 +29,12 @@ Route::get('/form', [HomeController::class, 'showForm']);
 
 route::get('reports',[AdminController::class,'reports'])->middleware(['auth','admin']);
 
-Route::get('account', [AdminController::class, 'Account'])->middleware(['auth', 'admin'])->name('account');
+// Route::get('account', [AdminController::class, 'Account'])->middleware(['auth', 'admin'])->name('account');
+
+Route::get('/account', [RegisteredUserController::class, 'create'])->name('Account');
 
 Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');
+Route::get('/register', [RegisteredUserController::class, 'create'])->name('register.create');
 
 Route::get('rankings', [AdminController::class, 'rankings'])
     ->name('admin.rankings')
@@ -55,6 +60,12 @@ Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')
 Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update')->middleware('auth');
 
 Route::get('/past_reports', [AdminController::class, 'pastReports'])->name('past.reports');
+
+Route::get('dashboard', [UserController::class, 'dashboard'])->name('dashboard');
+
+
+
+
 
 
 

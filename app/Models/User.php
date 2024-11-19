@@ -21,6 +21,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'usertype',
     ];
 
     /**
@@ -45,4 +46,11 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+
+    public function services()
+{
+    return $this->hasMany(Services::class);
+}
+
+    
 }

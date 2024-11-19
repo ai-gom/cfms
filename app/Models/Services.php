@@ -12,6 +12,8 @@ class Services extends Model
     protected $fillable = [
         'services_name',
         'services_type',
+        'user_id', // Include `user_id` in the fillable array
+
     ];
 
      // Define the relationship to the Form model
@@ -19,4 +21,9 @@ class Services extends Model
      {
          return $this->hasMany(Form::class);
      }
+     public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
 }

@@ -185,8 +185,8 @@
                     <select name="department" class="form-control" required>
                     <option value="">Select Department</option>
             @foreach($services as $service)
-                <option value="{{ $service->id }}">
-                    {{ $service->services_name }} ({{ ucfirst($service->service_type) }})
+            <option value="{{ $service->id }}">
+                    {{ $service->services_name }} <!-- Only show the service name -->
                 </option>
             @endforeach
                     </select>
@@ -557,6 +557,8 @@
         });
     }
 </script>
+
+
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

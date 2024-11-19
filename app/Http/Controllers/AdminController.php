@@ -150,6 +150,7 @@ private function getAgeRange($range)
 }
     public function Account()
     {
+        
         return view('admin.Account');
     }
 
@@ -312,9 +313,16 @@ private function getAgeRange($range)
        // Category breakdown for card 3
     $categoryBreakdown = $this->getClientCategoryBreakdown(1, 12, $currentYear);
 
+    // Fetch the count of internal forms
+    $internalFormsCount = $this->getInternalFormsCount();
+
+    $externalFormsCount = $this->getExternalFormsCount();
+
+    $totalFormsCount = $this->getTotalFormsCount();
+
     
 
-    return view('admin.index', compact('data', 'monthlySubmissions', 'quarterlySubmissions', 'biAnnualSubmissions', 'annualSubmissions','genderResponses','ageBreakdown','municipalityBreakdown','categoryBreakdown'));
+    return view('admin.index', compact('data', 'monthlySubmissions', 'quarterlySubmissions', 'biAnnualSubmissions', 'annualSubmissions','genderResponses','ageBreakdown','municipalityBreakdown','categoryBreakdown','internalFormsCount','externalFormsCount','totalFormsCount'));
 
     }
 
@@ -1636,6 +1644,46 @@ public function getClientCategoryBreakdown($startMonth, $endMonth, $year)
     }
 
     return $categoryBreakdown;
+}
+
+public function getInternalFormsCount()
+{
+    // Define internal categories
+    $internalCategories = ['faculty', 'Non-teaching staff'];
+
+    // Count the forms where the client category is in the internal categories
+    $internalFormsCount = Form::whereIn('client_category', $internalCategories)->count();
+
+    return $internalFormsCount;
+}
+
+public function getExternalFormsCount()
+{
+    // Define external categories
+    $externalCategories = [
+        'Student', 'Alumni', 'parents', 'Community_member',
+        'industry_partner', 'supplier', 'Regulatory', 'Others'
+    ];
+
+    // Count the forms where the client category is in the external categories
+    $externalFormsCount = Form::whereIn('client_category', $externalCategories)->count();
+
+    return $externalFormsCount;
+}
+
+public function getTotalFormsCount()
+{
+    // Define internal and external categories
+    $internalCategories = ['faculty', 'Non-teaching staff'];
+    $externalCategories = [
+        'Student', 'Alumni', 'parents', 'Community_member',
+        'industry_partner', 'supplier', 'Regulatory', 'Others'
+    ];
+
+    // Count forms where client category is in either internal or external categories
+    $totalFormsCount = Form::whereIn('client_category', array_merge($internalCategories, $externalCategories))->count();
+
+    return $totalFormsCount;
 }
 
 

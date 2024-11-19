@@ -4,14 +4,13 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Services;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Session; // Import Session here
 
 class RegisteredUserController extends Controller
 {
@@ -20,7 +19,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $services = Services::all(); // Fetch all services from the database
+        return view('admin.Account', compact('services')); // Pass $services to the view
     }
 
     /**
@@ -32,27 +32,31 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'usertype' => 'required|string|in:admin,user',
+            'service_id' => ['required', 'exists:services,id'], // Validate service_id
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'phone' => $request->phone,
-            'address' => $request->address,
             'password' => Hash::make($request->password),
+            'usertype' => $request->usertype,
         ]);
 
-        
-        // Flash a success message to the session
-        toastr()->success('Account Created Succesfully.'); 
+        // Assign the user to the selected service
+        $service = Services::find($request->service_id);
+        $service->user_id = $user->id;
+        $service->save();
 
+        // Flash a success message
+        toastr()->success('Account created and service assigned successfully.');
 
+        // Fetch all services for the account page
+        $services = Services::all();
 
-        // Redirect to the login page
-        return redirect()->route('account');
-
-        
+        // Redirect to the account page with services
+        return redirect()->route('Account')->with('services', $services);
     }
 }

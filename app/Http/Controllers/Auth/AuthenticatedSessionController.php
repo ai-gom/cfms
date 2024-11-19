@@ -32,10 +32,11 @@ class AuthenticatedSessionController extends Controller
     $adminName = $request->user()->name;
     toastr()->success("Welcome Back, {$adminName}!!!");
 
-        if($request->user()->usertype === 'admin')
-        {
-            return redirect('admin/dashboard');
-        }
+    if ($request->user()->usertype === 'admin') {
+        return redirect('admin/dashboard');
+    } elseif ($request->user()->usertype === 'user') {
+        return redirect()->route('dashboard'); // Redirect to user dashboard
+    }
 
         return redirect()->intended(route('home.form', ));
     }
