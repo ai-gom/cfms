@@ -6,6 +6,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\QRCodeController;
+use Illuminate\Http\Request;
 use App\Http\Middleware\Admin;
 
 
@@ -25,7 +27,10 @@ require __DIR__.'/auth.php';
 
 route::get('admin/dashboard',[AdminController::class,'index'])->middleware(['auth','admin']);
 
-Route::get('/form', [HomeController::class, 'showForm']);
+// Route::get('/form', [HomeController::class, 'showForm']);
+
+Route::get('/form', [HomeController::class, 'showForm'])->name('home.form');
+
 
 route::get('reports',[AdminController::class,'reports'])->middleware(['auth','admin']);
 
@@ -62,6 +67,18 @@ Route::put('/profile/update', [ProfileController::class, 'update'])->name('profi
 Route::get('/past_reports', [AdminController::class, 'pastReports'])->name('past.reports');
 
 Route::get('dashboard', [UserController::class, 'dashboard'])->name('dashboard');
+
+
+
+Route::get('/sorted-services', [AdminController::class, 'sortedServiceTable'])->name('admin.sorted_services');
+
+
+Route::get('/thank-you', function () {
+    return view('home.thank_you');
+})->name('thank.you');
+
+
+Route::get('/field-counts', [AdminController::class, 'showFieldCounts']);
 
 
 

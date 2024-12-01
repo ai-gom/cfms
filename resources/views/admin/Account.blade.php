@@ -2,45 +2,71 @@
 <html lang="en">
 
 <head>
-    @include('admin.css') <!-- Assuming you're using a shared CSS file -->
+    @include('admin.css') <!-- Assuming shared CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
-        /* Custom Styles for the Page */
+        /* Page Styles */
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            color: #343a40;
+            background-color: #f3f6f9;
+            color: #191c24;
+            margin: 0;
+            padding: 0;
         }
 
         .container {
+            max-width: 500px;
+            margin: 50px auto;
             background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             padding: 30px;
-            margin-top: 50px;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #004085;
-        }
-
-        .form-label {
-            font-weight: bold;
         }
 
         h2 {
             text-align: center;
-            margin-bottom: 30px;
+            color: #007bff;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            color: #343a40;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-control,
+        .form-select {
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            height: 40px;
+            padding: 10px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            height: 40px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
         }
 
         .alert {
-            border-radius: 8px;
-            margin-top: 20px;
+            border-radius: 5px;
+            padding: 10px;
         }
 
         .back-to-top {
@@ -48,118 +74,205 @@
             bottom: 20px;
             right: 20px;
             background-color: #007bff;
+            color: white;
             border-radius: 50%;
             padding: 10px;
-            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
         }
 
         .back-to-top:hover {
             background-color: #0056b3;
         }
 
-        .form-control {
-            border-radius: 5px;
-            height: 40px;
+        .back-to-top i {
+            font-size: 20px;
         }
 
-        .form-select {
-            border-radius: 5px;
-            height: 40px;
+        .password-strength {
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        .password-strength.weak {
+            color: red;
+        }
+
+        .password-strength.medium {
+            color: orange;
+        }
+
+        .password-strength.strong {
+            color: green;
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 
 <body>
     <div class="container-xxl position-relative bg-white d-flex p-0">
-        <!-- Spinner Start -->
-        @include('admin.spinner') <!-- Spinner if needed for loading -->
-        <!-- Spinner End -->
-
-        <!-- Sidebar Start -->
+        @include('admin.spinner') <!-- Spinner -->
         @include('admin.sidebar') <!-- Sidebar -->
-        <!-- Sidebar End -->
 
         <div class="content">
-            <!-- Navbar Start -->
             @include('admin.navbar') <!-- Navbar -->
-            <!-- Navbar End -->
 
-            <div class="container mt-5">
-                <!-- Registration Form -->
+            <div class="container">
                 <h2>Create Account</h2>
-                <form method="POST" action="{{ route('register') }}">
+                <form method="POST" action="{{ route('register') }}" id="registerForm">
                     @csrf
+
+                    <!-- Name -->
                     <div class="mb-3">
-                        <label for="name" class="form-label">Name:</label>
-                        <input type="text" id="name" name="name" class="form-control" required>
+                        <label for="name" class="form-label">Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" id="name" name="name" class="form-control" required>
+                        </div>
                     </div>
+
+                    <!-- Email -->
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email:</label>
-                        <input type="email" id="email" name="email" class="form-control" required>
+                        <label for="email" class="form-label">Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" id="email" name="email" class="form-control" required>
+                        </div>
                     </div>
+
+                    <!-- Password -->
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password:</label>
+                        <label for="password" class="form-label">Password</label>
                         <input type="password" id="password" name="password" class="form-control" required>
+                        <small id="passwordHint" class="form-text text-muted">Password must be at least 8 characters long and include uppercase letters and numbers.</small>
+                        <div id="passwordStrength" class="password-strength"></div>
                     </div>
+
+                    <!-- Confirm Password -->
                     <div class="mb-3">
-                        <label for="password_confirmation" class="form-label">Confirm Password:</label>
+                        <label for="password_confirmation" class="form-label">Confirm Password</label>
                         <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required>
                     </div>
+
+                    <!-- User Type -->
                     <div class="mb-3">
-                        <label for="usertype" class="form-label">User Type:</label>
+                        <label for="usertype" class="form-label">User Type</label>
                         <select id="usertype" name="usertype" class="form-select" required>
-                            <option value="admin">Admin</option>
-                            <option value="user">User</option>
+                            <option value="user">Faculty</option>
                         </select>
                     </div>
+
+                    <!-- Assigned Service -->
                     <div class="mb-3">
-                <label for="service_id" class="form-label">Assigned Service</label>
-                <select id="service_id" name="service_id" class="form-select" required>
-                    <option value="" disabled selected>Select Department</option>
-                    @if(!empty($services))
-                        @foreach($services as $service)
-                            <option value="{{ $service->id }}">
-                                {{ $service->services_name }} ({{ ucfirst($service->service_type) }})
-                            </option>
-                        @endforeach
-                    @else
-                        <option value="" disabled>No Services Available</option>
-                    @endif
-                </select>
-            </div>
+                        <label for="service_id" class="form-label">Assigned Service</label>
+                        @if(isset($assignedService) && $assignedService)
+                            <!-- Display the assigned service name if a service is already assigned -->
+                            <input type="text" class="form-control" value="{{ $assignedService->services_name }}" readonly>
+                            <small class="form-text text-muted">This user is already assigned to this service.</small>
+                        @else
+                            <!-- Display the dropdown if no service is assigned -->
+                            <select id="service_id" name="service_id" class="form-select" required>
+                                <option value="" disabled selected>Select Department</option>
+                                @if(!empty($services))
+                                    @foreach($services as $service)
+                                        <option value="{{ $service->id }}">{{ $service->services_name }}</option>
+                                    @endforeach
+                                @else
+                                    <option value="" disabled>No Services Available</option>
+                                @endif
+                            </select>
+                        @endif
+                    </div>
 
-
-
-
-                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                    <!-- Preview Modal Trigger -->
+                    <button type="button" class="btn btn-secondary w-100" data-bs-toggle="modal" data-bs-target="#previewModal" onclick="populateModal()">Preview</button>
                 </form>
 
-                <!-- Success Message -->
-                @if(session('success'))
-                    <div class="alert alert-success mt-3">
-                        {{ session('success') }}
+                <!-- Modal -->
+                <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="previewModalLabel">Confirm Your Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                
+                                <p><strong>User Type:</strong> <span id="modalUserType"></span></p>
+                                <p><strong>Assigned Service:</strong> <span id="modalService"></span></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Edit</button>
+                                <button type="submit" class="btn btn-primary" form="registerForm">Confirm & Register</button>
+                            </div>
+                        </div>
                     </div>
-                @endif
-
-                <!-- Validation Errors -->
-                @if($errors->any())
-                    <div class="alert alert-danger mt-3">
-                        <ul>
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+                </div>
             </div>
         </div>
 
+
+        
+
         <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+        <a href="#" class="back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
 
-    <!-- JavaScript Libraries -->
-    @include('admin.js') <!-- Assuming you have shared JS -->
+    @include('admin.js') <!-- Include Scripts -->
+
+    <!-- Toastr Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        @if(session('success'))
+            toastr.success("{{ session('success') }}", "Success");
+        @endif
+
+        @if($errors->any())
+            toastr.error("There were some errors in your submission. Please fix them and try again.", "Error");
+        @endif
+
+        // Password Strength Indicator
+        const password = document.getElementById("password");
+        const strengthIndicator = document.getElementById("passwordStrength");
+
+        password.addEventListener("input", function () {
+            const value = password.value;
+            let strength = 0;
+
+            if (value.length >= 8) strength += 30;
+            if (/[A-Z]/.test(value)) strength += 30;
+            if (/[0-9]/.test(value)) strength += 40;
+
+            if (strength <= 30) {
+                strengthIndicator.textContent = "Weak";
+                strengthIndicator.className = "password-strength weak";
+            } else if (strength <= 70) {
+                strengthIndicator.textContent = "Medium";
+                strengthIndicator.className = "password-strength medium";
+            } else {
+                strengthIndicator.textContent = "Strong";
+                strengthIndicator.className = "password-strength strong";
+            }
+        });
+
+        // Populate Modal with Form Data
+        function populateModal() {
+            
+            const userType = document.getElementById("usertype").options[document.getElementById("usertype").selectedIndex].text;
+            const service = document.getElementById("service_id").options[document.getElementById("service_id").selectedIndex].text;
+
+            
+            document.getElementById("modalUserType").innerText = userType || "N/A";
+            document.getElementById("modalService").innerText = service || "N/A";
+        }
+    </script>
 </body>
 
 </html>

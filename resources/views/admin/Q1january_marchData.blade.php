@@ -409,11 +409,11 @@
             </thead>
             <tbody>
                 <!-- External Services -->
-                <tr>
+                <!-- <tr>
                     <td colspan="2" style="font-weight: bold; text-align: center;">External Services</td>
                 </tr>
                 @foreach( $serviceAveragesQ1 as $service)
-                    @if($service['service_type'] == 'external') <!-- Assuming service_type is available -->
+                    @if($service['service_type'] == 'external') 
                     <tr>
                         <td>{{ $service['service_name'] }}</td>
                         <td>{{ number_format($service['overall_awm'], 2) }}%</td>
@@ -421,14 +421,14 @@
                     @endif
                 @endforeach
 
-                <!-- Break -->
+              
                 <tr>
                     <td colspan="2" style="background-color: #f8f9fa; height: 10px;"></td>
-                </tr>
+                </tr> -->
 
                 <!-- Internal Services -->
                 <tr>
-                    <td colspan="2" style="font-weight: bold; text-align: center;">Internal Services</td>
+                    <td colspan="2" style="font-weight: bold; text-align: center;">Services</td>
                 </tr>
                 @foreach( $serviceAveragesQ1 as $service)
                     @if($service['service_type'] == 'internal') <!-- Assuming service_type is available -->

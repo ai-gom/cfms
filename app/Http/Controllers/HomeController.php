@@ -84,9 +84,9 @@ class HomeController extends Controller
 
         $data->save();
 
-        toastr()->success('Form Sucessfully Submitted.');
+        // toastr()->success('Form Sucessfully Submitted.');
 
-        return redirect()->back();
+        return redirect()->route('thank.you');
 
 
     }

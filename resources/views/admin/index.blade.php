@@ -118,14 +118,7 @@
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top" aria-label="Back to top"><i class="bi bi-arrow-up"></i></a>
     </div>
 
-  <!-- Footer Start -->
-<footer class="bg-light text-dark py-4 mt-5">
-    <div class="container text-center">
-        <p>&copy; 2024 PSU ACC. All Rights Reserved.</p>
-        <p>Designed by PSU Development Team</p>
-    </div>
-</footer>
-<!-- Footer End -->
+@include('admin.footer')
 
 
     <!-- JavaScript Libraries -->

@@ -53,6 +53,12 @@
             <a href="{{ url('account') }}" class="nav-item nav-link {{ Request::is('account') ? 'active' : '' }}">
                 <i class="fa fa-user-cog me-2"></i>Account
             </a>
+
+            <a href="{{ url('field-counts') }}" class="nav-item nav-link {{ Request::is('field-counts') ? 'active' : '' }}">
+    <i class="fa fa-lightbulb me-2"></i>Suggestions
+</a>
+
+
         </div>
     </nav>
 </div>

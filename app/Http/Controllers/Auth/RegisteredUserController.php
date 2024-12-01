@@ -19,7 +19,9 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        $services = Services::all(); // Fetch all services from the database
+        // Fetch only services that do not have an assigned user
+        $services = Services::whereNull('user_id')->get();
+
         return view('admin.Account', compact('services')); // Pass $services to the view
     }
 
@@ -53,10 +55,9 @@ class RegisteredUserController extends Controller
         // Flash a success message
         toastr()->success('Account created and service assigned successfully.');
 
-        // Fetch all services for the account page
-        $services = Services::all();
-
-        // Redirect to the account page with services
-        return redirect()->route('Account')->with('services', $services);
+        // Redirect back to the registration page
+        return redirect()->route('Account');
     }
+
+   
 }

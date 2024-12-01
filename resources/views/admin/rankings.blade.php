@@ -180,6 +180,8 @@ canvas {
                         </div>
                     </form>
 
+                    
+
                     <!-- Toggle Buttons -->
                     <div class="toggle-buttons">
                         <button class="btn btn-primary" onclick="toggleSectionView('rankings', 'table')">Table View</button>

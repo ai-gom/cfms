@@ -32,7 +32,7 @@
                 <div class="col-md-4">
                     <label for="year" class="form-label">Year</label>
                     <select name="year" id="year" class="form-select">
-                        @for ($i = now()->year; $i >= 2000; $i--)
+                        @for ($i = now()->year; $i >= 2022; $i--)
                             <option value="{{ $i }}" {{ $selectedYear == $i ? 'selected' : '' }}>
                                 {{ $i }}
                             </option>
@@ -384,7 +384,7 @@
             </thead>
             <tbody>
                 <!-- External Services -->
-                <tr>
+                <!-- <tr>
                     <td colspan="2" class="font-weight-bold text-center">External Services</td>
                 </tr>
                 @foreach ($services as $service)
@@ -394,11 +394,11 @@
                             <td>{{ number_format($service['overall_awm'], 2) }}%</td>
                         </tr>
                     @endif
-                @endforeach
+                @endforeach -->
 
                 <!-- Internal Services -->
                 <tr>
-                    <td colspan="2" class="font-weight-bold text-center">Internal Services</td>
+                    <td colspan="2" class="font-weight-bold text-center"> Services</td>
                 </tr>
                 @foreach ($services as $service)
                     @if ($service['service_type'] === 'internal')

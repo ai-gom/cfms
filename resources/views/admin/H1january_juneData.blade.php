@@ -16,6 +16,8 @@
     }
 @endphp
 
+
+
 <!-- Table 1: Age Breakdown -->
 <div class="card" style="margin-top: 20px; margin-left: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
     <div class="card-header">
@@ -408,26 +410,11 @@
             </thead>
             <tbody>
                 <!-- External Services -->
-                <tr>
-                    <td colspan="2" style="font-weight: bold; text-align: center;">External Services</td>
-                </tr>
-                @foreach($serviceAveragesJanToJune as $service)
-                    @if($service['service_type'] == 'external') <!-- Assuming service_type is available -->
-                    <tr>
-                        <td>{{ $service['service_name'] }}</td>
-                        <td>{{ number_format($service['overall_awm'], 2) }}%</td>
-                    </tr>
-                    @endif
-                @endforeach
-
-                <!-- Break -->
-                <tr>
-                    <td colspan="2" style="background-color: #f8f9fa; height: 10px;"></td>
-                </tr>
+               
 
                 <!-- Internal Services -->
                 <tr>
-                    <td colspan="2" style="font-weight: bold; text-align: center;">Internal Services</td>
+                    <td colspan="2" style="font-weight: bold; text-align: center;"> Services</td>
                 </tr>
                 @foreach($serviceAveragesJanToJune as $service)
                     @if($service['service_type'] == 'internal') <!-- Assuming service_type is available -->

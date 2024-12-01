@@ -69,6 +69,7 @@ class AdminController extends Controller
     
         // Compute annual averages per service
         $serviceAveragesAnnual = $this->computeServiceAverages(1, 12, $currentYear);
+        
     
         // Custom field labels
         $fieldLabels = [
@@ -115,6 +116,10 @@ class AdminController extends Controller
     $municipalityBreakdown = $this->getClientMunicipalityBreakdown(1, 12, $currentYear);
 
     $categoryBreakdown = $this->getClientCategoryBreakdown(1, 12, $currentYear);
+
+    // Compute service averages, categorized by client type
+
+
     
         // Return the view with annual data
         return view('admin.reports', compact(
@@ -128,7 +133,8 @@ class AdminController extends Controller
             'serviceAveragesAnnual', // Include annual averages in the view
             'clientAgeBreakdown',
             'municipalityBreakdown',
-            'categoryBreakdown'
+            'categoryBreakdown',
+            
         ));
     }
 private function getAgeRange($range)
@@ -265,7 +271,7 @@ private function getAgeRange($range)
     {
         $currentYear = Carbon::now()->year;
 
-    // Assuming 'Service' is the model name for your services data
+    
     $data = Services::all();
 
     // Monthly data
@@ -1064,6 +1070,7 @@ private function aggregateExpectations($expectationsFields, $year, $startMonth, 
     
             // Determine the descriptive rating
             $descriptiveRating = $this->getDescriptiveRating($overallAWM);
+
     
             $serviceAverages[] = [
                 'service_name' => $service->services_name,
@@ -1071,7 +1078,8 @@ private function aggregateExpectations($expectationsFields, $year, $startMonth, 
                 'averages' => $averages,
                 'overall_awm' => $overallAWM,
                 'descriptive_rating' => $descriptiveRating,
-                'total_respondents' => $totalRespondents
+                'total_respondents' => $totalRespondents,
+                'client_category' => $service->client_category // This should align with your category logic
             ];
         }
     
@@ -1402,9 +1410,9 @@ public function getClientSexBreakdown($startMonth, $endMonth, $year)
         ->get();
 
     $sexBreakdown = [
-        'Male' => ['Internal' => 0, 'External' => 0],
-        'Female' => ['Internal' => 0, 'External' => 0],
-        'Other' => ['Internal' => 0, 'External' => 0],
+        'male' => ['Internal' => 0, 'External' => 0],
+        'female' => ['Internal' => 0, 'External' => 0],
+        'prefer-not-to-say' => ['Internal' => 0, 'External' => 0],
     ];
 
     // Match the enum values exactly
@@ -1425,8 +1433,8 @@ public function getClientSexBreakdown($startMonth, $endMonth, $year)
             continue; // Skip rows without these fields
         }
 
-        // Normalize and trim values
-        $sex = ucfirst(strtolower(trim($form->sex)));
+        // Normalize the 'sex' value to lowercase
+        $sex = strtolower(trim($form->sex)); // Ensure it's lowercase
         $clientCategory = trim($form->client_category);
 
         // Classify the client into Internal or External
@@ -1440,6 +1448,7 @@ public function getClientSexBreakdown($startMonth, $endMonth, $year)
         $sexBreakdown[$sex][$clientType]++;
     }
 
+    // Calculate percentages
     foreach ($sexBreakdown as $sex => &$counts) {
         $totalClients = $counts['Internal'] + $counts['External'];
         $counts['InternalPercentage'] = $totalClients > 0 ? ($counts['Internal'] / $totalClients) * 100 : 0;
@@ -1448,6 +1457,7 @@ public function getClientSexBreakdown($startMonth, $endMonth, $year)
 
     return $sexBreakdown;
 }
+
 
 
 public function getClientAgeBreakdown($startMonth, $endMonth, $year)
@@ -1646,6 +1656,7 @@ public function getClientCategoryBreakdown($startMonth, $endMonth, $year)
     return $categoryBreakdown;
 }
 
+
 public function getInternalFormsCount()
 {
     // Define internal categories
@@ -1685,6 +1696,24 @@ public function getTotalFormsCount()
 
     return $totalFormsCount;
 }
+
+
+public function showFieldCounts()
+{
+    // Fetch paginated forms with service name and suggestions
+    $forms = Form::join('services', 'forms.service_id', '=', 'services.id')
+        ->select('services.services_name', 'forms.suggestions', 'forms.created_at')
+        ->orderBy('forms.created_at', 'desc') // Order by latest
+        ->paginate(10); // Paginate results with 10 items per page
+
+    // Pass data to the view
+    return view('admin.field_counts', compact('forms'));
+}
+
+
+
+
+
 
 
 }

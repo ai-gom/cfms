@@ -395,39 +395,11 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- External Services -->
-                <tr>
-                    <td colspan="2" style="font-weight: bold; text-align: center;">External Services</td>
-                </tr>
-                @php
-                    $externalTotal = 0;
-                    $externalCount = 0;
-                @endphp
-                @foreach($externalServices as $service)
-                    @if($service['overall_awm'] > 0)
-                        <tr>
-                            <td>{{ $service['service_name'] }}</td>
-                            <td>{{ number_format($service['overall_awm'], 2) }}%</td>
-                        </tr>
-                        @php
-                            $externalTotal += $service['overall_awm'];
-                            $externalCount++;
-                        @endphp
-                    @endif
-                @endforeach
-                <tr>
-                    <td style="font-weight: bold; ">External Services Average</td>
-                    <td style="font-weight: bold;">{{ $externalCount > 0 ? number_format($externalTotal / $externalCount, 2) : 'N/A' }}%</td>
-                </tr>
-
-                <!-- Break -->
-                <tr>
-                    <td colspan="2" style="background-color: #f8f9fa; height: 10px;"></td>
-                </tr>
+              
 
                 <!-- Internal Services -->
                 <tr>
-                    <td colspan="2" style="font-weight: bold; text-align: center;">Internal Services</td>
+                    <td colspan="2" style="font-weight: bold; text-align: center;"> Services</td>
                 </tr>
                 @php
                     $internalTotal = 0;
@@ -445,11 +417,7 @@
                         @endphp
                     @endif
                 @endforeach
-                <tr>
-                    <td style="font-weight: bold; ">Internal Services Average</td>
-                    <td style="font-weight: bold;">{{ $internalCount > 0 ? number_format($internalTotal / $internalCount, 2) : 'N/A' }}%</td>
-                </tr>
-
+               
                 <!-- Break -->
                 <tr>
                     <td colspan="2" style="background-color: #f8f9fa; height: 10px;"></td>
@@ -457,8 +425,8 @@
 
                 <!-- Overall Average -->
                 @php
-                    $overallTotal = $externalTotal + $internalTotal;
-                    $overallCount = $externalCount + $internalCount;
+                    $overallTotal = $internalTotal + $internalTotal;
+                    $overallCount = $internalCount + $internalCount;
                 @endphp
                 <tr>
                     <td style="font-weight: bold; ">Overall Average of All Services</td>
